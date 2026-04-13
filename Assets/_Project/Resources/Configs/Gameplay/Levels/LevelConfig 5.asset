@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6eaf17de99e7d514487268282133fb94, type: 3}
+  m_Name: LevelConfig 5
+  m_EditorClassIdentifier: 
+  _stageConfigs:
+  - {fileID: 11400000, guid: dfa2ff8c0701b8049b81f45dd02b9c2f, type: 2}
+  - {fileID: 11400000, guid: 6e84eb8f6534aa44bbdc35d961ae18ee, type: 2}
+  - {fileID: 11400000, guid: 630228f581e5cd944bf103f7debc028d, type: 2}
+  - {fileID: 11400000, guid: 5752ed01d3b44554eb81011d711f21c5, type: 2}
+  - {fileID: 11400000, guid: dd8e2f66f53cd5145bf899c781a73508, type: 2}
+  _towerMaxHealth: 100
+  _goldReward: 750
