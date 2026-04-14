@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -18,6 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly BrainsFactory _brainsFactory;
         private readonly ConfigsProviderService _configsProviderService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly MouseInput _mouseInput;
+        private Transform _townWalkerSpawnPoint;
         private int _currentLevelNumber;
 
         public MainHeroFactory(DIContainer container, int currentLevelNumber)
@@ -27,6 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _brainsFactory = _container.Resolve<BrainsFactory>();
             _configsProviderService = _container.Resolve<ConfigsProviderService>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+            _mouseInput = _container.Resolve<MouseInput>();
             _currentLevelNumber =  currentLevelNumber;
         }
 
@@ -42,7 +46,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             _entitiesLifeContext.Add(entity);
+            
+            _townWalkerSpawnPoint = entity.SpawnPoint;
 
+            return entity;
+        }
+        
+        public Entity CreateTowerWalker()
+        {
+            Entity entity = _entitiesFactory.CreateTowerWalker(_townWalkerSpawnPoint.position);
+            
+            entity
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+
+            _entitiesLifeContext.Add(entity);
+            _brainsFactory.CreateTowerWalkerBrain(entity, _mouseInput);
+            
             return entity;
         }
     }

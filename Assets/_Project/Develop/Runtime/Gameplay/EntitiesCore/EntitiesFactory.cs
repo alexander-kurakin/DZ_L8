@@ -78,6 +78,36 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
+        public Entity CreateTowerWalker(Vector3 position)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, "Entities/TowerWalker");
+
+            entity
+                .AddMoveDirection()
+                .AddMoveSpeed(new ReactiveVariable<float>(3))
+                .AddIsMoving()
+                .AddRotationDirection()
+                .AddRotationSpeed(new ReactiveVariable<float>(900));
+            
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => true)); //tower walker always moves towards mouse cursor
+            
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => true)); //tower walker always rotates towards mouse cursor
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate);
+                
+            entity
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyRotationSystem());
+
+            return entity;
+        }
+
         public Entity CreateWalkingEnemy(Vector3 position, WalkingEnemyConfig config)
         {
             Entity entity = CreateEmpty();

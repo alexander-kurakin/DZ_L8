@@ -49,7 +49,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _mouseClickActions =  _container.Resolve<MouseClickActions>();
 
             _container.Resolve<MainHeroFactory>().Create();
-
+            _container.Resolve<MainHeroFactory>().CreateTowerWalker();
+            
             yield break;
         }
 

@@ -48,5 +48,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             
             return brain;
         }
+        
+        public StateMachineBrain CreateTowerWalkerBrain(Entity entity, MouseInput mouseInput)
+        {
+            MovingTowardsCursorState state = new MovingTowardsCursorState(entity, mouseInput);
+            
+            AIStateMachine stateMachine = new AIStateMachine();
+            
+            stateMachine.AddState(state);
+            
+            StateMachineBrain brain = new StateMachineBrain(stateMachine);
+            _brainsContext.SetFor(entity, brain);
+            
+            return brain;
+        }
     }
 }
