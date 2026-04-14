@@ -24,6 +24,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
             if (registrators != null)
                 foreach (MonoEntityRegistrator registrator in registrators)
                     registrator.Register(entity);
+            
+            EntityView[] views = GetComponentsInChildren<EntityView>();
+
+            if (views != null)
+                foreach (EntityView view in views)
+                    view.Link(entity);
 
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 _collidersRegistryService.Register(collider, entity);
@@ -31,6 +37,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public void Cleanup(Entity entity)
         {
+            EntityView[] views = GetComponentsInChildren<EntityView>();
+
+            if (views != null)
+                foreach (EntityView view in views)
+                    view.Cleanup(entity);
+            
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 _collidersRegistryService.Unregister(collider);
 
