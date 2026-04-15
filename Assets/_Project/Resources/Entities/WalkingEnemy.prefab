@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8575589285690833615
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5800966843338258160}
+  m_Layer: 0
+  m_Name: VFXSpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5800966843338258160
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8575589285690833615}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 1.78, z: -5.77}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6184043881470378523}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &246069532329153389
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -100,6 +131,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3099444620535002369}
+    - targetCorrespondingSourceObject: {fileID: 4490695214760082998, guid: ba1aa7e7060c8774096f6e3c34c02896,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 944736555035616405}
   m_SourcePrefab: {fileID: 100100000, guid: ba1aa7e7060c8774096f6e3c34c02896, type: 3}
 --- !u!4 &3923692740619335649 stripped
 Transform:
@@ -139,6 +174,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 6959166531336482203}
+--- !u!114 &944736555035616405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4411295002757737819}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 04177b30d7d229044ae7ce59b6756581, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _animator: {fileID: 6959166531336482203}
+  _spawnEffectPrefab: {fileID: 7251133750751391091, guid: 4b36af1f8ab60754db42dffbd3f50c8d,
+    type: 3}
+  _spawnEffectPoint: {fileID: 5800966843338258160}
 --- !u!95 &6959166531336482203 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7204030942818582262, guid: ba1aa7e7060c8774096f6e3c34c02896,
@@ -215,6 +266,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 3923692740619335649}
+    - targetCorrespondingSourceObject: {fileID: 4595113288729785282, guid: 6866f045f7996a24bb1312cb86a91d79,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 5800966843338258160}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 62956036438060799, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}

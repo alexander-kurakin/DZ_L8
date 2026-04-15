@@ -64,8 +64,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainGroup: {fileID: 2893304340920532784}
-  _aniclicker: {fileID: 4832025220975090498}
+  _anticlicker: {fileID: 0}
   _body: {fileID: 9003238490065565453}
+  _animationType: 0
   _text: {fileID: 6301684131584058422}
 --- !u!1 &1477019372411495324
 GameObject:
@@ -613,18 +614,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a7a2f2dbb93d3ba44888fe697126e8c3, type: 3}
---- !u!114 &4832025220975090498 stripped
-MonoBehaviour:
-  m_CorrespondingSourceObject: {fileID: 4031584344329502077, guid: a7a2f2dbb93d3ba44888fe697126e8c3,
-    type: 3}
-  m_PrefabInstance: {fileID: 8430137960988141119}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 0}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!224 &7493597680133927162 stripped
 RectTransform:
   m_CorrespondingSourceObject: {fileID: 1370016419053901509, guid: a7a2f2dbb93d3ba44888fe697126e8c3,

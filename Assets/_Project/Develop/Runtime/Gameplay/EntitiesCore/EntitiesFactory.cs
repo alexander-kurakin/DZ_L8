@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -134,14 +135,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.DistanceToTargetGoal))
                 .AddDistanceToTargetReachedEvent()
                 .AddDistanceToTargetReached()
-                .AddExplosionDamage(new ReactiveVariable<float>(config.ExplosionDamage));
+                .AddExplosionDamage(new ReactiveVariable<float>(config.ExplosionDamage))
+                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
+                .AddSpawnCurrentTime()
+                .AddInSpawnProcess();
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
 
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
@@ -153,6 +159,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
 
             ICompositeCondition canTakeDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
             
             entity
@@ -163,6 +170,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanTakeDamage(canTakeDamage);
             
             entity
+                .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
                 .AddSystem(new TakeDamageSystem())
