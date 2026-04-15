@@ -1,8 +1,8 @@
 using _Project.Develop.Runtime.Configs.Gameplay.MouseActions;
 using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities;
-using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.Gameplay.Features.Actions
@@ -28,6 +28,11 @@ namespace _Project.Develop.Runtime.Gameplay.Features.Actions
                 mouseActionsConfig.TowerExplosionDamage,
                 Layers.CharactersMask,
                 _mainHeroHolderService.MainHero);
+
+            Entity towerWalker = _mainHeroHolderService.TowerWalker;
+
+            if (towerWalker != null)
+                towerWalker.MagicCastRequestedEvent.Invoke();
         }
     }
 }

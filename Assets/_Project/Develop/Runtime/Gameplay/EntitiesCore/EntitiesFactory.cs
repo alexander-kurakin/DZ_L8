@@ -89,7 +89,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMoveSpeed(new ReactiveVariable<float>(3))
                 .AddIsMoving()
                 .AddRotationDirection()
-                .AddRotationSpeed(new ReactiveVariable<float>(900));
+                .AddRotationSpeed(new ReactiveVariable<float>(900))
+                .AddMagicCastRequestedEvent();
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => true)); //tower walker always moves towards mouse cursor

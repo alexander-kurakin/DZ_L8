@@ -18,4 +18,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
     {
         public ReactiveVariable<bool> Value;
     }
+    
+    public class MagicCastRequestedEvent : IEntityComponent
+    {
+        public ReactiveEvent Value;
+    }
 }

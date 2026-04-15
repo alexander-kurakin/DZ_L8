@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private ReactiveEvent<Entity> _heroRegistred = new();
 
         private Entity _mainHero;
+        private Entity _towerWalker;
 
         public MainHeroHolderService(EntitiesLifeContext entitiesLifeContext)
         {
@@ -20,6 +21,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         public IReadOnlyEvent<Entity> HeroRegistred => _heroRegistred;
 
         public Entity MainHero => _mainHero;
+
+        public Entity TowerWalker => _towerWalker;
+
+        public void RegisterTowerWalker(Entity entity)
+        {
+            _towerWalker = entity;
+        }
 
         public void Initialize()
         {

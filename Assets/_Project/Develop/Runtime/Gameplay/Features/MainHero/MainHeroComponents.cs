@@ -5,5 +5,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
     public class IsMainHero : IEntityComponent
     {
     }
-    
 }
