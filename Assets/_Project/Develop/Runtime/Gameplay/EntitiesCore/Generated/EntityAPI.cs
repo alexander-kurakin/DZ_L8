@@ -66,24 +66,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent MagicCastRequestedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent MagicCastRequestedEvent => MagicCastRequestedEventC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> MagicCastRequestedEvent => MagicCastRequestedEventC.Value;
 
-		public bool TryGetMagicCastRequestedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		public bool TryGetMagicCastRequestedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
 		{
 			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent component);
 			if(result)
 				value = component.Value;
 			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
 			return result;
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMagicCastRequestedEvent()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMagicCastRequestedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMagicCastRequestedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent() {Value = value}); 
 		}

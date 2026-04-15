@@ -32,7 +32,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.Actions
             Entity towerWalker = _mainHeroHolderService.TowerWalker;
 
             if (towerWalker != null)
-                towerWalker.MagicCastRequestedEvent.Invoke();
+                towerWalker.MagicCastRequestedEvent.Invoke(hit.point);
         }
     }
 }

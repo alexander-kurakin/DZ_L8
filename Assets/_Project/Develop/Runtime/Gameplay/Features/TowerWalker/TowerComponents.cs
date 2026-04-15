@@ -21,6 +21,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
     
     public class MagicCastRequestedEvent : IEntityComponent
     {
-        public ReactiveEvent Value;
+        public ReactiveEvent<Vector3> Value;
     }
 }

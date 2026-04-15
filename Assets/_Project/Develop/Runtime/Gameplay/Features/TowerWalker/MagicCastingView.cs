@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         private readonly int MagicCastedHash = Animator.StringToHash("MagicCasted");
 
         [SerializeField] private Animator _animator;
+        [SerializeField] private ParticleSystem _castVfxPrefab;
 
         private IDisposable _magicCastRequest;
 
@@ -31,9 +32,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
             _magicCastRequest?.Dispose();
         }
 
-        private void OnMagicCastRequested()
+        private void OnMagicCastRequested(Vector3 worldPoint)
         {
             _animator.SetTrigger(MagicCastedHash);
+
+            if (_castVfxPrefab == null)
+                return;
+
+            Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
+            
         }
     }
 }

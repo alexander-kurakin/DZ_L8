@@ -130,6 +130,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 5701155334034682124}
+  _castVfxPrefab: {fileID: 5374757574983774937, guid: b1ae5055f08b8284d9e996465d1d37e3,
+    type: 3}
 --- !u!4 &5645989512588368130 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4611257079440708, guid: 9d5c9b4d9fc598941aed8c2e63eaad91,
