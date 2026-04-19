@@ -12,6 +12,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _castVfxPrefab;
+        [SerializeField] private AudioClip _castVfxSound;
+        [SerializeField] private AudioSource _audioSource;
 
         private IDisposable _magicCastRequest;
 
@@ -41,6 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
             Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
             
+            _audioSource.PlayOneShot(_castVfxSound);
         }
     }
 }
