@@ -32,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         
         private ReactiveEvent _completed = new();
         private Entity _mainHero;
+        private Entity _towerWalker;
         private bool _inProcess;
 
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
@@ -93,6 +94,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             
             _mainHero = _mainHeroHolderService.MainHero;
             _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
+            
+            _towerWalker = _mainHeroHolderService.TowerWalker;
 
             _inProcess = true;
         }
@@ -109,8 +112,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
 
             if (MouseClickedOnGenericLayer(out Vector3 hitPoint))
-                    _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
-                        .AbilityUseRequest.Invoke(hitPoint);
+            {
+                if (_towerWalker != null)
+                    _towerWalker.MagicCastRequestedEvent.Invoke(hitPoint);
+                
+                _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
+                    .AbilityUseRequest.Invoke(hitPoint);
+            }
         }
 
         private bool MouseClickedOnGenericLayer(out Vector3 hitPoint)
