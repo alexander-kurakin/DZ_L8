@@ -1,5 +1,5 @@
 ﻿using _Project.Develop.Runtime.Configs.Meta.Stats;
-using _Project.Develop.Runtime.Gameplay.Features.Actions;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -28,15 +28,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             return new PreparationState(
                 _container.Resolve<PreparationTriggerService>(), 
-                _container.Resolve<GameplayActionSetService>(),
-                _container.Resolve<ConfigsProviderService>());
+                _container.Resolve<ConfigsProviderService>(),
+                _container.Resolve<MainHeroHolderService>(),
+                _container.Resolve<MouseRaycastService>(),
+                _container.Resolve<MouseInput>());
         }
 
         public StageProcessState CreateStageProcessState()
         {
             return new StageProcessState(
-                _container.Resolve<StageProviderService>(), 
-                _container.Resolve<GameplayActionSetService>());
+                _container.Resolve<StageProviderService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

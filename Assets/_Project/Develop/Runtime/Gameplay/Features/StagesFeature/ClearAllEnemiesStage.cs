@@ -4,7 +4,13 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -13,14 +19,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class ClearAllEnemiesStage : IStage
     {
-        private ClearAllEnemiesStageConfig _config;
-
-        private ReactiveEvent _completed = new();
-
-        private EnemiesFactory _enemiesFactory;
-        private EntitiesLifeContext _entitiesLifeContext;
+        private readonly ClearAllEnemiesStageConfig _config;
+        private readonly RaycastConfig _mouseRaycastConfig;
         private readonly TowerConfig _towerConfig;
-
+        
+        private EntitiesLifeContext _entitiesLifeContext;
+        private MainHeroHolderService _mainHeroHolderService;
+        private EnemiesFactory _enemiesFactory;
+        
+        private IMouseInputService _mouseInputService;
+        private MouseRaycastService _mouseRaycastService;
+        
+        private ReactiveEvent _completed = new();
+        private Entity _mainHero;
         private bool _inProcess;
 
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
@@ -29,12 +40,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             ClearAllEnemiesStageConfig config,
             EnemiesFactory enemiesFactory,
             EntitiesLifeContext entitiesLifeContext,
-            ConfigsProviderService  configsProviderService)
+            ConfigsProviderService  configsProviderService,
+            MainHeroHolderService mainHeroHolderService,
+            IMouseInputService mouseInputService,
+            MouseRaycastService mouseRaycastService)
         {
             _config = config;
             _enemiesFactory = enemiesFactory;
             _entitiesLifeContext = entitiesLifeContext;
+            _mainHeroHolderService = mainHeroHolderService;
+            _mouseInputService = mouseInputService;
+            _mouseRaycastService = mouseRaycastService;
+            
             _towerConfig = configsProviderService.GetConfig<TowerConfig>();
+            _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
+            
         }
 
         public IReadOnlyEvent Completed => _completed;
@@ -70,6 +90,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 throw new InvalidOperationException("Game mode alread started");
 
             SpawnEnemies();
+            
+            _mainHero = _mainHeroHolderService.MainHero;
+            _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
 
             _inProcess = true;
         }
@@ -80,7 +103,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 return;
 
             if (_spawnedEnemiesToRemoveReason.Count == 0)
+            {
                 ProcessEnd();
+                return;
+            }
+
+            if (MouseClickedOnGenericLayer(out Vector3 hitPoint))
+                    _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
+                        .AbilityUseRequest.Invoke(hitPoint);
+        }
+
+        private bool MouseClickedOnGenericLayer(out Vector3 hitPoint)
+        {
+            if (_mouseInputService.FireButtonPressed)
+                if (_mouseRaycastService.TryGetHit(
+                        _mouseInputService.PointerScreenPosition,
+                        out RaycastHit hit,
+                        _mouseRaycastConfig.MouseRaycastDistance,
+                        Layers.GenericLayerMask))
+                {
+                    hitPoint = hit.point;
+                    return true;
+                }
+
+            hitPoint = Vector3.zero;
+            return false;
         }
 
         private void ProcessEnd()

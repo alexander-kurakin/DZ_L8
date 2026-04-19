@@ -8,7 +8,6 @@ using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using System;
 using System.Collections;
-using _Project.Develop.Runtime.Gameplay.Features.Actions;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -21,8 +20,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private GameplayStatesContext _gameplayStatesContext;
         private EntitiesLifeContext _entitiesLifeContext;
         private AIBrainsContext _brainsContext;
-        private MouseClickActions _mouseClickActions;
-
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -46,11 +43,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             
-            _mouseClickActions =  _container.Resolve<MouseClickActions>();
-
             _container.Resolve<MainHeroFactory>().Create();
-            _container.Resolve<MainHeroFactory>().CreateTowerWalker();
-            
+			_container.Resolve<MainHeroFactory>().CreateTowerWalker();
             yield break;
         }
 
@@ -66,7 +60,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
-            _mouseClickActions?.Update(Time.deltaTime);
 
             if (Input.GetKeyDown(KeyCode.F))
             {

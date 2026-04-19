@@ -1,9 +1,9 @@
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
 {
@@ -12,14 +12,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
         private Buffer<Entity> _contacts;
         private List<Entity> _processedEntities;
         private Entity _mineEntity;
+        private Transform _mineTransform;
         private bool _hasDetonated;
+        private ReactiveEvent<Vector3> _dealAreaImpactDamageRequest;
         
-        private readonly AreaDamageService _areaDamageService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
 
-        public MineDetonationSystem(AreaDamageService areaDamageService, EntitiesLifeContext entitiesLifeContext)
+
+        public MineDetonationSystem(EntitiesLifeContext entitiesLifeContext)
         {
-            _areaDamageService = areaDamageService;
             _entitiesLifeContext = entitiesLifeContext;
         }
 
@@ -28,6 +29,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
             _contacts = entity.ContactEntitiesBuffer;
             _processedEntities = new List<Entity>(_contacts.Items.Length);
             _mineEntity = entity;
+            _dealAreaImpactDamageRequest = entity.DealAreaImpactDamageRequest;
+            _mineTransform = entity.Transform;
         }
 
         public void OnUpdate(float deltaTime)
@@ -43,12 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
                 {
                     _processedEntities.Add(contactEntity);
 
-                    _areaDamageService.ApplySphereDamage(
-                        _mineEntity.Transform.position, 
-                        _mineEntity.MineExplosionRadius.Value, 
-                        _mineEntity.MineDamage.Value, 
-                        _mineEntity.MineDamageableMask, 
-                        _mineEntity);
+                    _dealAreaImpactDamageRequest?.Invoke(_mineTransform.position);
 
                     _hasDetonated = true;
                     

@@ -3,6 +3,9 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using System;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
+using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
@@ -25,7 +28,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                         clearAllEnemiesStageConfig,
                         _container.Resolve<EnemiesFactory>(),
                         _container.Resolve<EntitiesLifeContext>(),
-                        _container.Resolve<ConfigsProviderService>());
+                        _container.Resolve<ConfigsProviderService>(),
+                        _container.Resolve<MainHeroHolderService>(),
+                        _container.Resolve<MouseInput>(),
+                        _container.Resolve<MouseRaycastService>());
 
                 default:
                     throw new ArgumentException($"Not supported {stageConfig.GetType()} type config");

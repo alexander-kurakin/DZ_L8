@@ -26,7 +26,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly MonoEntitiesFactory _monoEntitiesFactory;
-        private readonly AreaDamageService _areaDamageService;
 
         public EntitiesFactory(DIContainer container)
         {
@@ -34,7 +33,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _monoEntitiesFactory = _container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = _container.Resolve<CollidersRegistryService>();
-            _areaDamageService = _container.Resolve<AreaDamageService>();
         }
 
         public Entity CreateTower(TowerConfig config, LevelConfig levelConfig)
@@ -215,17 +213,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactCollidersBuffer(new Buffer<Collider>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
-                .AddMineDamage(new ReactiveVariable<float>(mineConfig.MineDamage))
-                .AddMineDamageableMask(Layers.CharactersMask)
-                .AddMineExplosionRadius(new ReactiveVariable<float>(mineConfig.MineExplosionRadius));
-
+                .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.MineDamage))
+                .AddAreaImpactRadius(new ReactiveVariable<float>(mineConfig.MineExplosionRadius))
+                .AddAreaImpactMask(Layers.CharactersMask)
+                .AddAreaImpactCollidersBuffer(new Buffer<Collider>(64))
+                .AddAreaImpactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddDealAreaImpactDamageRequest();
+                
             entity
                 .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new MineDetonationSystem(
-                    _areaDamageService,
-                    _entitiesLifeContext
-                    ));
+                .AddSystem(new MineDetonationSystem(_entitiesLifeContext))
+                .AddSystem(new AreaDamageContactDetectingSystem(_collidersRegistryService))
+                .AddSystem(new AreaDamageEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealAreaDamageSystem());
 
             _entitiesLifeContext.Add(entity);
             
