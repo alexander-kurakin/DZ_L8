@@ -571,73 +571,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineCollider() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamage MineDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamage>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> MineDamage => MineDamageC.Value;
-
-		public bool TryGetMineDamage(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamage component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineDamage()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamage() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineDamage(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamage() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineExplosionRadius MineExplosionRadiusC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineExplosionRadius>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> MineExplosionRadius => MineExplosionRadiusC.Value;
-
-		public bool TryGetMineExplosionRadius(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineExplosionRadius component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineExplosionRadius()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineExplosionRadius() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineExplosionRadius(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineExplosionRadius() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamageableMask MineDamageableMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamageableMask>();
-
-		public UnityEngine.LayerMask MineDamageableMask => MineDamageableMaskC.Value;
-
-		public bool TryGetMineDamageableMask(out UnityEngine.LayerMask value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamageableMask component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(UnityEngine.LayerMask);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddMineDamageableMask(UnityEngine.LayerMask value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Mines.MineDamageableMask() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero IsMainHeroC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsMainHero>();
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsMainHero()
@@ -971,6 +904,135 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached.ExplosionDamage() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactDamage AreaImpactDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactDamage>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> AreaImpactDamage => AreaImpactDamageC.Value;
+
+		public bool TryGetAreaImpactDamage(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactDamage component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactDamage()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactDamage() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactDamage(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactRadius AreaImpactRadiusC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactRadius>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> AreaImpactRadius => AreaImpactRadiusC.Value;
+
+		public bool TryGetAreaImpactRadius(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactRadius component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactRadius()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactRadius() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactRadius(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactRadius() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactMask AreaImpactMaskC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactMask>();
+
+		public UnityEngine.LayerMask AreaImpactMask => AreaImpactMaskC.Value;
+
+		public bool TryGetAreaImpactMask(out UnityEngine.LayerMask value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactMask component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.LayerMask);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactMask(UnityEngine.LayerMask value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactMask() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactCollidersBuffer AreaImpactCollidersBufferC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactCollidersBuffer>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Buffer<UnityEngine.Collider> AreaImpactCollidersBuffer => AreaImpactCollidersBufferC.Value;
+
+		public bool TryGetAreaImpactCollidersBuffer(out Assets._Project.Develop.Runtime.Utilities.Buffer<UnityEngine.Collider> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactCollidersBuffer component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Buffer<UnityEngine.Collider>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactCollidersBuffer(Assets._Project.Develop.Runtime.Utilities.Buffer<UnityEngine.Collider> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactCollidersBuffer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactEntitiesBuffer AreaImpactEntitiesBufferC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactEntitiesBuffer>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Buffer<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> AreaImpactEntitiesBuffer => AreaImpactEntitiesBufferC.Value;
+
+		public bool TryGetAreaImpactEntitiesBuffer(out Assets._Project.Develop.Runtime.Utilities.Buffer<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactEntitiesBuffer component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Buffer<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAreaImpactEntitiesBuffer(Assets._Project.Develop.Runtime.Utilities.Buffer<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.AreaImpactEntitiesBuffer() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.DealAreaImpactDamageRequest DealAreaImpactDamageRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.DealAreaImpactDamageRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> DealAreaImpactDamageRequest => DealAreaImpactDamageRequestC.Value;
+
+		public bool TryGetDealAreaImpactDamageRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.DealAreaImpactDamageRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDealAreaImpactDamageRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.DealAreaImpactDamageRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDealAreaImpactDamageRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealAreaDamage.DealAreaImpactDamageRequest() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget CurrentTargetC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> CurrentTarget => CurrentTargetC.Value;
@@ -993,6 +1055,126 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCurrentTarget(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility AbilityUserActiveAbilityC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> AbilityUserActiveAbility => AbilityUserActiveAbilityC.Value;
+
+		public bool TryGetAbilityUserActiveAbility(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserActiveAbility()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserActiveAbility(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserAllAbilities AbilityUserAllAbilitiesC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserAllAbilities>();
+
+		public System.Collections.Generic.Dictionary<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType, Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> AbilityUserAllAbilities => AbilityUserAllAbilitiesC.Value;
+
+		public bool TryGetAbilityUserAllAbilities(out System.Collections.Generic.Dictionary<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType, Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserAllAbilities component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(System.Collections.Generic.Dictionary<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType, Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserAllAbilities()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserAllAbilities() { Value = new System.Collections.Generic.Dictionary<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType, Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserAllAbilities(System.Collections.Generic.Dictionary<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType, Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserAllAbilities() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityOwner AbilityOwnerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityOwner>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> AbilityOwner => AbilityOwnerC.Value;
+
+		public bool TryGetAbilityOwner(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityOwner component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityOwner()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityOwner() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityOwner(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityOwner() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityTypeName AbilityTypeNameC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityTypeName>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> AbilityTypeName => AbilityTypeNameC.Value;
+
+		public bool TryGetAbilityTypeName(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityTypeName component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityTypeName()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityTypeName() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityTypeName(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityTypeName() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest AbilityUseRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> AbilityUseRequest => AbilityUseRequestC.Value;
+
+		public bool TryGetAbilityUseRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUseRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUseRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent RigidbodyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent>();
