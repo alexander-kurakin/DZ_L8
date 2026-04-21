@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             PlayerDataProvider playerDataProvider = container.Resolve<PlayerDataProvider>();
 
             loadingScreen.Show();
-
+            
             Debug.Log("Начинается инициализация сервисов");
 
             yield return container.Resolve<ConfigsProviderService>().LoadAsync();
@@ -59,8 +59,6 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             yield return new WaitForSeconds(1f);
 
             Debug.Log("Завершается инициализация сервисов");
-
-            loadingScreen.Hide();
 
             yield return sceneSwitcherService.ProcessSwitchTo(Scenes.Gameplay, new GameplayInputArgs(1));
         }

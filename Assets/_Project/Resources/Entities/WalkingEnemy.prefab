@@ -190,6 +190,8 @@ MonoBehaviour:
   _spawnEffectPrefab: {fileID: 7251133750751391091, guid: 4b36af1f8ab60754db42dffbd3f50c8d,
     type: 3}
   _spawnEffectPoint: {fileID: 5800966843338258160}
+  _spawnGlowPrefab: {fileID: 8461290916847762350, guid: 88ac81127d155884ca17e13e76d97ed8,
+    type: 3}
 --- !u!95 &6959166531336482203 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7204030942818582262, guid: ba1aa7e7060c8774096f6e3c34c02896,

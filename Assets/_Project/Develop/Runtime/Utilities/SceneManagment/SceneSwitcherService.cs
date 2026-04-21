@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagment
         public IEnumerator ProcessSwitchTo(string sceneName, IInputSceneArgs sceneArgs = null)
         {
             _loadingScreen.Show();
-
+            
             _currentSceneContainer?.Dispose();
 
             yield return _sceneLoaderService.LoadAsync(Scenes.Empty);
@@ -48,9 +48,9 @@ namespace Assets._Project.Develop.Runtime.Utilities.SceneManagment
 
             yield return sceneBootstrap.Initialize();
 
-            _loadingScreen.Hide();
-
             sceneBootstrap.Run();
+            
+            _loadingScreen.Hide();
         }
     }
 }

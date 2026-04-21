@@ -14,8 +14,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _spawnEffectPrefab;
         [SerializeField] private Transform _spawnEffectPoint;
+        [SerializeField] private ParticleSystem _spawnGlowPrefab;
 
         private ReactiveVariable<bool> _inSpawnProcess;
+        private Transform _entityTransform;
+        private ParticleSystem _spawnGlowInstance;
 
         private IDisposable _inSpawnProcessChangedDisposable;
 
@@ -27,9 +30,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _inSpawnProcess = entity.InSpawnProcess;
+            _entityTransform =  entity.Transform;
 
             _inSpawnProcessChangedDisposable = _inSpawnProcess.Subscribe(OnSpawnProcessChanged);
-            UpdateSpawnProcessKey(_inSpawnProcess.Value);
+            OnSpawnProcessChanged(default, _inSpawnProcess.Value);
         }
 
         public override void Cleanup(Entity entity)
@@ -39,18 +43,39 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
             _inSpawnProcessChangedDisposable.Dispose();
         }
 
-        private void OnSpawnProcessChanged(bool arg1, bool newValue) => UpdateSpawnProcessKey(newValue);
+        private void OnSpawnProcessChanged(bool arg1, bool newValue)
+        {
+            UpdateSpawnProcessKey(newValue);
+            
+            if (newValue)
+            {
+                Instantiate(
+                    _spawnEffectPrefab,
+                    new Vector3(_spawnEffectPoint.position.x, _spawnEffectPoint.position.y + 2.5f, _spawnEffectPoint.position.z),
+                    _spawnEffectPrefab.transform.rotation,
+                    null);
+                
+                _spawnGlowInstance = Instantiate(
+                    _spawnGlowPrefab,
+                    new Vector3 (_entityTransform.position.x, _entityTransform.position.y + 2.5f, _entityTransform.position.z),
+                    Quaternion.identity,
+                    null);
+            }
+            else
+            {
+                if (_spawnGlowInstance == null)
+                    return;
+                
+                foreach (ParticleSystem subSystem in _spawnGlowInstance.GetComponentsInChildren<ParticleSystem>())
+                {
+                    subSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                }
+            }
+        }
 
         private void UpdateSpawnProcessKey(bool value)
         {
             _animator.SetBool(SpawningProcessKey, value);
-
-            if (value)
-                Instantiate(
-                    _spawnEffectPrefab, 
-                    _spawnEffectPoint.position, 
-                    _spawnEffectPrefab.transform.rotation, 
-                    null);
         }
     }
 }
