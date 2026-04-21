@@ -38,9 +38,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         {
             _animator.SetTrigger(MagicCastedHash);
 
-            if (_castVfxPrefab == null)
-                return;
-
             Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
             
             _audioSource.PlayOneShot(_castVfxSound);

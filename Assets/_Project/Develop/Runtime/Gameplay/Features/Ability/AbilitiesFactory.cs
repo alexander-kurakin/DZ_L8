@@ -52,9 +52,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private Entity CreatePlantMineAbility(Entity abilityOwner)
         {
             Entity entity = CreateEmpty();
-            //абилка не наносит урон - ей не нужна команда. однако в самой мине - у нас команда есть
+            
+            Teams ownerTeam = Teams.MainHero; //default
+            
+            if (abilityOwner.TryGetTeam(out ReactiveVariable<Teams>team))
+                ownerTeam = team.Value;
+            
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
+                .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
                 .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.PlantMine))
                 .AddAbilityUseRequest();
 
