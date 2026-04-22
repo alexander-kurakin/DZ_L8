@@ -96,6 +96,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
             
             _towerWalker = _mainHeroHolderService.TowerWalker;
+            _towerWalker.IsMoving.Value = true;
 
             _inProcess = true;
         }

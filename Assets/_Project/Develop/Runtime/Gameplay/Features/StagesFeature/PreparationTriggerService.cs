@@ -19,10 +19,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private IMouseInputService _mouseInputService;
         private IMouseRaycastService _mouseRaycastService;
         private readonly ContactTriggerConfig _contactTriggerConfig;
-        
 
         private Entity _nextStageTrigger;
-        private Entity _mainHero;
 
         public PreparationTriggerService(
             EntitiesFactory entitiesFactory, 

@@ -23,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private MouseRaycastService _mouseRaycastService;
         
         private Entity _mainHero;
+        private Entity _towerWalker;
 
         public PreparationState(
             PreparationTriggerService preparationTriggerService, 
@@ -47,6 +48,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             
             _mainHero = _mainHeroHolderService.MainHero;
             _mainHero.AbilityUserActiveAbility.Value = AbilityType.PlantMine;
+            
+            _towerWalker = _mainHeroHolderService.TowerWalker;
+            _towerWalker.IsMoving.Value = false;
         }
 
         public void Update(float deltaTime)

@@ -92,7 +92,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMagicCastRequestedEvent();
             
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => true)); //tower walker always moves towards mouse cursor
+                .Add(new FuncCondition(() => entity.IsMoving.Value));
             
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => true)); //tower walker always rotates towards mouse cursor

@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 {
@@ -10,14 +11,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     public class SpawnProcessView : EntityView
     {
         private readonly int SpawningProcessKey = Animator.StringToHash("InSpawnProcess");
+        private const float VolumeMin = 0.6f, VolumeMax = 1f, PitchMin = 0.7f, PitchMax = 1.2f;
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _spawnEffectPrefab;
         [SerializeField] private Transform _spawnEffectPoint;
-        [SerializeField] private ParticleSystem _spawnGlowPrefab;
-
+        [SerializeField] private AudioClip _spawnVfxSound;
+        [SerializeField] private AudioSource _audioSource;
+        
         private ReactiveVariable<bool> _inSpawnProcess;
-        private Transform _entityTransform;
         private ParticleSystem _spawnGlowInstance;
 
         private IDisposable _inSpawnProcessChangedDisposable;
@@ -30,7 +32,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         protected override void OnEntityStartedWork(Entity entity)
         {
             _inSpawnProcess = entity.InSpawnProcess;
-            _entityTransform =  entity.Transform;
 
             _inSpawnProcessChangedDisposable = _inSpawnProcess.Subscribe(OnSpawnProcessChanged);
             OnSpawnProcessChanged(default, _inSpawnProcess.Value);
@@ -51,26 +52,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
             {
                 Instantiate(
                     _spawnEffectPrefab,
-                    new Vector3(_spawnEffectPoint.position.x, _spawnEffectPoint.position.y + 2.5f, _spawnEffectPoint.position.z),
+                    _spawnEffectPoint.position,
                     _spawnEffectPrefab.transform.rotation,
                     null);
                 
-                _spawnGlowInstance = Instantiate(
-                    _spawnGlowPrefab,
-                    new Vector3 (_entityTransform.position.x, _entityTransform.position.y + 2.5f, _entityTransform.position.z),
-                    Quaternion.identity,
-                    null);
+                SetupRandomSettingsOnAudioSource();
+                _audioSource.PlayOneShot(_spawnVfxSound);
             }
-            else
-            {
-                if (_spawnGlowInstance == null)
-                    return;
-                
-                foreach (ParticleSystem subSystem in _spawnGlowInstance.GetComponentsInChildren<ParticleSystem>())
-                {
-                    subSystem.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                }
-            }
+        }
+
+        private void SetupRandomSettingsOnAudioSource()
+        {
+            _audioSource.volume = Random.Range(VolumeMin, VolumeMax);
+            _audioSource.pitch = Random.Range(PitchMin, PitchMax);
         }
 
         private void UpdateSpawnProcessKey(bool value)
