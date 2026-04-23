@@ -24,6 +24,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly SceneSwitcherService _sceneSwitcherService;
 
+        private readonly CharacterPreviewPresenter _characterPreviewPresenter;
+
         public MainMenuScreenPresenter(
             MainMenuScreenView screen,
             ProjectPresentersFactory projectPresentersFactory,
@@ -45,6 +47,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
             CreateWallet();
             CreateStats();
+            CreateCharacterPreview();
 
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
@@ -70,6 +73,12 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         {
             GameStatsPresenter gameStatsPresenter = _projectPresentersFactory.CreateGameStatsPresenter(_screen.StatsIconTextListView);
             _childPresenters.Add(gameStatsPresenter);            
+        }
+
+        private void CreateCharacterPreview()
+        {
+            CharacterPreviewPresenter characterPreviewPresenter = _projectPresentersFactory.CreateCharacterPreviewPresenter();
+            _childPresenters.Add(characterPreviewPresenter);
         }
 
         private void OnPlayButtonClicked()

@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.TestPopup;
+using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -71,6 +72,11 @@ namespace Assets._Project.Develop.Runtime.UI
             return new TestPopupPresenter(
                 view,
                 _container.Resolve<ICoroutinesPerformer>());
+        }
+        
+        public CharacterPreviewPresenter CreateCharacterPreviewPresenter()
+        {
+            return new CharacterPreviewPresenter(_container.Resolve<SceneLoaderService>(), _container.Resolve<ICoroutinesPerformer>());
         }
     }
 }
