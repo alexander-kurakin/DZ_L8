@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
@@ -49,6 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<StatsService>(),
                 _container.Resolve<WalletService>(),
+                _container.Resolve<GameplayPopupService>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(inputArgs.LevelNumber).GoldReward);
         }
 
@@ -59,7 +61,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<PlayerDataProvider>(),
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
-                _container.Resolve<StatsService>());
+                _container.Resolve<StatsService>(),
+                _container.Resolve<GameplayPopupService>());
         }
 
         public GameplayStateMachine CreateGameplayStateMachine(GameplayInputArgs inputArgs)

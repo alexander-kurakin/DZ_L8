@@ -11,6 +11,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -67,6 +68,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             
             container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
             
+            container.RegisterAsSingle(CreateGameplayPopupService);
+            
+        }
+        
+        private static GameplayPopupService CreateGameplayPopupService(DIContainer c)
+        {
+            return new GameplayPopupService(
+                c.Resolve<ViewsFactory>(),
+                c.Resolve<ProjectPresentersFactory>(),
+                c.Resolve<GameplayUIRoot>(),
+                c.Resolve<GameplayPresentersFactory>());
         }
 
         private static AbilitiesFactory CreateAbilitiesFactory(DIContainer c)
@@ -180,7 +192,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         }
 
         private static GameplayPresentersFactory CreateGameplayPresentersFactory(DIContainer c)
-            => new GameplayPresentersFactory(c);
+            => new GameplayPresentersFactory(c, _inputArgs);
 
         private static GameplayScreenPresenter CreateGameplayScreenPresenter(DIContainer c)
         {

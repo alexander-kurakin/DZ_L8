@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     public class SpawnProcessView : EntityView
     {
         private readonly int SpawningProcessKey = Animator.StringToHash("InSpawnProcess");
-        private const float VolumeMin = 0.6f, VolumeMax = 1f, PitchMin = 0.7f, PitchMax = 1.2f;
+        private const float VolumeMin = 0f, VolumeMax = 0.2f, PitchMin = 0.7f, PitchMax = 1.2f;
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _spawnEffectPrefab;
