@@ -1,4 +1,4 @@
-using _Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 
@@ -17,7 +17,6 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             return new GameplayScreenPresenter(
                 _container.Resolve<ProjectPresentersFactory>(),
-                _container.Resolve<StatsService>(),
                 view);
         }
     }

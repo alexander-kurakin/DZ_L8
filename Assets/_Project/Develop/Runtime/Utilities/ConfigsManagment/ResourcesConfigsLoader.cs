@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Configs.Meta.Stats;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
@@ -18,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
         {
             {typeof(StartWalletConfig), "Configs/Meta/Wallet/StartWalletConfig" },
             {typeof(CurrencyIconsConfig), "Configs/Meta/Wallet/CurrencyIconsConfig" },
+            {typeof(StatIconsConfig), "Configs/Meta/Stats/StatIconsConfig" },
             {typeof(LevelsListConfig), "Configs/Gameplay/Levels/LevelsListConfig" },
             {typeof(TowerConfig), "Configs/Gameplay/Entities/Characters/TowerConfig" },
             {typeof(MineConfig), "Configs/Gameplay/Entities/Characters/MineConfig" },

@@ -1,9 +1,12 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+﻿using _Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Core.TestPopup;
+using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
@@ -32,11 +35,32 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
                 view);
         }
+        
+        public SingleGameStatPresenter CreateSingleGameStatPresenter(
+            IconTextView view,
+            IReadOnlyVariable<int> stat,
+            StatType statType)
+        {
+            return new SingleGameStatPresenter(
+                stat,
+                statType,
+                _container.Resolve<ConfigsProviderService>().GetConfig<StatIconsConfig>(),
+                view);
+        }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)
         {
             return new WalletPresenter(
                 _container.Resolve<WalletService>(),
+                this,
+                _container.Resolve<ViewsFactory>(),
+                view);
+        }
+
+        public GameStatsPresenter CreateGameStatsPresenter(IconTextListView view)
+        {
+            return new GameStatsPresenter(
+                _container.Resolve<StatsService>(),
                 this,
                 _container.Resolve<ViewsFactory>(),
                 view);

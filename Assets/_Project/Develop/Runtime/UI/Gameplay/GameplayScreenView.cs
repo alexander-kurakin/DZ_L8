@@ -6,8 +6,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 {
     public class GameplayScreenView : MonoBehaviour, IView
     {
-        [field: SerializeField] public IconTextListView WalletView { get; private set; }
-        [field: SerializeField] public TextView StatsView { get; private set; }
-        
+        [field: SerializeField] public IconTextListView WalletIconTextListView { get; private set; }
+        [field: SerializeField] public IconTextListView StatsIconTextListView { get; private set; }
     }
 }

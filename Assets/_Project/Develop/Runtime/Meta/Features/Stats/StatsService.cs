@@ -2,7 +2,7 @@ using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
-namespace _Project.Develop.Runtime.Configs.Meta.Stats
+namespace Assets._Project.Develop.Runtime.Configs.Meta.Stats
 {
     public class StatsService : IDataReader<PlayerData>, IDataWriter<PlayerData>
     {
@@ -29,11 +29,6 @@ namespace _Project.Develop.Runtime.Configs.Meta.Stats
         public void RecordWin()
         {
             _wins.Value++;
-        }
-
-        public string GetStatsText()
-        {
-            return $"Wins: {_wins.Value}, Losses: {_losses.Value}";
         }
 
         public void ReadFrom(PlayerData data)

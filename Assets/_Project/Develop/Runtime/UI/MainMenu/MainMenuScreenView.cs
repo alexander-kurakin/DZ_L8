@@ -10,8 +10,9 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
     {
         public event Action PlayButtonClicked;
 
-        [field: SerializeField] public IconTextListView WalletView { get; private set; }
-        [field: SerializeField] public TextView StatsView { get; private set; }
+        [field: SerializeField] public IconTextListView WalletIconTextListView { get; private set; }
+
+        [field: SerializeField] public IconTextListView StatsIconTextListView { get; private set; }
 
         [SerializeField] private Button _playButton;
 

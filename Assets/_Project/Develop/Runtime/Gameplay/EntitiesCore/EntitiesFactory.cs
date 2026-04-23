@@ -5,12 +5,14 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
@@ -26,6 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly MonoEntitiesFactory _monoEntitiesFactory;
+        private readonly MainHeroHolderService _mainHeroHolderService;
 
         public EntitiesFactory(DIContainer container)
         {
@@ -33,6 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _monoEntitiesFactory = _container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = _container.Resolve<CollidersRegistryService>();
+            _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
 
         public Entity CreateTower(TowerConfig config, LevelConfig levelConfig)
@@ -96,14 +100,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => true)); //tower walker always rotates towards mouse cursor
+            
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => _mainHeroHolderService.MainHero.IsDead.Value))
+                .Add(new FuncCondition(() => _mainHeroHolderService.MainHero.InDeathProcess.Value == false));
 
             entity
                 .AddCanMove(canMove)
-                .AddCanRotate(canRotate);
-                
+                .AddCanRotate(canRotate)
+                .AddMustSelfRelease(mustSelfRelease);
+
             entity
                 .AddSystem(new RigidbodyMovementSystem())
-                .AddSystem(new RigidbodyRotationSystem());
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             return entity;
         }

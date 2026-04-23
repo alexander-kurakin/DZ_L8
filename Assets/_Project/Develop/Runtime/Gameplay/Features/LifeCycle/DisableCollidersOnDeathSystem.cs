@@ -14,12 +14,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         private IDisposable _isDeadChangedDisposable;
 
+        private bool _isMainHero;
+        private Entity _towerWalker;
+
         public void OnInit(Entity entity)
         {
             _colliders = entity.DisableCollidersOnDeath;
             _isDead = entity.IsDead;
 
             _isDeadChangedDisposable = _isDead.Subscribe(OnIsDeadChanged);
+            
+            //if ()
         }
 
         private void OnIsDeadChanged(bool arg1, bool isDead)
