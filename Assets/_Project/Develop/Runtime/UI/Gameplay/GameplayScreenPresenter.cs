@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using UnityEngine;
@@ -13,7 +14,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay
     {
         //logic
         private readonly ProjectPresentersFactory _projectPresentersFactory;
-        
+
+        private readonly GameplayPresentersFactory _gameplayPresentersFactory;
         //view
         private readonly GameplayScreenView _screen;
         
@@ -21,16 +23,19 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         public GameplayScreenPresenter(
             ProjectPresentersFactory projectPresentersFactory,
-            GameplayScreenView screen)
+            GameplayScreenView screen,
+            GameplayPresentersFactory gameplayPresentersFactory)
         {
             _projectPresentersFactory = projectPresentersFactory;
             _screen = screen;
+            _gameplayPresentersFactory = gameplayPresentersFactory;
         }
 
         public void Initialize()
         {
             CreateWallet();
             CreateStats();
+            CreateStageNumber();
             
             foreach (IPresenter presenter in _childPresenters)
             {
@@ -57,6 +62,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             GameStatsPresenter gameStatsPresenter = _projectPresentersFactory.CreateGameStatsPresenter(_screen.StatsIconTextListView);
             _childPresenters.Add(gameStatsPresenter);            
         }
-        
+
+        private void CreateStageNumber()
+        {
+            StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_screen.StageNumberView);
+            _childPresenters.Add(stagePresenter);
+        }
     }
 }

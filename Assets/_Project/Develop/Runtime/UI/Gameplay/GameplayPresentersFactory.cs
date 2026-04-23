@@ -1,8 +1,11 @@
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
+using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
+using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
@@ -40,7 +43,13 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             return new GameplayScreenPresenter(
                 _container.Resolve<ProjectPresentersFactory>(),
-                view);
+                view,
+                _container.Resolve<GameplayPresentersFactory>());
+        }
+        
+        public StagePresenter CreateStagePresenter(IconTextView view)
+        {
+            return new StagePresenter(view, _container.Resolve<StageProviderService>());
         }
     }
 }
