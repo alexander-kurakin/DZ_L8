@@ -31,6 +31,7 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 6451465572123972956}
   - {fileID: 6828752238676963858}
   - {fileID: 4893386941003301610}
   - {fileID: 9081564905941281917}
@@ -64,6 +65,7 @@ MonoBehaviour:
   <WalletIconTextListView>k__BackingField: {fileID: 1878433728868284233}
   <StatsIconTextListView>k__BackingField: {fileID: 521816133263263665}
   <StageNumberView>k__BackingField: {fileID: 9030145724564745164}
+  <EntitiesHealthDisplay>k__BackingField: {fileID: 6919133708905567926}
 --- !u!114 &2921664489248786043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -76,6 +78,55 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 69d6bc6190984d2eb12cfb359215f0aa, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1394709802080183199
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6451465572123972956}
+  - component: {fileID: 6919133708905567926}
+  m_Layer: 5
+  m_Name: EntitiesHealthDisplay
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!224 &6451465572123972956
+RectTransform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394709802080183199}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1570563383212734544}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0, y: 0}
+  m_SizeDelta: {x: 0, y: 0}
+  m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &6919133708905567926
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1394709802080183199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0f9e56a070ae4ddaa94b500e47d0dce6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _parent: {fileID: 6451465572123972956}
 --- !u!1001 &5249473362946042413
 PrefabInstance:
   m_ObjectHideFlags: 0

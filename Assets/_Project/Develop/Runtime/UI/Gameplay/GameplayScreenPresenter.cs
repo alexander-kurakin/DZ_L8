@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
@@ -20,6 +21,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private readonly GameplayScreenView _screen;
         
         private readonly List<IPresenter> _childPresenters = new();
+        
+        private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
 
         public GameplayScreenPresenter(
             ProjectPresentersFactory projectPresentersFactory,
@@ -36,6 +39,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateWallet();
             CreateStats();
             CreateStageNumber();
+            CreateEntitiesHealthDisplay();
             
             foreach (IPresenter presenter in _childPresenters)
             {
@@ -49,6 +53,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 presenter.Dispose();
 
             _childPresenters.Clear();
+        }
+        
+        public void LateUpdate()
+        {
+            _entitiesHealthDisplayPresenter.LateUpdate();
         }
         
         private void CreateWallet()
@@ -67,6 +76,13 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_screen.StageNumberView);
             _childPresenters.Add(stagePresenter);
+        }
+        
+        private void CreateEntitiesHealthDisplay()
+        {
+            _entitiesHealthDisplayPresenter = _gameplayPresentersFactory.CreateEntitiesHealthDisplayPresenter(_screen.EntitiesHealthDisplay);
+
+            _childPresenters.Add(_entitiesHealthDisplayPresenter);
         }
     }
 }

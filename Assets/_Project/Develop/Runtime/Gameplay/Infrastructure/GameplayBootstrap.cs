@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using System;
 using System.Collections;
+using _Project.Develop.Runtime.UI.Gameplay;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -20,6 +21,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private GameplayStatesContext _gameplayStatesContext;
         private EntitiesLifeContext _entitiesLifeContext;
         private AIBrainsContext _brainsContext;
+        
+        private GameplayScreenPresenter _screenPresenter;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -45,6 +48,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             
             _container.Resolve<MainHeroFactory>().Create();
 			_container.Resolve<MainHeroFactory>().CreateTowerWalker();
+            
+            _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
             yield break;
         }
 
@@ -67,6 +72,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
                 coroutinesPerformer.StartPerform(sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu));
             }
+        }
+        
+        private void LateUpdate()
+        {
+            _screenPresenter?.LateUpdate();
         }
     }
 }

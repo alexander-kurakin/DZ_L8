@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &7286886592174157711
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4661313072293770434}
+  m_Layer: 0
+  m_Name: HealthBarPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4661313072293770434
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7286886592174157711}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 13.93, z: 6.35}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6184043881470378523}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &7644644957186306521
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -70,6 +101,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 4777473444256764905}
+    - targetCorrespondingSourceObject: {fileID: 4595113288729785282, guid: 6866f045f7996a24bb1312cb86a91d79,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4661313072293770434}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 62956036438060799, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}
@@ -95,6 +130,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1709649875977327256}
+    - targetCorrespondingSourceObject: {fileID: 62956036438060799, guid: 6866f045f7996a24bb1312cb86a91d79,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 3449082464473692410}
   m_SourcePrefab: {fileID: 100100000, guid: 6866f045f7996a24bb1312cb86a91d79, type: 3}
 --- !u!4 &6184043881470378523 stripped
 Transform:
@@ -210,6 +249,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _spawnPoint: {fileID: 1883970307172581638}
+--- !u!114 &3449082464473692410
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7694565146182115110}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b10f7c3d54344393ae094d9040739292, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _point: {fileID: 4661313072293770434}
 --- !u!1001 &9131025336952530485
 PrefabInstance:
   m_ObjectHideFlags: 0
