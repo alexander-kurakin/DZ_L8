@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Meta.Stats;
+using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
@@ -26,6 +27,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(ContactTriggerConfig), "Configs/Gameplay/Entities/Characters/ContactTriggerConfig" },
             {typeof(RaycastConfig), "Configs/Gameplay/MouseConfig/RaycastConfig" },
             {typeof(ExplodeAtPointAbilityConfig), "Configs/Gameplay/Entities/Abilities/ExplodeAtPointAbilityConfig" },
+            {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
+            {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

@@ -16,7 +16,9 @@ using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -51,6 +53,38 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle<ISaveLoadSerivce>(CreateSaveLoadService);
             
             container.RegisterAsSingle(CreateStatsService).NonLazy();
+            
+            container.RegisterAsSingle(CreateAudioHub).NonLazy();
+            
+            container.RegisterAsSingle<IBackgroundMusicService>(CreateBackgroundMusicService);
+            
+            container.RegisterAsSingle<IUISoundService>(CreateUISoundsService);
+        }
+        
+        private static AudioHub CreateAudioHub(DIContainer c)
+        {
+            ResourcesAssetsLoader resources = c.Resolve<ResourcesAssetsLoader>();
+            AudioHub prefab = resources.Load<AudioHub>("Utilities/AudioHub");
+            
+            return Object.Instantiate(prefab);
+        }
+        
+        private static IBackgroundMusicService CreateBackgroundMusicService(DIContainer c)
+        {
+            AudioHub audioHub = c.Resolve<AudioHub>();
+            BackgroundMusicConfig config = c.Resolve<ConfigsProviderService>()
+                .GetConfig<BackgroundMusicConfig>();
+            
+            return new BackgroundMusicService(audioHub.BackgroundMusicSource, config);
+        }
+        
+        private static IUISoundService CreateUISoundsService(DIContainer c)
+        {
+            AudioHub audioHub = c.Resolve<AudioHub>();
+            UISoundsConfig config = c.Resolve<ConfigsProviderService>()
+                .GetConfig<UISoundsConfig>();
+            
+            return new UISoundService(audioHub.UISoundsSource, config);
         }
 
         private static TimerServiceFactory CreateTimerService(DIContainer c)
