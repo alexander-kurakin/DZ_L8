@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
@@ -21,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly RaycastConfig _mouseRaycastConfig;
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
+        private IBackgroundMusicService _backgroundMusicService;
         
         private Entity _mainHero;
         private Entity _towerWalker;
@@ -30,7 +32,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ConfigsProviderService  configsProviderService,
             MainHeroHolderService mainHeroHolderService,
             MouseRaycastService mouseRaycastService,
-            MouseInput mouseInputService)
+            MouseInput mouseInputService,
+            IBackgroundMusicService backgroundMusicService)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -38,6 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
+            _backgroundMusicService = backgroundMusicService;
         }
 
         public override void Enter()
@@ -51,6 +55,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             
             _towerWalker = _mainHeroHolderService.TowerWalker;
             _towerWalker.IsMoving.Value = false;
+            
+            _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
         }
 
         public void Update(float deltaTime)

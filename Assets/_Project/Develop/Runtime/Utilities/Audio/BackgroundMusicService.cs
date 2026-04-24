@@ -32,5 +32,11 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
             _audioSource.clip = clipToPlay;
             _audioSource.Play();
         }
+
+        public void Stop()
+        {
+            _audioSource.Stop();
+            _audioSource.clip = null;
+        }
     }
 }

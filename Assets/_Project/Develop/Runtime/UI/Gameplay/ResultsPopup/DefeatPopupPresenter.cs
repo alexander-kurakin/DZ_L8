@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
@@ -13,17 +14,23 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
         private readonly SceneSwitcherService _sceneSwitcher;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly GameplayInputArgs _currentLevelArgs;
+        private readonly IUISoundService _uiSoundService;
+        private readonly IBackgroundMusicService _backgroundMusicService;
 
         public DefeatPopupPresenter(
             ICoroutinesPerformer coroutinesPerformer,
             DefeatPopupView view,
             SceneSwitcherService sceneSwitcher,
-            GameplayInputArgs currentLevelArgs) : base(coroutinesPerformer)
+            GameplayInputArgs currentLevelArgs,
+            IUISoundService uiSoundService, 
+            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;
             _sceneSwitcher = sceneSwitcher;
             _currentLevelArgs = currentLevelArgs;
+            _uiSoundService = uiSoundService;
+            _backgroundMusicService = backgroundMusicService;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -36,6 +43,16 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
 
             _view.ContinueClicked += OnContinueClicked;
             _view.RestartClicked += OnRestartClicked;
+            
+            _backgroundMusicService.Stop();
+            _uiSoundService.Play(UISoundIDs.PopupOpen);
+        }
+        
+        protected override void OnPreShow()
+        {
+            base.OnPreShow();
+            
+            _uiSoundService.Play(UISoundIDs.DefeatFanfare);
         }
 
         protected override void OnPreHide()

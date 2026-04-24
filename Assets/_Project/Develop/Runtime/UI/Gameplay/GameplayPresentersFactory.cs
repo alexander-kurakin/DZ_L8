@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
@@ -30,7 +31,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             return new WinPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
-                _container.Resolve<SceneSwitcherService>());
+                _container.Resolve<SceneSwitcherService>(),
+                _container.Resolve<IUISoundService>(),
+                _container.Resolve<IBackgroundMusicService>());
         }
 
         public DefeatPopupPresenter CreateDefeatPopupPresenter(DefeatPopupView view)
@@ -39,7 +42,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
                 _container.Resolve<SceneSwitcherService>(),
-                _gameplayInputArgs);
+                _gameplayInputArgs,
+                _container.Resolve<IUISoundService>(),
+                _container.Resolve<IBackgroundMusicService>());
         }
 
         public GameplayScreenPresenter CreateGameplayScreen(GameplayScreenView view)

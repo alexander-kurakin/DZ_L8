@@ -11,6 +11,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -29,6 +30,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
+        private IBackgroundMusicService _backgroundMusicService;
         
         private ReactiveEvent _completed = new();
         private Entity _mainHero;
@@ -44,7 +46,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             ConfigsProviderService  configsProviderService,
             MainHeroHolderService mainHeroHolderService,
             IMouseInputService mouseInputService,
-            MouseRaycastService mouseRaycastService)
+            MouseRaycastService mouseRaycastService,
+            IBackgroundMusicService  backgroundMusicService)
         {
             _config = config;
             _enemiesFactory = enemiesFactory;
@@ -52,6 +55,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mainHeroHolderService = mainHeroHolderService;
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
+            _backgroundMusicService = backgroundMusicService;
             
             _towerConfig = configsProviderService.GetConfig<TowerConfig>();
             _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
@@ -88,8 +92,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         public void Start()
         {
             if (_inProcess)
-                throw new InvalidOperationException("Game mode alread started");
-
+                throw new InvalidOperationException("Game mode already started");
+            
+            _backgroundMusicService.Play(BackgroundMusicTrackIDs.Battle);
+            
             SpawnEnemies();
             
             _mainHero = _mainHeroHolderService.MainHero;
@@ -99,6 +105,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _towerWalker.IsMoving.Value = true;
 
             _inProcess = true;
+            
         }
 
         public void Update(float deltaTime)

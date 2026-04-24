@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.UI.Stats;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
@@ -23,15 +24,18 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly SceneSwitcherService _sceneSwitcherService;
-
+        private readonly IUISoundService _uiSoundService;
+        
         private readonly CharacterPreviewPresenter _characterPreviewPresenter;
+        
 
         public MainMenuScreenPresenter(
             MainMenuScreenView screen,
             ProjectPresentersFactory projectPresentersFactory,
             LevelsListConfig levelsListConfig,
             ICoroutinesPerformer coroutinesPerformer,
-            SceneSwitcherService sceneSwitcherService
+            SceneSwitcherService sceneSwitcherService,
+            IUISoundService uiSoundService
             )
         {
             _screen = screen;
@@ -39,6 +43,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _levelsListConfig = levelsListConfig;
             _coroutinesPerformer = coroutinesPerformer;
             _sceneSwitcherService = sceneSwitcherService;
+            _uiSoundService = uiSoundService;
         }
 
         public void Initialize()
@@ -83,6 +88,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
 
         private void OnPlayButtonClicked()
         {
+            _uiSoundService.Play(UISoundIDs.ButtonClick);
+            
             int randomLevel = _levelsListConfig.GetRandomLevelNumber();
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessSwitchTo(Scenes.Gameplay, new GameplayInputArgs(randomLevel)));
         }

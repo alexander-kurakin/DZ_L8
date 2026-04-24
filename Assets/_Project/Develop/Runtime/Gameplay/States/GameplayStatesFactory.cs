@@ -8,6 +8,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
@@ -32,7 +33,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<ConfigsProviderService>(),
                 _container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<MouseRaycastService>(),
-                _container.Resolve<MouseInput>());
+                _container.Resolve<MouseInput>(),
+                _container.Resolve<IBackgroundMusicService>());
         }
 
         public StageProcessState CreateStageProcessState()

@@ -14,10 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _sounds:
   - <Id>k__BackingField: 0
-    <Clip>k__BackingField: {fileID: 0}
+    <Clip>k__BackingField: {fileID: 8300000, guid: f2a3604524e7046418a09c33ac18b5ec,
+      type: 3}
   - <Id>k__BackingField: 1
-    <Clip>k__BackingField: {fileID: 0}
+    <Clip>k__BackingField: {fileID: 8300000, guid: 5cbb63ec8afdcbe47805f102bbb3b1d4,
+      type: 3}
   - <Id>k__BackingField: 2
-    <Clip>k__BackingField: {fileID: 0}
+    <Clip>k__BackingField: {fileID: 8300000, guid: 7d2218ee4bd29aa4a98c09081623ce60,
+      type: 3}
   - <Id>k__BackingField: 3
-    <Clip>k__BackingField: {fileID: 0}
+    <Clip>k__BackingField: {fileID: 8300000, guid: 3f23d2255e60f4040ae366bdb8c24a96,
+      type: 3}

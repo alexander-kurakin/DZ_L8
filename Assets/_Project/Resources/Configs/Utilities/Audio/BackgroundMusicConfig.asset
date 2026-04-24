@@ -14,8 +14,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _tracks:
   - <Id>k__BackingField: 0
-    <Clip>k__BackingField: {fileID: 0}
-  - <Id>k__BackingField: 0
-    <Clip>k__BackingField: {fileID: 0}
-  - <Id>k__BackingField: 0
-    <Clip>k__BackingField: {fileID: 0}
+    <Clip>k__BackingField: {fileID: 8300000, guid: 48c0b28983149664d9c97da2b94375cf,
+      type: 3}
+  - <Id>k__BackingField: 1
+    <Clip>k__BackingField: {fileID: 8300000, guid: 278d62790c4bf6a439bf2838f39894ec,
+      type: 3}
+  - <Id>k__BackingField: 2
+    <Clip>k__BackingField: {fileID: 8300000, guid: e96b142a0b65ba8408a75862e9bb8e60,
+      type: 3}
