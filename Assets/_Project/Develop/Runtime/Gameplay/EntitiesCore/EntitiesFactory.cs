@@ -223,8 +223,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactCollidersBuffer(new Buffer<Collider>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
-                .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.MineDamage))
-                .AddAreaImpactRadius(new ReactiveVariable<float>(mineConfig.MineExplosionRadius))
+                .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.Damage))
+                .AddAreaImpactRadius(new ReactiveVariable<float>(mineConfig.ExplosionRadius))
                 .AddAreaImpactMask(Layers.CharactersMask)
                 .AddAreaImpactCollidersBuffer(new Buffer<Collider>(64))
                 .AddAreaImpactEntitiesBuffer(new Buffer<Entity>(64))
@@ -237,6 +237,34 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AreaDamageContactDetectingSystem(_collidersRegistryService))
                 .AddSystem(new AreaDamageEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealAreaDamageSystem());
+
+            _entitiesLifeContext.Add(entity);
+            
+            return entity;
+        }
+        
+        public Entity CreateTurret(Vector3 position, TurretConfig turretConfig)
+        {
+            Entity entity = CreateEmpty();
+            
+            _monoEntitiesFactory.Create(entity, position, turretConfig.PrefabPath);
+
+            entity
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+                
+            _entitiesLifeContext.Add(entity);
+            
+            return entity;
+        }
+        
+        public Entity CreateToxicArea(Vector3 position, ToxicAreaConfig toxicAreaConfig)
+        {
+            Entity entity = CreateEmpty();
+            
+            _monoEntitiesFactory.Create(entity, position, toxicAreaConfig.PrefabPath);
+
+            entity
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             _entitiesLifeContext.Add(entity);
             

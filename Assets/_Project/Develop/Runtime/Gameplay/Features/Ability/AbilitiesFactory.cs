@@ -38,18 +38,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         {
             Dictionary<AbilityType, Entity> mapping = mainHero.AbilityUserAllAbilities;
 
-            Entity plantMineAbility = CreatePlantMineAbility(mainHero);
+            Entity plantMineAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantMine, _configsProviderService.GetConfig<MineConfig>());
+            Entity plantTurretAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantTurret, _configsProviderService.GetConfig<TurretConfig>());
+            Entity plantToxicAreaAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantToxicArea, _configsProviderService.GetConfig<ToxicAreaConfig>());
             Entity explodeAtPointAbility = CreateExplodeAtPointAbility(mainHero);
             
             mapping[AbilityType.PlantMine] = plantMineAbility;
+            mapping[AbilityType.PlantTurret] = plantTurretAbility;
+            mapping[AbilityType.PlantToxicArea] = plantToxicAreaAbility;
             mapping[AbilityType.ExplodeAtPoint] = explodeAtPointAbility;
             
             //only register in life context when abilities is assigned to someone, e.g. here owner is mainHero
-            _entitiesLifeContext.Add(plantMineAbility); 
+            _entitiesLifeContext.Add(plantMineAbility);
+            _entitiesLifeContext.Add(plantTurretAbility); 
+            _entitiesLifeContext.Add(plantToxicAreaAbility); 
             _entitiesLifeContext.Add(explodeAtPointAbility);
         }
-
-        private Entity CreatePlantMineAbility(Entity abilityOwner)
+        
+        private Entity CreatePlantableObjectAbility(
+            Entity abilityOwner,
+            AbilityType abilityType,
+            PurchasableEntityConfig purchasableEntityConfig)
         {
             Entity entity = CreateEmpty();
             
@@ -61,18 +70,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
                 .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
-                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.PlantMine))
+                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(abilityType))
                 .AddAbilityUseRequest();
 
             entity
-                .AddSystem(new PlantMineSystem(
+                .AddSystem(new PlantPurchasedObjectsSystem(
                     _walletService, 
                     _entitiesFactory,
-                    _configsProviderService.GetConfig<MineConfig>()));
+                    purchasableEntityConfig));
 
             return entity;
         }
-
+        
         private Entity CreateExplodeAtPointAbility(Entity abilityOwner)
         {
             Entity entity = CreateEmpty();

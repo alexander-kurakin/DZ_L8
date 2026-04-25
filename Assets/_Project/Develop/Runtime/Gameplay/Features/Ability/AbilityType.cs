@@ -4,5 +4,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     {
         PlantMine,
         ExplodeAtPoint,
+        PlantTurret,
+        PlantToxicArea,
     }
 }

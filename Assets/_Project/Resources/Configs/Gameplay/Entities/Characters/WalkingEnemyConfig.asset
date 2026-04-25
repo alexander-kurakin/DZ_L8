@@ -17,6 +17,6 @@ MonoBehaviour:
   <RotationSpeed>k__BackingField: 900
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 1
-  <DistanceToTargetGoal>k__BackingField: 6
+  <DistanceToTargetGoal>k__BackingField: 5
   <ExplosionDamage>k__BackingField: 50
-  <SpawnProcessTime>k__BackingField: 1.66667
+  <SpawnProcessTime>k__BackingField: 2

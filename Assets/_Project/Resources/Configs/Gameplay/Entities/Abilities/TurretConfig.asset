@@ -9,10 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7f302c4704724ca581050cbee4cc2dbc, type: 3}
-  m_Name: MineConfig
+  m_Script: {fileID: 11500000, guid: 36b6e0a25d70427db198b851fae2ffe0, type: 3}
+  m_Name: TurretConfig
   m_EditorClassIdentifier: 
-  <PrefabPath>k__BackingField: Entities/Mine
-  <MineDamage>k__BackingField: 100
-  <MineExplosionRadius>k__BackingField: 5
-  <MineCostInGold>k__BackingField: 50
+  <PrefabPath>k__BackingField: Entities/Turret
+  <CostInGold>k__BackingField: 150
+  <Damage>k__BackingField: 15
+  <ActionRadius>k__BackingField: 15
+  <CooldownTime>k__BackingField: 0.5

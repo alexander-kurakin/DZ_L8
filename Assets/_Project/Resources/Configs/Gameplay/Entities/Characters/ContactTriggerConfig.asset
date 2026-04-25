@@ -13,7 +13,5 @@ MonoBehaviour:
   m_Name: ContactTriggerConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/ContactTrigger
-  <ContactTriggerLayerMask>k__BackingField:
-    serializedVersion: 2
-    m_Bits: 0
   <ContactTriggerStartPosition>k__BackingField: {x: 0, y: 0, z: -30}
+  <MouseRaycastDistance>k__BackingField: 1000
