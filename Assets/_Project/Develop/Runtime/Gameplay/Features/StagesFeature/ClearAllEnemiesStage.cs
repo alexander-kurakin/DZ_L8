@@ -8,6 +8,7 @@ using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities;
@@ -99,11 +100,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             SpawnEnemies();
             
             _mainHero = _mainHeroHolderService.MainHero;
-            _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
-            
             _towerWalker = _mainHeroHolderService.TowerWalker;
-            _towerWalker.IsMoving.Value = true;
-
+          
             _inProcess = true;
             
         }

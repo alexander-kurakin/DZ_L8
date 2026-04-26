@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using _Project.Develop.Runtime.Configs.Meta.Stats;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using UnityEngine;
@@ -31,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(ExplodeAtPointAbilityConfig), "Configs/Gameplay/Entities/Abilities/ExplodeAtPointAbilityConfig" },
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
+            {typeof(AbilityIconsConfig), "Configs/Gameplay/Abilities/AbilityIconsConfig" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

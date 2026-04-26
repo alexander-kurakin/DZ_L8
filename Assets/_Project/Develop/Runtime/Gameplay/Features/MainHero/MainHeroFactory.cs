@@ -48,14 +48,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             entity
                 .AddIsMainHero()
+                .AddGameplayPhase()
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddAbilityUserActiveAbility()
                 .AddAbilityUserAllAbilities();
 
+            _abilitiesFactory.SetupAbilitiesForMainHero(entity);
+            
             _entitiesLifeContext.Add(entity);
             
-			_abilitiesFactory.SetupAbilitiesForMainHero(entity);
-			
             _townWalkerSpawnPoint = entity.SpawnPoint;
 
             return entity;
@@ -68,6 +69,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             
             
             entity
+                .AddGameplayPhase()
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             _mainHeroHolderService.RegisterTowerWalker(entity);

@@ -11,5 +11,6 @@
         public const string DefeatPopup = nameof(DefeatPopup);
         public const string SimpleHealthBar = nameof(SimpleHealthBar);
         public const string MainHeroHealthBar = nameof(MainHeroHealthBar);
+        public const string AbilityView = nameof(AbilityView);
     }
 }

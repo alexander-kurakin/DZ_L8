@@ -24,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public GameplayStatesFactory(DIContainer container)
         {
             _container = container;
-        }
+       }
 
         public PreparationState CreatePreparationState()
         {
@@ -40,7 +40,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public StageProcessState CreateStageProcessState()
         {
             return new StageProcessState(
-                _container.Resolve<StageProviderService>());
+                _container.Resolve<StageProviderService>(),
+                _container.Resolve<MainHeroHolderService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

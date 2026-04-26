@@ -803,6 +803,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle.DisableCollidersOnDeath() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase GameplayPhaseC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayStates> GameplayPhase => GameplayPhaseC.Value;
+
+		public bool TryGetGameplayPhase(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayStates> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayStates>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGameplayPhase()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayStates>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGameplayPhase(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayStates> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal DistanceToTargetGoalC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DistanceToTargetGoal => DistanceToTargetGoalC.Value;

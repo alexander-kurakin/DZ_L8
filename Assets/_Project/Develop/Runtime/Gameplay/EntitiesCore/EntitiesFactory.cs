@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
@@ -96,7 +97,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMagicCastRequestedEvent();
             
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsMoving.Value));
+                .Add(new FuncCondition(() => entity.GameplayPhase.Value == GameplayStates.StageProcess));
             
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => true)); //tower walker always rotates towards mouse cursor

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -40,6 +41,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateStats();
             CreateStageNumber();
             CreateEntitiesHealthDisplay();
+            CreateAbitities();
             
             foreach (IPresenter presenter in _childPresenters)
             {
@@ -77,7 +79,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_screen.StageNumberView);
             _childPresenters.Add(stagePresenter);
         }
-        
+
+        private void CreateAbitities()
+        {
+            AbilityListPresenter abilityListPresenter =
+                _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView);
+            _childPresenters.Add(abilityListPresenter);
+        }
+
         private void CreateEntitiesHealthDisplay()
         {
             _entitiesHealthDisplayPresenter = _gameplayPresentersFactory.CreateEntitiesHealthDisplayPresenter(_screen.EntitiesHealthDisplay);

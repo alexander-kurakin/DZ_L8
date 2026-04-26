@@ -1,6 +1,9 @@
-﻿using _Project.Develop.Runtime.Configs.Meta.Stats;
+﻿using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
+using _Project.Develop.Runtime.Configs.Meta.Stats;
+using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -46,6 +49,16 @@ namespace Assets._Project.Develop.Runtime.UI
                 stat,
                 statType,
                 _container.Resolve<ConfigsProviderService>().GetConfig<StatIconsConfig>(),
+                view);
+        }
+        
+        public SingleAbilityPresenter CreateSingleAbilityPresenter(
+            IconView view,
+            AbilityType abilityType)
+        {
+            return new SingleAbilityPresenter(
+                abilityType,
+                _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
                 view);
         }
 

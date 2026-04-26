@@ -1,5 +1,7 @@
+using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -54,7 +56,15 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<GameplayPresentersFactory>());
         }
-        
+
+        public AbilityListPresenter CreateAbilityListPresenter(IconListView view)
+        {
+            return new AbilityListPresenter(_container.Resolve<MainHeroHolderService>(),
+                _container.Resolve<ProjectPresentersFactory>(),
+                _container.Resolve<ViewsFactory>(),
+                view);
+        }
+
         public StagePresenter CreateStagePresenter(IconTextView view)
         {
             return new StagePresenter(view, _container.Resolve<StageProviderService>());

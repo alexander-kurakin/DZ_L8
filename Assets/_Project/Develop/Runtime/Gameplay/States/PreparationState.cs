@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -51,10 +52,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _preparationTriggerService.Create(_contactTriggerConfig.ContactTriggerStartPosition);
             
             _mainHero = _mainHeroHolderService.MainHero;
-            _mainHero.AbilityUserActiveAbility.Value = AbilityType.PlantMine;
             
-            _towerWalker = _mainHeroHolderService.TowerWalker;
-            _towerWalker.IsMoving.Value = false;
+            _mainHero.GameplayPhase.Value = GameplayStates.Preparation;
+            _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
             
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
         }
