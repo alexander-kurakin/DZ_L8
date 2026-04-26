@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -59,6 +60,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateMouseInput);
             
             container.RegisterAsSingle(CreateMouseRaycastService);
+            
+            container.RegisterAsSingle(CreateMouseOverUIService);
 
             container.RegisterAsSingle(CreateMonoEntitiesFactory).NonLazy();
             
@@ -84,6 +87,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static AbilitiesFactory CreateAbilitiesFactory(DIContainer c)
         {
             return new  AbilitiesFactory(c);
+        }
+        
+        private static MouseOverUIService CreateMouseOverUIService(DIContainer c)
+        {
+            return new MouseOverUIService();
         }
 
         private static MouseRaycastService CreateMouseRaycastService(DIContainer c)

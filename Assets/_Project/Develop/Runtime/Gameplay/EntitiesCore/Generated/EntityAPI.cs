@@ -1220,6 +1220,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUseRequest() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference AbilityUserPlantAbilityPreferenceC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> AbilityUserPlantAbilityPreference => AbilityUserPlantAbilityPreferenceC.Value;
+
+		public bool TryGetAbilityUserPlantAbilityPreference(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserPlantAbilityPreference()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAbilityUserPlantAbilityPreference(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent RigidbodyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent>();
 
 		public UnityEngine.Rigidbody Rigidbody => RigidbodyC.Value;

@@ -3,7 +3,9 @@ using _Project.Develop.Runtime.Configs.Meta.Stats;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -54,12 +56,14 @@ namespace Assets._Project.Develop.Runtime.UI
         
         public SingleAbilityPresenter CreateSingleAbilityPresenter(
             IconView view,
-            AbilityType abilityType)
+            AbilityType abilityType,
+            Entity mainHero)
         {
             return new SingleAbilityPresenter(
                 abilityType,
                 _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
-                view);
+                view,
+                mainHero);
         }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)

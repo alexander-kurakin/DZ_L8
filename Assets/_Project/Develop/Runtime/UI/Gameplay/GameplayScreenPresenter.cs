@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -27,7 +28,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private readonly List<IPresenter> _childPresenters = new();
         
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
-        
+
         private MainHeroHolderService _mainHeroHolderService;
         private AbilityListPresenter _abilityListPresenter;
 
@@ -63,9 +64,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         private void OnMainHeroRegistered(Entity mainHero)
         {
-            _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
+            CreateAbitities(mainHero);
             
-            CreateAbitities();
+            _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
         }
 
         private void OnGameplayStateChanged(GameplayStates oldState, GameplayStates newState)
@@ -110,9 +111,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _childPresenters.Add(stagePresenter);
         }
 
-        private void CreateAbitities()
+        private void CreateAbitities(Entity mainHero)
         {
-            _abilityListPresenter = _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView);
+            _abilityListPresenter = _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView, mainHero);
             
             _abilityListPresenter.Initialize();
             _childPresenters.Add(_abilityListPresenter); 

@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -23,6 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly RaycastConfig _mouseRaycastConfig;
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
+        private MouseOverUIService _mouseOverUIService;
         private IBackgroundMusicService _backgroundMusicService;
         
         private Entity _mainHero;
@@ -34,7 +36,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             MainHeroHolderService mainHeroHolderService,
             MouseRaycastService mouseRaycastService,
             MouseInput mouseInputService,
-            IBackgroundMusicService backgroundMusicService)
+            IBackgroundMusicService backgroundMusicService,
+            MouseOverUIService mouseOverUIService)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -43,6 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
             _backgroundMusicService = backgroundMusicService;
+            _mouseOverUIService = mouseOverUIService;
         }
 
         public override void Enter()
@@ -55,6 +59,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             
             _mainHero.GameplayPhase.Value = GameplayStates.Preparation;
             _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
+
+            _mainHero.AbilityUserActiveAbility.Value = _mainHero.AbilityUserPlantAbilityPreference.Value;
             
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
         }
@@ -62,6 +68,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public void Update(float deltaTime)
         {
             _preparationTriggerService.Update(deltaTime);
+
+            if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
+                return;
             
             if (MouseClickedOnFloorLayer(out Vector3 hitPoint))
                 _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]

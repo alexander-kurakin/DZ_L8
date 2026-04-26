@@ -30,4 +30,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     {
         public ReactiveEvent<Vector3> Value;
     }
+    
+    public class AbilityUserPlantAbilityPreference : IEntityComponent
+    {
+        public ReactiveVariable<AbilityType> Value;
+    }
 }

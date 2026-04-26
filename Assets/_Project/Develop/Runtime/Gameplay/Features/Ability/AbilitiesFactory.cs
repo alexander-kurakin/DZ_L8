@@ -47,6 +47,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             mapping[AbilityType.PlantTurret] = plantTurretAbility;
             mapping[AbilityType.PlantToxicArea] = plantToxicAreaAbility;
             mapping[AbilityType.ExplodeAtPoint] = explodeAtPointAbility;
+
+            mainHero.AbilityUserPlantAbilityPreference.Value = AbilityType.PlantMine;
             
             //only register in life context when abilities is assigned to someone, e.g. here owner is mainHero
             _entitiesLifeContext.Add(plantMineAbility);

@@ -1,3 +1,4 @@
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -59,12 +60,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 );
         }
 
-        public AbilityListPresenter CreateAbilityListPresenter(IconListView view)
+        public AbilityListPresenter CreateAbilityListPresenter(IconListView view, Entity mainHero)
         {
             return new AbilityListPresenter(_container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<ProjectPresentersFactory>(),
                 _container.Resolve<ViewsFactory>(),
-                view);
+                view,
+                mainHero,
+                _container.Resolve<MouseOverUIService>());
         }
 
         public StagePresenter CreateStagePresenter(IconTextView view)

@@ -51,7 +51,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddGameplayPhase()
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddAbilityUserActiveAbility()
-                .AddAbilityUserAllAbilities();
+                .AddAbilityUserAllAbilities()
+                .AddAbilityUserPlantAbilityPreference();
 
             _abilitiesFactory.SetupAbilitiesForMainHero(entity);
             

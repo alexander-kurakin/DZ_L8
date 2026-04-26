@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
@@ -34,7 +35,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<MouseRaycastService>(),
                 _container.Resolve<MouseInput>(),
-                _container.Resolve<IBackgroundMusicService>());
+                _container.Resolve<IBackgroundMusicService>(),
+                _container.Resolve<MouseOverUIService>());
         }
 
         public StageProcessState CreateStageProcessState()
