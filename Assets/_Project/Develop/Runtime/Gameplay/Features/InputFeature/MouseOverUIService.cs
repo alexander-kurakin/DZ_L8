@@ -18,7 +18,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.InputFeature
             _uiRects.Remove(rectTransform);
         }
 
-        public bool IsPointerOverUI(Vector2 screenPosition)
+        public bool IsPointerOverUI(Vector2 pointerPosition)
         {
             for (int i = 0; i < _uiRects.Count; i++)
             {
@@ -27,7 +27,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.InputFeature
                 if (rectTransform == null || !rectTransform.gameObject.activeInHierarchy)
                     continue;
                 
-                if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, screenPosition, null))
+                if (RectTransformUtility.RectangleContainsScreenPoint(rectTransform, pointerPosition, null))
                     return true;
             }
             return false;
