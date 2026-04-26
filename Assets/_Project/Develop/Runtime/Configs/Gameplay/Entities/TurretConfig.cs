@@ -6,7 +6,10 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     public class TurretConfig : PurchasableEntityConfig
     {
         [field: SerializeField, Min(0)] public float Damage { get; private set; } = 15;
-        [field: SerializeField, Min(0)] public float ActionRadius { get; private set; } = 15;
-        [field: SerializeField, Min(0)] public float CooldownTime { get; private set; } = 0.5f;
+        [field: SerializeField, Min(0)] public float RotationSpeed { get; private set; } = 300;
+        
+        [field: SerializeField, Min(0)] public float AttackProcessTime { get; private set; } = 1;
+        [field: SerializeField, Min(0)] public float AttackDelayTime { get; private set; } = 0.3f;
+        [field: SerializeField, Min(0)] public float AttackCooldown { get; private set; } = 1;
     }
 }

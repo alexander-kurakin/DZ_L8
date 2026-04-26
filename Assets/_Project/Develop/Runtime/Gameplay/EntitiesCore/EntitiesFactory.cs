@@ -2,6 +2,11 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
@@ -13,11 +18,9 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
-using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -30,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly MonoEntitiesFactory _monoEntitiesFactory;
         private readonly MainHeroHolderService _mainHeroHolderService;
+        private readonly BrainsFactory _brainsFactory;
 
         public EntitiesFactory(DIContainer container)
         {
@@ -38,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory = _container.Resolve<MonoEntitiesFactory>();
             _collidersRegistryService = _container.Resolve<CollidersRegistryService>();
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
+            _brainsFactory = _container.Resolve<BrainsFactory>();
         }
 
         public Entity CreateTower(TowerConfig config, LevelConfig levelConfig)
@@ -251,9 +256,46 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, turretConfig.PrefabPath);
 
             entity
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
+                .AddRotationDirection()
+                .AddRotationSpeed(new ReactiveVariable<float>(turretConfig.RotationSpeed))
+                .AddCurrentTarget()
+                .AddAttackProcessInitialTime(new ReactiveVariable<float>(turretConfig.AttackProcessTime))
+                .AddAttackProcessCurrentTime()
+                .AddInAttackProcess()
+                .AddStartAttackRequest()
+                .AddStartAttackEvent()
+                .AddEndAttackEvent()
+                .AddAttackDelayTime(new ReactiveVariable<float>(turretConfig.AttackDelayTime))
+                .AddAttackDelayEndEvent()
+                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(turretConfig.AttackCooldown))
+                .AddAttackCooldownCurrentTime()
+                .AddInAttackCooldown()
+                .AddInstantAttackDamage(new ReactiveVariable<float>(turretConfig.Damage));
+            
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.CurrentTarget.Value != null));
+            
+            ICompositeCondition canStartAttack = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false));
+
+            entity
+                .AddCanRotate(canRotate)
+                .AddCanStartAttack(canStartAttack);
+
+            entity
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new StartAttackSystem())
+                .AddSystem(new AttackProcessTimerSystem())
+                .AddSystem(new AttackDelayEndTriggerSystem())
+                .AddSystem(new InstantShootSystem(this))
+                .AddSystem(new EndAttackSystem())
+                .AddSystem(new AttackCooldownTimerSystem());
                 
             _entitiesLifeContext.Add(entity);
+            
+            _brainsFactory.CreateTurretBrain(entity, new NearestDamageableTargetSelector(entity));
             
             return entity;
         }
@@ -269,6 +311,64 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             _entitiesLifeContext.Add(entity);
             
+            return entity;
+        }
+        
+        public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, Entity owner)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, "Entities/Projectile");
+
+            entity
+                .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
+                .AddMoveSpeed(new ReactiveVariable<float>(25))
+                .AddIsMoving()
+                .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
+                .AddRotationSpeed(new ReactiveVariable<float>(9999))
+                .AddIsDead()
+                .AddContactsDetectingMask(Layers.CharactersMask | Layers.EnviromentMask)
+                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+                .AddDeathMask(Layers.EnviromentMask)
+                .AddIsTouchDeathMask()
+                .AddIsTouchAnotherTeam()
+                .AddTeam(new ReactiveVariable<Teams>(owner.Team.Value));
+
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => entity.IsTouchDeathMask.Value))
+                .Add(new FuncCondition(() => entity.IsTouchAnotherTeam.Value));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value));
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new DeathMaskTouchDetectorSystem())
+                .AddSystem(new AnotherTeamTouchDetectorSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
+
             return entity;
         }
 

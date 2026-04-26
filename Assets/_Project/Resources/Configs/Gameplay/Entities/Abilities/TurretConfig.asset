@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Turret
   <CostInGold>k__BackingField: 150
-  <Damage>k__BackingField: 15
+  <Damage>k__BackingField: 20
   <ActionRadius>k__BackingField: 15
+  <RotationSpeed>k__BackingField: 300
   <CooldownTime>k__BackingField: 0.5
