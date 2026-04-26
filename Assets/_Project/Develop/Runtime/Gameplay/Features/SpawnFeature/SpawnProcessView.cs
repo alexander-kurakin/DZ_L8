@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
     public class SpawnProcessView : EntityView
     {
         private readonly int SpawningProcessKey = Animator.StringToHash("InSpawnProcess");
-        private const float VolumeMin = 0f, VolumeMax = 0.2f, PitchMin = 0.7f, PitchMax = 1.2f;
+        private const float VolumeMinMult = 0.9f, VolumeMaxMult = 1.2f, PitchMin = 0.7f, PitchMax = 1.2f;
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _spawnEffectPrefab;
@@ -58,12 +58,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
                 
                 SetupRandomSettingsOnAudioSource();
                 _audioSource.PlayOneShot(_spawnVfxSound);
+                
             }
         }
 
         private void SetupRandomSettingsOnAudioSource()
         {
-            _audioSource.volume = Random.Range(VolumeMin, VolumeMax);
+            _audioSource.volume = Random.Range(_audioSource.volume * VolumeMinMult, _audioSource.volume * VolumeMaxMult);
             _audioSource.pitch = Random.Range(PitchMin, PitchMax);
         }
 

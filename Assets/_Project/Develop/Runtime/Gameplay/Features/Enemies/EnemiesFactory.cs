@@ -39,6 +39,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                     entity = _entitiesFactory.CreateWalkingEnemy(position, walkingEnemyConfig);
                     _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
+                
+                case RangedEnemyConfig rangedEnemyConfig:
+                    entity = _entitiesFactory.CreateRangedEnemy(position, rangedEnemyConfig);
+                    _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                    break;
 
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");

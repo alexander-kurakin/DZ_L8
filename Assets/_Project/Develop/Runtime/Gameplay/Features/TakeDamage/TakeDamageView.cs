@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
         {
             base.Cleanup(entity);
             
-            _damageEventDisposable.Dispose();
+            _damageEventDisposable?.Dispose();
         }
     }
 }

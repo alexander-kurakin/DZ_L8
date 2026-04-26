@@ -9,14 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c57fb5eba48a40f09e162046233cce09, type: 3}
-  m_Name: WalkingEnemyConfig
+  m_Script: {fileID: 11500000, guid: 7302909471254182a6569cc2c5664b50, type: 3}
+  m_Name: RangedEnemyConfig
   m_EditorClassIdentifier: 
-  <PrefabPath>k__BackingField: Entities/WalkingEnemy
+  <PrefabPath>k__BackingField: Entities/RangedEnemy
   <MoveSpeed>k__BackingField: 9
   <RotationSpeed>k__BackingField: 900
   <MaxHealth>k__BackingField: 100
   <DeathProcessTime>k__BackingField: 1
-  <DistanceToTargetGoal>k__BackingField: 10
-  <ExplosionDamage>k__BackingField: 50
+  <AttackRange>k__BackingField: 20
+  <AttackCooldown>k__BackingField: 2
+  <InstantDamage>k__BackingField: 50
   <SpawnProcessTime>k__BackingField: 2

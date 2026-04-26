@@ -87,7 +87,7 @@ Transform:
   m_GameObject: {fileID: 8575589285690833615}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 4.34, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -188,7 +188,7 @@ Animator:
   m_GameObject: {fileID: 6310921680747709959}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: cead88b91e0bf0141a58156231a8c0a4, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 04177b30d7d229044ae7ce59b6756581, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _animator: {fileID: 0}
+  _animator: {fileID: 745026182827526232}
   _spawnEffectPrefab: {fileID: 2164174841048073238, guid: 9ef717e9fbd7c44448bf2cd4dc8a8a09,
     type: 3}
   _spawnEffectPoint: {fileID: 5800966843338258160}

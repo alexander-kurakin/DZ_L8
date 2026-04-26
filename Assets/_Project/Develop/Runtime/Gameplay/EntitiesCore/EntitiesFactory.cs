@@ -124,6 +124,77 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return entity;
         }
+        
+        public Entity CreateRangedEnemy(Vector3 position, RangedEnemyConfig config)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
+
+            entity
+                .AddMoveDirection()
+                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddIsMoving()
+                .AddRotationDirection()
+                .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
+                .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddIsDead()
+                .AddInDeathProcess()
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+                .AddCurrentTarget()
+                .AddDistanceToTargetGoal(new ReactiveVariable<float>(config.AttackRange))
+                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.AttackRange))
+                .AddDistanceToTargetReachedEvent()
+                .AddDistanceToTargetReached()
+                .AddExplosionDamage(new ReactiveVariable<float>(config.InstantDamage))
+                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
+                .AddSpawnCurrentTime()
+                .AddInSpawnProcess();
+            
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+
+            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
+
+            ICompositeCondition canTakeDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+            
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                .AddCanTakeDamage(canTakeDamage);
+
+            entity
+                .AddSystem(new SpawnProcessTimerSystem())
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new TakeDamageSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new DeathProcessTimerSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                .AddSystem(new DistanceDetectorSystem());
+
+            return entity;
+        }
 
         public Entity CreateWalkingEnemy(Vector3 position, WalkingEnemyConfig config)
         {
