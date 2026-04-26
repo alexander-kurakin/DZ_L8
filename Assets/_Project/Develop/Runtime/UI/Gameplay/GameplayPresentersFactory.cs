@@ -54,7 +54,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             return new GameplayScreenPresenter(
                 _container.Resolve<ProjectPresentersFactory>(),
                 view,
-                _container.Resolve<GameplayPresentersFactory>());
+                _container.Resolve<GameplayPresentersFactory>(),
+                _container.Resolve<MainHeroHolderService>()
+                );
         }
 
         public AbilityListPresenter CreateAbilityListPresenter(IconListView view)

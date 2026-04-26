@@ -66,8 +66,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             }
         }
 
-        private void SetActiveAbility()
+        public void HideAll()
         {
+            _view.gameObject.SetActive(false);
+        }
+        
+        public void ShowAll()
+        {
+            _view.gameObject.SetActive(true);
         }
 
         public void Dispose()

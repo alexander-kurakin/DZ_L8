@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
@@ -24,15 +27,23 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private readonly List<IPresenter> _childPresenters = new();
         
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
+        
+        private MainHeroHolderService _mainHeroHolderService;
+        private AbilityListPresenter _abilityListPresenter;
+
+        private IDisposable _mainHeroRegisteredDisposable;
+        private IDisposable _gameplayStateChangedDisposable;
 
         public GameplayScreenPresenter(
             ProjectPresentersFactory projectPresentersFactory,
             GameplayScreenView screen,
-            GameplayPresentersFactory gameplayPresentersFactory)
+            GameplayPresentersFactory gameplayPresentersFactory,
+            MainHeroHolderService mainHeroHolderService)
         {
             _projectPresentersFactory = projectPresentersFactory;
             _screen = screen;
             _gameplayPresentersFactory = gameplayPresentersFactory;
+            _mainHeroHolderService = mainHeroHolderService;
         }
 
         public void Initialize()
@@ -41,12 +52,28 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateStats();
             CreateStageNumber();
             CreateEntitiesHealthDisplay();
-            CreateAbitities();
+            
+            _mainHeroRegisteredDisposable = _mainHeroHolderService.HeroRegistred.Subscribe(OnMainHeroRegistered);
             
             foreach (IPresenter presenter in _childPresenters)
             {
                 presenter.Initialize();
             }
+        }
+
+        private void OnMainHeroRegistered(Entity mainHero)
+        {
+            _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
+            
+            CreateAbitities();
+        }
+
+        private void OnGameplayStateChanged(GameplayStates oldState, GameplayStates newState)
+        {
+            if (newState == GameplayStates.StageProcess)
+                _abilityListPresenter.HideAll();
+            else
+                _abilityListPresenter.ShowAll();
         }
 
         public void Dispose()
@@ -55,6 +82,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 presenter.Dispose();
 
             _childPresenters.Clear();
+            
+            _mainHeroRegisteredDisposable?.Dispose();
+            _gameplayStateChangedDisposable?.Dispose();
         }
         
         public void LateUpdate()
@@ -82,9 +112,10 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         private void CreateAbitities()
         {
-            AbilityListPresenter abilityListPresenter =
-                _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView);
-            _childPresenters.Add(abilityListPresenter);
+            _abilityListPresenter = _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView);
+            
+            _abilityListPresenter.Initialize();
+            _childPresenters.Add(_abilityListPresenter); 
         }
 
         private void CreateEntitiesHealthDisplay()
