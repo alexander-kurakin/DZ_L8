@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
+using _Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
@@ -307,7 +308,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, toxicAreaConfig.PrefabPath);
 
             entity
+                .AddContactsDetectingMask(Layers.CharactersMask)
+                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddDamagePerTick(new ReactiveVariable<float>(toxicAreaConfig.DamagePerTick))
+                .AddDamageInterval(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
+                .AddDamageTimer(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+            
+            entity
+                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DamageOverTimeSystem());
 
             _entitiesLifeContext.Add(entity);
             

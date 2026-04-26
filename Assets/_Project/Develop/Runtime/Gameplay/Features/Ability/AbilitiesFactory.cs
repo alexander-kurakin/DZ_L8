@@ -3,6 +3,7 @@ using _Project.Develop.Runtime.Gameplay.Features.AbilitySystems;
 using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -20,6 +21,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly WalletService _walletService; //mines
         private readonly ConfigsProviderService _configsProviderService;
         private readonly CollidersRegistryService _collidersRegistryService;
+        private readonly StageProviderService _stageProviderService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         
@@ -30,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _walletService = container.Resolve<WalletService>();
             _configsProviderService = container.Resolve<ConfigsProviderService>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
+            _stageProviderService = container.Resolve<StageProviderService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -79,7 +82,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                 .AddSystem(new PlantPurchasedObjectsSystem(
                     _walletService, 
                     _entitiesFactory,
-                    purchasableEntityConfig));
+                    purchasableEntityConfig,
+                    _stageProviderService
+                    ));
 
             return entity;
         }

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3505836200522129114}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: ViewContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 8963372482293978194}
   - component: {fileID: 6093446714627502784}
   - component: {fileID: 1853624172139372150}
-  m_Layer: 9
+  m_Layer: 6
   m_Name: Mine
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -184,10 +184,40 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 1661245431713670011, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 2158015988542831493, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5344413478604066849, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7363054642147358598, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 7664580327639534647, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 8015373888706998467, guid: 48df021f491684d49aaaacaaa19be0c2,
         type: 3}
       propertyPath: m_Name
       value: EnergyTornado
+      objectReference: {fileID: 0}
+    - target: {fileID: 8015373888706998467, guid: 48df021f491684d49aaaacaaa19be0c2,
+        type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

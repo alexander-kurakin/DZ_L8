@@ -1,6 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
+using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
@@ -13,15 +15,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private StagesFactory _stagesFactory;
 
         private IStage _currentStage;
+        
+        private List<Entity> _spawnedToxicAreas = new();
+        private EntitiesLifeContext _entitiesLifeContext;
 
         private IDisposable _stageEndedDisposable;
 
         public StageProviderService(
             LevelConfig levelConfig, 
-            StagesFactory stagesFactory)
+            StagesFactory stagesFactory,
+            EntitiesLifeContext entitiesLifeContext)
         {
             _levelConfig = levelConfig;
             _stagesFactory = stagesFactory;
+            _entitiesLifeContext = entitiesLifeContext;
         }
 
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
@@ -44,6 +51,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[_currentStageNumber.Value - 1]);
         }
+        
+        public void AddToxicArea(Entity entity)
+        {
+            if (entity != null && !_spawnedToxicAreas.Contains(entity))
+                _spawnedToxicAreas.Add(entity);
+        }
+
+        private void ClearToxicAreas()
+        {
+            foreach (Entity entity in _spawnedToxicAreas)
+                _entitiesLifeContext.Release(entity);
+            
+            _spawnedToxicAreas.Clear();
+        }
 
         public void StartCurrent()
         {
@@ -54,6 +75,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private void OnStageCompleted()
         {
             _currentStageResult.Value = StageResults.Completed;
+            ClearToxicAreas();
         }
 
         public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);

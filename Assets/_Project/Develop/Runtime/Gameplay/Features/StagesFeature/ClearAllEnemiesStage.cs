@@ -86,7 +86,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
 
             _spawnedEnemiesToRemoveReason.Clear();
-
+            
             _inProcess = false;
         }
 

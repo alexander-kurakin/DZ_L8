@@ -133,7 +133,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             return new StageProviderService(
                 c.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
-                c.Resolve<StagesFactory>());
+                c.Resolve<StagesFactory>(),
+                c.Resolve<EntitiesLifeContext>());
         }
 
         private static StagesFactory CreateStagesFactory(DIContainer c)

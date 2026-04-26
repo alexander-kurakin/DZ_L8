@@ -2,6 +2,7 @@ using System;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly WalletService _walletService;
         private readonly EntitiesFactory _entitiesFactory;
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
+        private readonly StageProviderService _stageProviderService;
         
         private Entity _entity;
         private IDisposable _requestDisposable;
@@ -19,11 +21,13 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         public PlantPurchasedObjectsSystem(
             WalletService walletService,
             EntitiesFactory entitiesFactory,
-            PurchasableEntityConfig purchasableEntityConfig)
+            PurchasableEntityConfig purchasableEntityConfig,
+            StageProviderService stageProviderService)
         {
             _walletService = walletService;
             _entitiesFactory = entitiesFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
+            _stageProviderService = stageProviderService;
         }
 
         public void OnInit(Entity entity)
@@ -52,7 +56,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                     }
                     case ToxicAreaConfig toxicAreaConfig:
                     {
-                        _entitiesFactory.CreateToxicArea(usePoint, toxicAreaConfig);
+                        Entity toxicEntity = _entitiesFactory.CreateToxicArea(usePoint, toxicAreaConfig);
+                        _stageProviderService.AddToxicArea(toxicEntity);
                         break;
                     }
                     default:

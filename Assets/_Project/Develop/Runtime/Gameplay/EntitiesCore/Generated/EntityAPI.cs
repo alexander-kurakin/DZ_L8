@@ -923,6 +923,78 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick DamagePerTickC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamagePerTick => DamagePerTickC.Value;
+
+		public bool TryGetDamagePerTick(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamagePerTick()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamagePerTick(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageInterval DamageIntervalC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageInterval>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamageInterval => DamageIntervalC.Value;
+
+		public bool TryGetDamageInterval(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageInterval component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageInterval()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageInterval() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageInterval(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageInterval() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageTimer DamageTimerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageTimer>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamageTimer => DamageTimerC.Value;
+
+		public bool TryGetDamageTimer(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageTimer component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageTimer()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageTimer() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDamageTimer(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamageTimer() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached.ExplosionDamage ExplosionDamageC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached.ExplosionDamage>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionDamage => ExplosionDamageC.Value;
