@@ -16,6 +16,7 @@ using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Configs.Meta.Powerups;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
@@ -56,6 +57,8 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle(CreateStatsService).NonLazy();
             
             container.RegisterAsSingle(CreatePowerupService).NonLazy();
+            
+            container.RegisterAsSingle(CreatePermanentPowerupResolver);
             
             container.RegisterAsSingle(CreateAudioHub).NonLazy();
             
@@ -102,6 +105,11 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
         private static PowerupService CreatePowerupService(DIContainer c)
         {
             return new PowerupService(c.Resolve<PlayerDataProvider>());
+        }
+        
+        private static PermanentPowerupResolver CreatePermanentPowerupResolver(DIContainer c)
+        {
+            return new PermanentPowerupResolver(c.Resolve<PowerupService>(), c.Resolve<ConfigsProviderService>().GetConfig<PermanentPowerupsConfig>());
         }
         
         private static StatsService CreateStatsService(DIContainer c)

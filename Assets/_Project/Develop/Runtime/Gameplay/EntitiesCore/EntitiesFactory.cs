@@ -1,5 +1,6 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using _Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;

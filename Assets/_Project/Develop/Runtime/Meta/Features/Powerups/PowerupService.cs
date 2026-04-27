@@ -21,9 +21,7 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
             playerDataProvider.RegisterReader(this);
         }
         
-        public IReadOnlyVariable<bool> IsUnlocked(PowerupType type) => _powerups[type];
-
-        public bool GetBy(PowerupType type) => _powerups[type].Value;
+        public IReadOnlyVariable<bool> GetBy(PowerupType type) => _powerups[type];
         
         public void Set(PowerupType type, bool value) => _powerups[type].Value = value;
         

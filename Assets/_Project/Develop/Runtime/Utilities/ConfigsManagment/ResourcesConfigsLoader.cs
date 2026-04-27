@@ -7,6 +7,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
+using _Project.Develop.Runtime.Configs.Meta.Powerups;
 using _Project.Develop.Runtime.Configs.Meta.Stats;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using UnityEngine;
@@ -33,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
             {typeof(AbilityIconsConfig), "Configs/Gameplay/Abilities/AbilityIconsConfig" },
+            {typeof(PermanentPowerupsConfig),"Configs/Meta/Powerups/PermanentPowerupsConfig"}
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

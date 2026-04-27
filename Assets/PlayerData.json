@@ -1,8 +1,13 @@
 {
   "WalletData": {
-    "Gold": 1650,
-    "Diamond": 190
+    "Gold": 2550,
+    "Diamond": 246
   },
-  "Wins": 170,
-  "Losses": 43
+  "Wins": 172,
+  "Losses": 43,
+  "PowerupsData": {
+    "HealExtra": true,
+    "DamageFirstEnemies": false,
+    "IncreaseClickDamage": false
+  }
 }

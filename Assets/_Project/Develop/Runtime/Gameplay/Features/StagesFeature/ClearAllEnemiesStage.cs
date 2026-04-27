@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
@@ -32,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
         private IBackgroundMusicService _backgroundMusicService;
+        private PermanentPowerupResolver _permanentPowerupResolver;
         
         private ReactiveEvent _completed = new();
         private Entity _mainHero;
@@ -48,7 +50,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             MainHeroHolderService mainHeroHolderService,
             IMouseInputService mouseInputService,
             MouseRaycastService mouseRaycastService,
-            IBackgroundMusicService  backgroundMusicService)
+            IBackgroundMusicService  backgroundMusicService,
+            PermanentPowerupResolver permanentPowerupResolver)
         {
             _config = config;
             _enemiesFactory = enemiesFactory;
@@ -57,6 +60,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
             _backgroundMusicService = backgroundMusicService;
+            _permanentPowerupResolver = permanentPowerupResolver;
             
             _towerConfig = configsProviderService.GetConfig<TowerConfig>();
             _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
@@ -101,9 +105,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             
             _mainHero = _mainHeroHolderService.MainHero;
             _towerWalker = _mainHeroHolderService.TowerWalker;
-          
-            _inProcess = true;
+
+            TryApplyStagePowerups();
             
+            _inProcess = true;
+        }
+
+        private void TryApplyStagePowerups()
+        {
+            float maxHealth = _mainHero.MaxHealth.Value;
+            float currentHealth = _mainHero.CurrentHealth.Value;
+
+            if (_permanentPowerupResolver.TryGetTowerHealMult(out float modifierMult))
+            {
+                float newCurrentHealth = MathF.Min(maxHealth, currentHealth + maxHealth * modifierMult);
+                _mainHero.CurrentHealth.Value = newCurrentHealth;
+            }
         }
 
         public void Update(float deltaTime)
