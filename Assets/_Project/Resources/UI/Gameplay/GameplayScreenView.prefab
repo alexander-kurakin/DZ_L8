@@ -67,7 +67,7 @@ MonoBehaviour:
   <StatsIconTextListView>k__BackingField: {fileID: 521816133263263665}
   <StageNumberView>k__BackingField: {fileID: 9030145724564745164}
   <EntitiesHealthDisplay>k__BackingField: {fileID: 6919133708905567926}
-  <AbilitiesView>k__BackingField: {fileID: 3943302640035643418}
+  <AbilitiesView>k__BackingField: {fileID: 3328519087480571603}
 --- !u!114 &2921664489248786043
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -175,7 +175,7 @@ PrefabInstance:
     - target: {fileID: 806475608141834439, guid: 52127d88a20aa9248ba79a3edfd61f50,
         type: 3}
       propertyPath: m_SizeDelta.y
-      value: 300
+      value: 400
       objectReference: {fileID: 0}
     - target: {fileID: 806475608141834439, guid: 52127d88a20aa9248ba79a3edfd61f50,
         type: 3}
@@ -220,7 +220,7 @@ PrefabInstance:
     - target: {fileID: 806475608141834439, guid: 52127d88a20aa9248ba79a3edfd61f50,
         type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: 150
+      value: 200
       objectReference: {fileID: 0}
     - target: {fileID: 806475608141834439, guid: 52127d88a20aa9248ba79a3edfd61f50,
         type: 3}
@@ -255,7 +255,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1865570729058155713, guid: 52127d88a20aa9248ba79a3edfd61f50,
         type: 3}
       insertIndex: -1
-      addedObject: {fileID: 3943302640035643418}
+      addedObject: {fileID: 3328519087480571603}
   m_SourcePrefab: {fileID: 100100000, guid: 52127d88a20aa9248ba79a3edfd61f50, type: 3}
 --- !u!1 &2390760771310634658 stripped
 GameObject:
@@ -263,7 +263,7 @@ GameObject:
     type: 3}
   m_PrefabInstance: {fileID: 4093322294788127331}
   m_PrefabAsset: {fileID: 0}
---- !u!114 &3943302640035643418
+--- !u!114 &3328519087480571603
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -272,7 +272,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 2390760771310634658}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b1ac610193be4029b1780519e1b5f513, type: 3}
+  m_Script: {fileID: 11500000, guid: 40a9765ba4f748b88c88ca9303b756a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _parent: {fileID: 3746796679299846820}

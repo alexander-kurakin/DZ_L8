@@ -57,13 +57,13 @@ namespace Assets._Project.Develop.Runtime.UI
         }
         
         public SingleAbilityPresenter CreateSingleAbilityPresenter(
-            IconView view,
+            AbilitySlotView view,
             AbilityType abilityType,
             Entity mainHero)
         {
             return new SingleAbilityPresenter(
                 abilityType,
-                _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
+                _container.Resolve<ConfigsProviderService>(),
                 view,
                 mainHero);
         }

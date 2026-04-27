@@ -1,9 +1,9 @@
 {
   "WalletData": {
-    "Gold": 950,
-    "Diamond": 4232
+    "Gold": 400,
+    "Diamond": 4233
   },
-  "Wins": 181,
+  "Wins": 182,
   "Losses": 43,
   "PowerupsData": {
     "HealExtra": true,

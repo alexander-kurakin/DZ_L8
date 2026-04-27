@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
@@ -16,7 +17,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         private readonly ProjectPresentersFactory _presentersFactory;
         private readonly ViewsFactory _viewsFactory;
 
-        private readonly IconListView _view;
+        private readonly AbilitySlotListView _view;
         private readonly Entity _mainHero;
         
         private MouseOverUIService _mouseOverUIService;
@@ -28,7 +29,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             MainHeroHolderService mainHeroHolderService,
             ProjectPresentersFactory presentersFactory,
             ViewsFactory viewsFactory,
-            IconListView view,
+            AbilitySlotListView view,
             Entity mainHero,
             MouseOverUIService mouseOverUIService)
         {
@@ -51,9 +52,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
                 if (abilityType == AbilityType.ExplodeAtPoint) //only draw abilities for plant
                     continue;
                 
-                IconView abilityView = _viewsFactory.Create<IconView>(ViewIDs.AbilityView);
+                AbilitySlotView abilityView = _viewsFactory.Create<AbilitySlotView>(ViewIDs.AbilitySlot);
                 
-                _mouseOverUIService.Register(abilityView.RectTransform);
+                _mouseOverUIService.Register(abilityView.IconView.RectTransform);
 
                 _view.Add(abilityView);
 
@@ -83,7 +84,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
                 _view.Remove(singleAbilityPresenter.View);
                 _viewsFactory.Release(singleAbilityPresenter.View);
                 singleAbilityPresenter.Dispose();
-                _mouseOverUIService.Unregister(singleAbilityPresenter.View.RectTransform);
+                _mouseOverUIService.Unregister(singleAbilityPresenter.View.IconView.RectTransform);
             }
 
             _abilityPresenters.Clear();

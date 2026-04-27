@@ -60,7 +60,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 );
         }
 
-        public AbilityListPresenter CreateAbilityListPresenter(IconListView view, Entity mainHero)
+        public AbilityListPresenter CreateAbilityListPresenter(AbilitySlotListView view, Entity mainHero)
         {
             return new AbilityListPresenter(_container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<ProjectPresentersFactory>(),

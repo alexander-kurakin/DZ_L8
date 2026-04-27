@@ -5,7 +5,7 @@
         public const string WalletIconTextView = nameof(WalletIconTextView);
         public const string StatIconTextView = nameof(StatIconTextView);
         public const string MainMenuScreen = nameof(MainMenuScreen);
-        public const string TestPopup = nameof(TestPopup);
+        public const string AbilitySlot = nameof(AbilitySlot);
         public const string GameplayScreen = nameof(GameplayScreen);
         public const string WinPopup = nameof(WinPopup);
         public const string DefeatPopup = nameof(DefeatPopup);
