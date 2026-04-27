@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 
 namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
 {
@@ -22,7 +23,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
         {
             return new PlayerData()
             {
-                WalletData = InitWalletData()
+                WalletData = InitWalletData(),
+                PowerupsData = InitPowerupData(),
             };
         }
 
@@ -36,6 +38,16 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
                 walletData[currencyType] = walletConfig.GetValueFor(currencyType);
 
             return walletData;
+        }
+        
+        private Dictionary<PowerupType, bool> InitPowerupData()
+        {
+            Dictionary<PowerupType, bool> powerupData = new();
+
+            foreach (PowerupType powerupType in Enum.GetValues(typeof(PowerupType)))
+                powerupData[powerupType] = false;
+
+            return powerupData;
         }
     }
 }

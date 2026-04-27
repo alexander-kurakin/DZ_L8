@@ -17,6 +17,7 @@ using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
@@ -53,6 +54,8 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle<ISaveLoadSerivce>(CreateSaveLoadService);
             
             container.RegisterAsSingle(CreateStatsService).NonLazy();
+            
+            container.RegisterAsSingle(CreatePowerupService).NonLazy();
             
             container.RegisterAsSingle(CreateAudioHub).NonLazy();
             
@@ -95,6 +98,11 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
         private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer c)
             => new ProjectPresentersFactory(c);
+        
+        private static PowerupService CreatePowerupService(DIContainer c)
+        {
+            return new PowerupService(c.Resolve<PlayerDataProvider>());
+        }
         
         private static StatsService CreateStatsService(DIContainer c)
         {

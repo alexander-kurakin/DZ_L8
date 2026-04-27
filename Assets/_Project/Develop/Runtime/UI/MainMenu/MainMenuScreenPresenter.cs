@@ -1,9 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Wallet;
-using System;
 using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
@@ -26,9 +24,6 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly IUISoundService _uiSoundService;
         
-        private readonly CharacterPreviewPresenter _characterPreviewPresenter;
-        
-
         public MainMenuScreenPresenter(
             MainMenuScreenView screen,
             ProjectPresentersFactory projectPresentersFactory,
