@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.AbilitySystems;
 using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -22,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly ConfigsProviderService _configsProviderService;
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly StageProviderService _stageProviderService;
+        private readonly PermanentPowerupResolver _permanentPowerupResolver;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         
@@ -33,6 +35,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _configsProviderService = container.Resolve<ConfigsProviderService>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _stageProviderService = container.Resolve<StageProviderService>();
+            _permanentPowerupResolver = container.Resolve<PermanentPowerupResolver>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -97,13 +100,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             
             if (abilityOwner.TryGetTeam(out ReactiveVariable<Teams>team))
                 ownerTeam = team.Value;
+
+            float explosionDamage = _explodeAtPointAbilityConfig.ExplosionDamage;
+
+            if (_permanentPowerupResolver.TryGetExplosionDamageMult(out float modifierMultiplier))
+                explosionDamage *= modifierMultiplier;
             
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
                 .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.ExplodeAtPoint))
                 .AddAbilityUseRequest()
                 .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
-                .AddAreaImpactDamage(new ReactiveVariable<float>(_explodeAtPointAbilityConfig.ExplosionDamage))
+                .AddAreaImpactDamage(new ReactiveVariable<float>(explosionDamage))
                 .AddAreaImpactRadius(new ReactiveVariable<float>(_explodeAtPointAbilityConfig.ExplosionRadius))
                 .AddAreaImpactMask(Layers.CharactersMask)
                 .AddAreaImpactCollidersBuffer(new Buffer<Collider>(64))

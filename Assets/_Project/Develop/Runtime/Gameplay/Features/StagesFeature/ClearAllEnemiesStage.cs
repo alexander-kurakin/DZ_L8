@@ -6,10 +6,8 @@ using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities;
@@ -39,6 +37,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private Entity _mainHero;
         private Entity _towerWalker;
         private bool _inProcess;
+
+        private int _targetDebuffedEnemiesCount;
+        private int _currentDebuffedEnemiesCount;
+        private float _debuffPercent;
+        private bool _shouldDebuff;
 
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
 
@@ -101,12 +104,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Battle);
             
-            SpawnEnemies();
-            
             _mainHero = _mainHeroHolderService.MainHero;
             _towerWalker = _mainHeroHolderService.TowerWalker;
 
             TryApplyStagePowerups();
+            
+            SpawnEnemies();
             
             _inProcess = true;
         }
@@ -120,6 +123,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             {
                 float newCurrentHealth = MathF.Min(maxHealth, currentHealth + maxHealth * modifierMult);
                 _mainHero.CurrentHealth.Value = newCurrentHealth;
+            }
+
+            if (_permanentPowerupResolver.TryGetFirstEnemiesDamageMult(out float debuffPerc,
+                    out int debuffEnemiesCount))
+            {
+                _targetDebuffedEnemiesCount = debuffEnemiesCount;
+                _debuffPercent = debuffPerc;
+                _currentDebuffedEnemiesCount = 0;
+
+                _shouldDebuff = true;
+            }
+            else
+            {
+                _shouldDebuff = false;
             }
         }
 
@@ -186,8 +203,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             for (int i = 0; i < enemyItemConfig.EnemiesCount; i++)
             {
-                Entity spawnedEnemy =
-                    _enemiesFactory.Create(GenerateRandomPositionInCircle(), enemyItemConfig.EnemyConfig);
+                if (_shouldDebuff && _currentDebuffedEnemiesCount >= _targetDebuffedEnemiesCount)
+                    _shouldDebuff = false;
+                
+                float healthDebuffPercent = 0f;
+                
+                if (_shouldDebuff)
+                    healthDebuffPercent = _debuffPercent;
+
+                Entity spawnedEnemy = _enemiesFactory.Create(GenerateRandomPositionInCircle(), enemyItemConfig.EnemyConfig, healthDebuffPercent);
+
+                if (_shouldDebuff)
+                    _currentDebuffedEnemiesCount++;
 
                 IDisposable removeReason = spawnedEnemy.IsDead.Subscribe((oldValue, isDead) =>
                 {

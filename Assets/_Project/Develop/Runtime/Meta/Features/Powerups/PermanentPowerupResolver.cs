@@ -23,7 +23,7 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
                 return false;
             }
 
-            towerHealMult = _permanentPowerupsConfig.TowerCurrentHealthMult;
+            towerHealMult = _permanentPowerupsConfig.TowerExtraHealthPerc;
             return true;
         }
 
@@ -37,7 +37,7 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
             }
 
             firstEnemiesCount = _permanentPowerupsConfig.FirstEnemiesInWaveCount;
-            firstEnemiesDamageMult = _permanentPowerupsConfig.FirstEnemiesInWaveDamageMult;
+            firstEnemiesDamageMult = _permanentPowerupsConfig.FirstEnemiesInWaveDebuffPerc;
             return true;
         }
 

@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
 
-        public Entity Create(Vector3 position, EntityConfig config)
+        public Entity Create(Vector3 position, EntityConfig config, float healthDebuffPercent = 0f)
         {
             Entity entity;
 
@@ -39,7 +39,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                     entity = _entitiesFactory.CreateWalkingEnemy(position, walkingEnemyConfig);
                     _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
-                
+
                 case RangedEnemyConfig rangedEnemyConfig:
                     entity = _entitiesFactory.CreateRangedEnemy(position, rangedEnemyConfig);
                     _brainsFactory.CreateRangedEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
@@ -48,6 +48,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");
             }
+
+            if (healthDebuffPercent != 0)
+                entity.CurrentHealth.Value = entity.MaxHealth.Value * (1 - healthDebuffPercent);
 
             entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
 
