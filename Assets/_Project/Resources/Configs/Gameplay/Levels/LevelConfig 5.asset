@@ -18,5 +18,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 630228f581e5cd944bf103f7debc028d, type: 2}
   - {fileID: 11400000, guid: 5752ed01d3b44554eb81011d711f21c5, type: 2}
   - {fileID: 11400000, guid: dd8e2f66f53cd5145bf899c781a73508, type: 2}
-  _towerMaxHealth: 100
-  _goldReward: 750
+  _towerMaxHealth: 200
+  _goldReward: 1500

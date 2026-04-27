@@ -150,7 +150,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.AttackRange))
                 .AddDistanceToTargetReachedEvent()
                 .AddDistanceToTargetReached()
-                .AddExplosionDamage(new ReactiveVariable<float>(config.InstantDamage))
+                .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.AttackProcessTime))
+                .AddAttackProcessCurrentTime()
+                .AddInAttackProcess()
+                .AddStartAttackRequest()
+                .AddStartAttackEvent()
+                .AddEndAttackEvent()
+                .AddAttackDelayTime(new ReactiveVariable<float>(config.AttackDelayTime))
+                .AddAttackDelayEndEvent()
+                .AddAttackCooldownInitialTime(new ReactiveVariable<float>(config.AttackCooldown))
+                .AddAttackCooldownCurrentTime()
+                .AddInAttackCooldown()
+                .AddInstantAttackDamage(new ReactiveVariable<float>(config.InstantDamage))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess();
@@ -175,12 +186,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
             
+            ICompositeCondition canStartAttack = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InAttackProcess.Value == false))
+                .Add(new FuncCondition(() => entity.InAttackCooldown.Value == false))
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value));
+
             entity
                 .AddCanMove(canMove)
                 .AddCanRotate(canRotate)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
-                .AddCanTakeDamage(canTakeDamage);
+                .AddCanTakeDamage(canTakeDamage)
+                .AddCanStartAttack(canStartAttack);
 
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
@@ -191,7 +208,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                .AddSystem(new DistanceDetectorSystem());
+                .AddSystem(new DistanceDetectorSystem())
+                .AddSystem(new StartAttackSystem())
+                .AddSystem(new AttackProcessTimerSystem())
+                .AddSystem(new AttackDelayEndTriggerSystem())
+                .AddSystem(new InstantShootSystem(this))
+                .AddSystem(new EndAttackSystem())
+                .AddSystem(new AttackCooldownTimerSystem());
 
             return entity;
         }

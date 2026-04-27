@@ -63,16 +63,67 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             
             return brain;
         }
+        
+        public StateMachineBrain CreateRangedEnemyBrain(Entity entity, ITargetSelector targetSelector)
+        {
+            FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
+            
+            MoveToTargetState moveToTargetState = new MoveToTargetState(entity);
+            RotateToTargetState rotateToTargetState = new RotateToTargetState(entity);
+            
+            AIParallelState chaseState = new AIParallelState(moveToTargetState, rotateToTargetState);
+            
+            AIStateMachine autoAttackState = CreateAutoAttackStateMachine(entity);
+            
+            AIStateMachine rootStateMachine = new AIStateMachine();
+            rootStateMachine.AddState(findTargetState);
+            rootStateMachine.AddState(chaseState);
+            rootStateMachine.AddState(autoAttackState);
+            
+            ReactiveVariable<Entity> currentTarget = entity.CurrentTarget;
+            ReactiveVariable<bool> distanceToTargetReached = entity.DistanceToTargetReached;
+            ICondition canMove = entity.CanMove;
+            
+            ICompositeCondition fromFindToChaseCondition = new CompositeCondition()
+                .Add(canMove)
+                .Add(new FuncCondition(() => currentTarget.Value != null));
+            
+            ICompositeCondition fromChaseToAutoAttackCondition = new CompositeCondition()
+                .Add(new FuncCondition(() => currentTarget.Value != null))
+                .Add(new FuncCondition(() => distanceToTargetReached.Value));
+
+            //if current target is null = game over
+
+            rootStateMachine.AddTransition(findTargetState, chaseState, fromFindToChaseCondition);
+            rootStateMachine.AddTransition(chaseState, autoAttackState, fromChaseToAutoAttackCondition);
+            
+            StateMachineBrain brain = new StateMachineBrain(rootStateMachine);
+            
+            _brainsContext.SetFor(entity, brain);
+            
+            return brain;
+        }
 
         public StateMachineBrain CreateTurretBrain(Entity entity, ITargetSelector targetSelector)
         {
             FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
-            AIStateMachine autoAttack = CreateAutoAttackStateMachine(entity);
+            AIStateMachine autoAttackState = CreateAutoAttackStateMachine(entity);
 
-            AIParallelState rootParallelState = new AIParallelState(findTargetState, autoAttack);
-            
             AIStateMachine rootStateMachine = new AIStateMachine();
-            rootStateMachine.AddState(rootParallelState);
+            rootStateMachine.AddState(findTargetState);
+            rootStateMachine.AddState(autoAttackState);
+            
+            ReactiveVariable<Entity> currentTarget = entity.CurrentTarget;
+            
+            ICompositeCondition fromFindToAutoAttackCondition = new CompositeCondition()
+                .Add(new FuncCondition(() => currentTarget.Value != null));
+
+            rootStateMachine.AddTransition(findTargetState, autoAttackState, fromFindToAutoAttackCondition);
+            
+            ICompositeCondition fromAutoAttackToFindCondition = new CompositeCondition()
+                .Add(new FuncCondition(() => currentTarget.Value == null));
+
+            rootStateMachine.AddTransition(autoAttackState, findTargetState, fromAutoAttackToFindCondition);
             
             StateMachineBrain brain = new StateMachineBrain(rootStateMachine);
             

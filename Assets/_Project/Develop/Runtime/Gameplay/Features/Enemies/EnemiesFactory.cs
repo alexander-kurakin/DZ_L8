@@ -42,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 
                 case RangedEnemyConfig rangedEnemyConfig:
                     entity = _entitiesFactory.CreateRangedEnemy(position, rangedEnemyConfig);
-                    _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                    _brainsFactory.CreateRangedEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
 
                 default:

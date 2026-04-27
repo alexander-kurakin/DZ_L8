@@ -15,5 +15,5 @@ MonoBehaviour:
   _stageConfigs:
   - {fileID: 11400000, guid: dfa2ff8c0701b8049b81f45dd02b9c2f, type: 2}
   - {fileID: 11400000, guid: 6e84eb8f6534aa44bbdc35d961ae18ee, type: 2}
-  _towerMaxHealth: 55
-  _goldReward: 250
+  _towerMaxHealth: 80
+  _goldReward: 300
