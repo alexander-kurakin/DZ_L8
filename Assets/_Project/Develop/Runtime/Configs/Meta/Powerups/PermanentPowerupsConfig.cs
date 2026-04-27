@@ -1,3 +1,4 @@
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.Configs.Meta.Powerups
@@ -9,7 +10,29 @@ namespace _Project.Develop.Runtime.Configs.Meta.Powerups
         [field: SerializeField] public int FirstEnemiesInWaveCount { get; private set; } = 5;
         [field: SerializeField, Range(0f, 1f)] public float FirstEnemiesInWaveDebuffPerc { get; private set; } = 0.25f;
         [field: SerializeField] public float ExplosionDamageIncreasedMult { get; private set; } = 1.5f;
-        
-        
+
+        [field: SerializeField] public int TowerExtraHealthPriceDiamonds { get; private set; } = 150;
+        [field: SerializeField] public int FirstEnemiesDebuffPriceDiamonds { get; private set; } = 250;
+        [field: SerializeField] public int PowerfulClickPriceDiamonds { get; private set; } = 400;
+
+        public int GetDiamondPriceBy(PowerupType type)
+        {
+            int diamondPrice = 0;
+
+            switch (type)
+            {
+                case PowerupType.HealExtra:
+                    diamondPrice = TowerExtraHealthPriceDiamonds;
+                    break;
+                case PowerupType.DamageFirstEnemies:
+                    diamondPrice = FirstEnemiesDebuffPriceDiamonds;
+                    break;
+                case PowerupType.IncreaseClickDamage:
+                    diamondPrice = PowerfulClickPriceDiamonds;
+                    break;
+            }
+            
+            return diamondPrice;
+        }
     }
 }

@@ -2,6 +2,7 @@
 using DG.Tweening;
 using System;
 using System.Collections;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.Core
@@ -11,12 +12,15 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         public event Action<PopupPresenterBase> CloseRequest;
 
         private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly IUISoundService _uiSoundService;
 
         private Coroutine _process;
 
-        protected PopupPresenterBase(ICoroutinesPerformer coroutinesPerformer)
+        protected PopupPresenterBase(ICoroutinesPerformer coroutinesPerformer,
+            IUISoundService uiSoundService)
         {
             _coroutinesPerformer = coroutinesPerformer;
+            _uiSoundService = uiSoundService;
         }
 
         protected abstract PopupViewBase PopupView { get; }
@@ -60,7 +64,14 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             PopupView.CloseRequest -= OnCloseRequest;
         }
 
-        protected void OnCloseRequest() => CloseRequest?.Invoke(this);
+        protected void OnCloseRequest()
+        {
+            _uiSoundService.Play(UISoundIDs.ButtonClick);
+            
+            CloseRequest?.Invoke(this);
+        }
+
+        
 
         private IEnumerator ProcessShow()
         {

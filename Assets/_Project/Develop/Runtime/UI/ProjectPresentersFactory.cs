@@ -1,21 +1,23 @@
 ﻿using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using _Project.Develop.Runtime.Configs.Meta.Stats;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Core.TestPopup;
 using Assets._Project.Develop.Runtime.UI.MainMenu;
+using Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
@@ -84,16 +86,21 @@ namespace Assets._Project.Develop.Runtime.UI
                 view);
         }
 
-        public TestPopupPresenter CreateTestPopupPresenter(TestPopupView view)
-        {
-            return new TestPopupPresenter(
-                view,
-                _container.Resolve<ICoroutinesPerformer>());
-        }
-        
         public CharacterPreviewPresenter CreateCharacterPreviewPresenter()
         {
             return new CharacterPreviewPresenter(_container.Resolve<SceneLoaderService>(), _container.Resolve<ICoroutinesPerformer>());
+        }
+        
+        public ShopPopupPresenter CreateShopPopupPresenter(ShopPopupView view)
+        {
+            return new ShopPopupPresenter(
+                _container.Resolve<ICoroutinesPerformer>(),
+                view,
+                _container.Resolve<WalletService>(),
+                _container.Resolve<PowerupService>(),
+                _container.Resolve<PlayerDataProvider>(),
+                _container.Resolve<ConfigsProviderService>(),
+                _container.Resolve<IUISoundService>());
         }
     }
 }

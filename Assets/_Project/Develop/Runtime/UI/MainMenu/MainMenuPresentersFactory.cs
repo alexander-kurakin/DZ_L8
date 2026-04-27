@@ -24,7 +24,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<SceneSwitcherService>(),
-                _container.Resolve<IUISoundService>());
+                _container.Resolve<IUISoundService>(),
+                _container.Resolve<MainMenuPopupService>());
         }
     }
 }

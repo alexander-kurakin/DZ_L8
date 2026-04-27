@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core.TestPopup;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,17 +21,6 @@ namespace Assets._Project.Develop.Runtime.UI.Core
         }
 
         protected abstract Transform PopupLayer { get; }
-
-        public TestPopupPresenter OpenTestPopup(Action closedCallback = null)
-        {
-            TestPopupView view = ViewsFactory.Create<TestPopupView>(ViewIDs.TestPopup, PopupLayer);
-
-            TestPopupPresenter popup = _presentersFactory.CreateTestPopupPresenter(view);
-
-            OnPopupCreated(popup, view, closedCallback);
-
-            return popup;
-        }
 
         public void ClosePopup(PopupPresenterBase popup)
         {

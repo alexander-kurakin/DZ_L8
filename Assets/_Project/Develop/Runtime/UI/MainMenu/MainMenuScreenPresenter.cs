@@ -23,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly IUISoundService _uiSoundService;
+        private readonly MainMenuPopupService _popupService;
         
         public MainMenuScreenPresenter(
             MainMenuScreenView screen,
@@ -30,7 +31,8 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             LevelsListConfig levelsListConfig,
             ICoroutinesPerformer coroutinesPerformer,
             SceneSwitcherService sceneSwitcherService,
-            IUISoundService uiSoundService
+            IUISoundService uiSoundService,
+            MainMenuPopupService popupService
             )
         {
             _screen = screen;
@@ -39,11 +41,13 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             _coroutinesPerformer = coroutinesPerformer;
             _sceneSwitcherService = sceneSwitcherService;
             _uiSoundService = uiSoundService;
+            _popupService = popupService;
         }
 
         public void Initialize()
         {
             _screen.PlayButtonClicked += OnPlayButtonClicked;
+            _screen.ShopButtonClicked += OnShopButtonClicked;
 
             CreateWallet();
             CreateStats();
@@ -52,7 +56,14 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             foreach (IPresenter presenter in _childPresenters)
                 presenter.Initialize();
         }
-        
+
+        private void OnShopButtonClicked()
+        {
+            _uiSoundService.Play(UISoundIDs.ButtonClick);
+
+            _popupService.OpenShopPopup();
+        }
+
         public void Dispose()
         {
             _screen.PlayButtonClicked -= OnPlayButtonClicked;

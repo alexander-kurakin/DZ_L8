@@ -21,7 +21,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
             WinPopupView view,
             SceneSwitcherService sceneSwitcher,
             IUISoundService uiSoundService,
-            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer)
+            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer, uiSoundService)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;

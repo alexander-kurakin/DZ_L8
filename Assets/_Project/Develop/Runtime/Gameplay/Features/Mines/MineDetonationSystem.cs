@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -13,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
         private List<Entity> _processedEntities;
         private Entity _mineEntity;
         private Transform _mineTransform;
+        private ReactiveVariable<Teams> _mineTeam;
         private bool _hasDetonated;
         private ReactiveEvent<Vector3> _dealAreaImpactDamageRequest;
         
@@ -31,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
             _mineEntity = entity;
             _dealAreaImpactDamageRequest = entity.DealAreaImpactDamageRequest;
             _mineTransform = entity.Transform;
+            _mineTeam = entity.Team;
         }
 
         public void OnUpdate(float deltaTime)
@@ -39,24 +42,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
             {
                 if (_hasDetonated)
                     return;
-                
+
                 Entity contactEntity = _contacts.Items[i];
 
-                if(_processedEntities.Contains(contactEntity) == false)
-                {
-                    _processedEntities.Add(contactEntity);
+                if (_processedEntities.Contains(contactEntity))
+                    continue;
 
-                    _dealAreaImpactDamageRequest?.Invoke(_mineTransform.position);
+                _processedEntities.Add(contactEntity);
 
-                    _hasDetonated = true;
-                    
-                    _entitiesLifeContext.Release(_mineEntity);
-                }
+                if (IsSameTeam(contactEntity))
+                    continue;
+
+                _dealAreaImpactDamageRequest?.Invoke(_mineTransform.position);
+
+                _hasDetonated = true;
+
+                _entitiesLifeContext.Release(_mineEntity);
             }
-
+            
             for (int i = _processedEntities.Count - 1; i >= 0; i--)
                 if (ContainInContacts(_processedEntities[i]) == false)
                     _processedEntities.RemoveAt(i);
+        }
+
+        private bool IsSameTeam(Entity contactEntity)
+        {
+            if (contactEntity.TryGetTeam(out ReactiveVariable<Teams> contactTeam))
+                return _mineTeam.Value == contactTeam.Value;
+
+            return false;
         }
 
         public bool ContainInContacts(Entity entity)

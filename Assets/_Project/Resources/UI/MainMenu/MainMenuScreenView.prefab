@@ -192,6 +192,7 @@ MonoBehaviour:
   <WalletIconTextListView>k__BackingField: {fileID: 1878433728868284233}
   <StatsIconTextListView>k__BackingField: {fileID: 1936559415057442376}
   _playButton: {fileID: 701919369352906010}
+  _shopButton: {fileID: 4568543002742591544}
 --- !u!222 &7876747582623618751
 CanvasRenderer:
   m_ObjectHideFlags: 0

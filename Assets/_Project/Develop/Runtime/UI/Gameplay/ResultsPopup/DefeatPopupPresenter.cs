@@ -23,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
             SceneSwitcherService sceneSwitcher,
             GameplayInputArgs currentLevelArgs,
             IUISoundService uiSoundService, 
-            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer)
+            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer, uiSoundService)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;
