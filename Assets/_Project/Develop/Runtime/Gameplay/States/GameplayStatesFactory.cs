@@ -85,7 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             WinState winState = CreateWinState(inputArgs);
 
             ICompositeCondition coreLoopToWinStateCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => preparationTriggerService.PrepareTriggerClicked.Value))
                 .Add(new FuncCondition(() => stageProviderService.CurrentStageResult.Value == StageResults.Completed))
                 .Add(new FuncCondition(() => stageProviderService.HasNextStage() == false));
 
