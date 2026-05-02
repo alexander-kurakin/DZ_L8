@@ -55,6 +55,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
                 AbilitySlotView abilityView = _viewsFactory.Create<AbilitySlotView>(ViewIDs.AbilitySlot);
                 
                 _mouseOverUIService.Register(abilityView.IconView.RectTransform);
+                _mouseOverUIService.Register(abilityView.IconTextView.RectTransform);
 
                 _view.Add(abilityView);
 
@@ -85,6 +86,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
                 _viewsFactory.Release(singleAbilityPresenter.View);
                 singleAbilityPresenter.Dispose();
                 _mouseOverUIService.Unregister(singleAbilityPresenter.View.IconView.RectTransform);
+                _mouseOverUIService.Unregister(singleAbilityPresenter.View.IconTextView.RectTransform);
             }
 
             _abilityPresenters.Clear();

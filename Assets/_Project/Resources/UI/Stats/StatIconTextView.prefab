@@ -53,6 +53,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _text: {fileID: 1594520344631327503}
   _icon: {fileID: 427878596411176514}
+  _rectTransform: {fileID: 927372948090849455}
 --- !u!1 &2998180404402118365
 GameObject:
   m_ObjectHideFlags: 0
