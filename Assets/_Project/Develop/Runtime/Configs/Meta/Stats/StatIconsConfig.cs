@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
 
-namespace _Project.Develop.Runtime.Configs.Meta.Stats
+namespace Assets._Project.Develop.Runtime.Configs.Meta.Stats
 {
     [CreateAssetMenu(menuName = "Configs/Meta/Stats/NewStatIconsConfig", fileName = "StatIconsConfig")]
     public class StatIconsConfig : ScriptableObject

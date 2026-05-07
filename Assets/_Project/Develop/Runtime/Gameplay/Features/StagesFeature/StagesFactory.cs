@@ -4,7 +4,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using System;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
-using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
@@ -34,8 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                         _container.Resolve<MainHeroHolderService>(),
                         _container.Resolve<MouseInput>(),
                         _container.Resolve<MouseRaycastService>(),
-                        _container.Resolve<IBackgroundMusicService>(),
-                        _container.Resolve<PermanentPowerupResolver>());
+                        _container.Resolve<IBackgroundMusicService>());
 
                 default:
                     throw new ArgumentException($"Not supported {stageConfig.GetType()} type config");

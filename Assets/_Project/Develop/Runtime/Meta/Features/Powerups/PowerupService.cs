@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -8,42 +9,112 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
 {
     public class PowerupService : IDataReader<PlayerData>, IDataWriter<PlayerData>
     {
-        private readonly Dictionary<PowerupType, ReactiveVariable<bool>> _powerups;
+        private readonly Dictionary<string, PowerupSaveData> _powerupData;
         
         public PowerupService(PlayerDataProvider playerDataProvider)
         {
-            _powerups = new Dictionary<PowerupType, ReactiveVariable<bool>>();
-
-            foreach (PowerupType powerupType in Enum.GetValues(typeof(PowerupType)))
-                _powerups[powerupType] = new ReactiveVariable<bool>();
+            _powerupData = new Dictionary<string, PowerupSaveData>();
             
             playerDataProvider.RegisterWriter(this);
             playerDataProvider.RegisterReader(this);
         }
-        
-        public IReadOnlyVariable<bool> GetBy(PowerupType type) => _powerups[type];
-        
-        public void Set(PowerupType type, bool value) => _powerups[type].Value = value;
+
+        public IReadOnlyList<PowerupUIData> GetPowerupUIData(IReadOnlyList<PowerupConfig> powerupConfigs)
+        {
+            List<PowerupUIData> powerupUIData = new(powerupConfigs.Count);
+
+            foreach (PowerupConfig powerupConfig in powerupConfigs)
+            {
+                PowerupSaveData powerupSaveData = _powerupData[powerupConfig.ID];
+
+                powerupUIData.Add(new PowerupUIData(
+                    powerupConfig, 
+                    powerupSaveData.Level, 
+                    powerupSaveData.Unlocked));
+            }
+            
+            return powerupUIData;
+        }
+
+        public void UnlockPowerup(string ID)
+        {
+            PowerupSaveData powerupSaveData = _powerupData[ID];
+            
+            if (powerupSaveData.Unlocked)
+                throw new InvalidOperationException($"Powerup '{ID}' already unlocked.");
+            
+            powerupSaveData.Unlocked = true;
+            powerupSaveData.Level = 1;
+        }
+
+        public void UpgradePowerup(string ID, int maxLevel)
+        {
+            PowerupSaveData powerupSaveData = _powerupData[ID];
+            
+            if (powerupSaveData.Level >= maxLevel)
+                throw new InvalidOperationException($"Powerup '{ID}' already max level.");
+            
+            powerupSaveData.Level++;
+        }
         
         public void ReadFrom(PlayerData data)
         {
-            foreach (PowerupType powerupType in Enum.GetValues(typeof(PowerupType)))
+            foreach (KeyValuePair<string, PowerupSaveData> kvp in data.PowerupsData)
             {
-                if (data.PowerupsData != null && data.PowerupsData.TryGetValue(powerupType, out bool powerup))
-                    _powerups[powerupType].Value = powerup;
+                if (_powerupData.ContainsKey(kvp.Key))
+                {
+                    _powerupData[kvp.Key].Level = kvp.Value.Level;
+                    _powerupData[kvp.Key].Unlocked = kvp.Value.Unlocked;
+                }
                 else
-                    _powerups[powerupType].Value = false;
+                {
+                    _powerupData.Add(kvp.Key, new PowerupSaveData
+                    {
+                        Level = kvp.Value.Level,
+                        Unlocked = kvp.Value.Unlocked
+                    });                    
+                }
             }
+
         }
 
         public void WriteTo(PlayerData data)
         {
-            if (data.PowerupsData == null)
-                data.PowerupsData = new Dictionary<PowerupType, bool>();
-
-            foreach (KeyValuePair<PowerupType, ReactiveVariable<bool>> keyValuePair in _powerups)
-                data.PowerupsData[keyValuePair.Key] = keyValuePair.Value.Value;
-                
+            foreach (KeyValuePair<string, PowerupSaveData> kvp in _powerupData)
+            {
+                if (data.PowerupsData.ContainsKey(kvp.Key))
+                {
+                    data.PowerupsData[kvp.Key].Level = kvp.Value.Level;
+                    data.PowerupsData[kvp.Key].Unlocked = kvp.Value.Unlocked;
+                }
+                else
+                {
+                    data.PowerupsData.Add(kvp.Key, new PowerupSaveData
+                    {
+                        Level = kvp.Value.Level,
+                        Unlocked = kvp.Value.Unlocked
+                    });
+                }
+            }
         }
+    }
+    
+    public class PowerupSaveData
+    {
+        public int Level;
+        public bool Unlocked;
+    }
+    
+    public class PowerupUIData
+    {
+        public PowerupUIData(PowerupConfig config, int level, bool unlocked)
+        {
+            Config = config;
+            Level = level;
+            Unlocked = unlocked;
+        }
+        public PowerupConfig Config { get; }
+        public int Level { get; }
+        public bool Unlocked { get; }
     }
 }

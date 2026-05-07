@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -53,6 +54,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddAbilityUserActiveAbility()
                 .AddAbilityUserAllAbilities()
                 .AddAbilityUserPlantAbilityPreference();
+
+            entity
+                .AddPowerup()
+                .AddSystem(new PowerupOnAddActivatorSystem());
 
             _abilitiesFactory.SetupAbilitiesForMainHero(entity);
             

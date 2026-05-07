@@ -1,5 +1,5 @@
 using System;
-using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;

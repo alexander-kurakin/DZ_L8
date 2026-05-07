@@ -4,7 +4,7 @@ using System.Linq;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using UnityEngine;
 
-namespace _Project.Develop.Runtime.Configs.Gameplay.Abilities
+namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities
 {
     [CreateAssetMenu(menuName = "Configs/Gameplay/Abilities/NewAbilityIconsConfig", fileName = "AbilityIconsConfig")]
     public class AbilityIconsConfig : ScriptableObject
@@ -21,4 +21,17 @@ namespace _Project.Develop.Runtime.Configs.Gameplay.Abilities
             [field: SerializeField] public Sprite Sprite { get; private set; }
         }
     }
+}
+
+public abstract class AbilityConfig : ScriptableObject
+{
+    [field: SerializeField] public string ID { get; private set; }
+    public abstract int MaxLevel { get; }
+
+    //meta-data 
+    [field: SerializeField] public string Name { get; private set; }
+    [field: SerializeField] public string Description { get; private set; }
+    [field: SerializeField] public Sprite Icon { get; private set; }
+
+    public bool IsUpgradable() => MaxLevel > 1;
 }

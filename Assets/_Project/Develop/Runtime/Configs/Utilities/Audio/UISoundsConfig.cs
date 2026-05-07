@@ -4,7 +4,7 @@ using System.Linq;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 
-namespace _Project.Develop.Runtime.Configs.Utilities.Audio
+namespace Assets._Project.Develop.Runtime.Configs.Utilities.Audio
 {
     [CreateAssetMenu(
         menuName = "Configs/Utilities/Audio/NewUISoundsConfig",

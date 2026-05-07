@@ -1,8 +1,10 @@
-﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
+﻿using _Project.Develop.Runtime.Meta.Features.Powerups;
+using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
@@ -15,6 +17,13 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             container.RegisterAsSingle(CreateMainMenuPresentersFactory);
             container.RegisterAsSingle(CreateMainMenuScreenPresenter).NonLazy();
             container.RegisterAsSingle(CreateMainMenuPopupService);
+            
+            container.RegisterAsSingle(CreatePowerupFactory);
+        }
+        
+        private static PowerupFactory CreatePowerupFactory(DIContainer c)
+        {
+            return new PowerupFactory(c);
         }
 
         private static MainMenuPopupService CreateMainMenuPopupService(DIContainer c)
@@ -22,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             return new MainMenuPopupService(
                 c.Resolve<ViewsFactory>(),
                 c.Resolve<ProjectPresentersFactory>(),
+                c.Resolve<MainMenuPresentersFactory>(),
                 c.Resolve<MainMenuUIRoot>());
         }
 

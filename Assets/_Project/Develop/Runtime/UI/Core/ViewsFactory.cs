@@ -22,8 +22,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/HeroHealthBar" },
             {ViewIDs.AbilitySlot, "UI/Gameplay/Abilities/AbilitySlotView" },
             {ViewIDs.ShopPopup, "UI/MainMenu/Shop/ShopPopup" },
-            
-            
+            {ViewIDs.SelectableAbilityView, "UI/AbilitySelectPopup/SelectionAbilityView"},
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

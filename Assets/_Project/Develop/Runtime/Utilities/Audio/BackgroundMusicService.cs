@@ -1,4 +1,4 @@
-using _Project.Develop.Runtime.Configs.Utilities.Audio;
+using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilities.Audio

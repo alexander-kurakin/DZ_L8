@@ -2,6 +2,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
+		public Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupComponent PowerupC => GetComponent<Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupComponent>();
+
+		public Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupList Powerup => PowerupC.Value;
+
+		public bool TryGetPowerup(out Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupList value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupComponent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupList);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPowerup()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupComponent() { Value = new Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupList() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPowerup(Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupList value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Meta.Features.Powerups.PowerupComponent() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.SpawnPoint SpawnPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.SpawnPoint>();
 
 		public UnityEngine.Transform SpawnPoint => SpawnPointC.Value;

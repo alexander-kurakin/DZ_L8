@@ -1,8 +1,7 @@
-using System;
-using _Project.Develop.Runtime.Configs.Meta.Powerups;
+using System.Collections.Generic;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
+using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
-using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -13,32 +12,43 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
 {
     public class ShopPopupPresenter : PopupPresenterBase
     {
-        private const string TitleName = "SHOP";
-
+        private const string Title = "SHOP";
+        private const string PowerupText = "CHOOSE WISELY..";
+        
         private readonly ShopPopupView _view;
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly MainMenuPresentersFactory _presentersFactory;
+        private readonly ViewsFactory _viewsFactory;
         private readonly WalletService _walletService;
-        private readonly PowerupService _powerupService;
-        private readonly PlayerDataProvider _playerDataProvider;
-        private readonly PermanentPowerupsConfig  _permanentPowerupsConfig;
         private readonly IUISoundService _uiSoundService;
+        private readonly ConfigsProviderService _configsProviderService;
+        private readonly PowerupService _powerupService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly PlayerDataProvider _playerDataProvider;
+        
+        private List<SelectableAbilityPresenter> _presenters = new();
+        private SelectableAbilityPresenter _selectableAbilityPresenter;
         
         public ShopPopupPresenter(
             ICoroutinesPerformer coroutinesPerformer,
             ShopPopupView view,
+            MainMenuPresentersFactory presentersFactory,
+            ViewsFactory viewsFactory,
             WalletService walletService,
-            PowerupService powerupService,
-            PlayerDataProvider playerDataProvider,
             ConfigsProviderService configsProviderService,
-            IUISoundService uiSoundService) : base(coroutinesPerformer, uiSoundService)
+            IUISoundService uiSoundService,
+            PowerupService powerupService,
+            PlayerDataProvider playerDataProvider
+            ) : base(coroutinesPerformer, uiSoundService)
         {
             _view = view;
-            _coroutinesPerformer = coroutinesPerformer;
+            _presentersFactory = presentersFactory;
+            _viewsFactory = viewsFactory;
             _walletService = walletService;
-            _powerupService = powerupService;
-            _playerDataProvider = playerDataProvider;
-            _permanentPowerupsConfig = configsProviderService.GetConfig<PermanentPowerupsConfig>();
             _uiSoundService = uiSoundService;
+            _configsProviderService =  configsProviderService;
+            _powerupService =  powerupService;
+            _coroutinesPerformer = coroutinesPerformer;
+            _playerDataProvider =  playerDataProvider;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -46,108 +56,91 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
         public override void Initialize()
         {
             base.Initialize();
-
-            _view.SetTitle(TitleName);
-
-            _view.TowerHealOuterView.IconClicked += OnTowerHealthClicked;
-            _view.EnemiesDebuffOuterView.IconClicked += OnEnemiesDebuffClicked;
-            _view.PowerfulClickOuterView.IconClicked += OnPowerfulClickClicked;
-
-            RefreshPowerupsData();
-        }
-
-        private void RefreshPowerupsData()
-        {
-            foreach (PowerupType type in Enum.GetValues(typeof(PowerupType)))
-                RefreshPowerupData(type);
-        }
-
-        private void RefreshPowerupData(PowerupType type)
-        {
-            bool alreadyOwned = _powerupService.GetBy(type).Value;
-            int price = _permanentPowerupsConfig.GetDiamondPriceBy(type);
             
-            switch (type)
-            {
-                case PowerupType.HealExtra:
-                    RefreshSingleSlot(
-                        _view.TowerHealInnerTextView, 
-                        _view.TowerHealOuterView, 
-                        alreadyOwned, 
-                        price);
-                    break;
-                
-                case PowerupType.DamageFirstEnemies:
-                    RefreshSingleSlot(
-                        _view.EnemiesDebuffInnerTextView, 
-                        _view.EnemiesDebuffOuterView, 
-                        alreadyOwned, 
-                        price);
-                    break;
-                
-                case PowerupType.IncreaseClickDamage:
-                    RefreshSingleSlot(
-                        _view.PowerfulClickInnerTextView, 
-                        _view.PowerfulClickOuterView, 
-                        alreadyOwned, 
-                        price);
-                    break;
-            }
+            _view.SetTitle(Title);
+            _view.SetAdditionalText(PowerupText);
+            _view.BuyButtonOff();
+
+            _view.BuyButtonClicked += OnBuyButtonClicked;
+
+            RebuildPowerups();
         }
 
-        private void RefreshSingleSlot (
-            IconTextView priceView,
-            IconView iconView,
-            bool alreadyOwned,
-            int price)
+        private void RebuildPowerups()
         {
-            if (alreadyOwned)
+            PowerupConfigsContainer powerupConfigsContainer = _configsProviderService.GetConfig<PowerupConfigsContainer>();
+            IReadOnlyList<PowerupUIData> powerupUIData = _powerupService.GetPowerupUIData(powerupConfigsContainer.PowerupConfigs);
+
+            foreach (PowerupUIData uiData in powerupUIData)
             {
-                priceView.SetText("ALREADY OWNED");
-                iconView.SetHighlighted(true);
+                SelectableAbilityView selectableAbilityView = _viewsFactory.Create<SelectableAbilityView>(ViewIDs.SelectableAbilityView);
+                _view.AbilityListView.Add(selectableAbilityView);
+                
+                SelectableAbilityPresenter selectableAbilityPresenter = _presentersFactory.CreateSelectableAbilityPresenter(
+                    uiData.Config,
+                    selectableAbilityView);
+                
+                selectableAbilityPresenter.Selected += OnPresenterSelected;
+                selectableAbilityPresenter.Initialize();
+                
+                _presenters.Add(selectableAbilityPresenter);
             }
-            else
-            {
-                priceView.SetText(price.ToString());
-                iconView.SetHighlighted(false);
-            }
+            
+            _view.BuyButtonOff(); //resetting button state
         }
         
-        private void TryBuy(PowerupType type)
+        private void OnPresenterSelected(SelectableAbilityPresenter selected)
         {
-            if (_powerupService.GetBy(type).Value)
-                return;
-            
-            int price = _permanentPowerupsConfig.GetDiamondPriceBy(type);
-            
-            if (price <= 0)
-                return;
+            _view.BuyButtonOn();
+            _view.AbilityListView.Select(selected.View);
+            _selectableAbilityPresenter = selected;
+        }
+
+        private void OnBuyButtonClicked()
+        {
+            int price = _selectableAbilityPresenter.PowerupConfig.CostInDiamonds;
             
             if (_walletService.Enough(CurrencyTypes.Diamond, price) == false)
                 return;
             
             _walletService.Spend(CurrencyTypes.Diamond, price);
-            _powerupService.Set(type, true);
+            
+            _selectableAbilityPresenter.Provide();
+            
             _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
             
             _uiSoundService.Play(UISoundIDs.PopupOpen);
-            
-            RefreshPowerupData(type);
         }
 
-        private void OnPowerfulClickClicked() => TryBuy(PowerupType.IncreaseClickDamage);
-
-        private void OnEnemiesDebuffClicked() => TryBuy(PowerupType.DamageFirstEnemies);
-
-        private void OnTowerHealthClicked() => TryBuy(PowerupType.HealExtra);
-        
         protected override void OnPreHide()
         {
-            _view.TowerHealOuterView.IconClicked -= OnTowerHealthClicked;
-            _view.EnemiesDebuffOuterView.IconClicked -= OnEnemiesDebuffClicked;
-            _view.PowerfulClickOuterView.IconClicked -= OnPowerfulClickClicked;
-            
             base.OnPreHide();
+            
+            _view.BuyButtonOff();
+
+            _view.BuyButtonClicked -= OnBuyButtonClicked;
+
+            foreach (SelectableAbilityPresenter abilityPresenter in _presenters)
+                abilityPresenter.Selected -= OnPresenterSelected;
         }
+        
+        public override void Dispose()
+        {
+            base.Dispose();
+
+            _view.BuyButtonClicked -= OnBuyButtonClicked;
+
+            foreach (SelectableAbilityPresenter abilityPresenter in _presenters)
+            {
+                abilityPresenter.Selected -= OnPresenterSelected;
+                _view.AbilityListView.Remove(abilityPresenter.View);
+                _viewsFactory.Release(abilityPresenter.View);
+                abilityPresenter.Dispose();
+            }
+
+            _presenters.Clear();
+        }
+
+
     }
 }

@@ -26,7 +26,6 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         private readonly List<SingleAbilityPresenter> _abilityPresenters = new();
         
         public AbilityListPresenter(
-            MainHeroHolderService mainHeroHolderService,
             ProjectPresentersFactory presentersFactory,
             ViewsFactory viewsFactory,
             AbilitySlotListView view,

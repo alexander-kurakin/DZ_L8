@@ -6,10 +6,10 @@ using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Configs.Gameplay.Abilities;
-using _Project.Develop.Runtime.Configs.Meta.Powerups;
-using _Project.Develop.Runtime.Configs.Meta.Stats;
-using _Project.Develop.Runtime.Configs.Utilities.Audio;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
+using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
             {typeof(AbilityIconsConfig), "Configs/Gameplay/Abilities/AbilityIconsConfig" },
-            {typeof(PermanentPowerupsConfig),"Configs/Meta/Powerups/PermanentPowerupsConfig"}
+            {typeof(PowerupConfigsContainer), "Configs/Gameplay/Abilities/PowerupConfigsContainer" },
         };
 
         public ResourcesConfigsLoader(ResourcesAssetsLoader resources)

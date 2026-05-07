@@ -71,8 +71,6 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             CloseRequest?.Invoke(this);
         }
 
-        
-
         private IEnumerator ProcessShow()
         {
             OnPreShow();

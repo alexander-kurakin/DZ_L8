@@ -9,7 +9,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment
         public Dictionary<CurrencyTypes, int> WalletData;
         public int Wins;
         public int Losses;
-        public Dictionary<PowerupType, bool> PowerupsData;
+        public Dictionary<string, PowerupSaveData> PowerupsData;
         
     }
 }
