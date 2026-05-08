@@ -86,38 +86,62 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
                 _presenters.Add(selectableAbilityPresenter);
             }
             
-            _view.BuyButtonOff(); //resetting button state
+            _view.BuyButtonOff(); //default button state
         }
         
         private void OnPresenterSelected(SelectableAbilityPresenter selected)
         {
-            _view.BuyButtonOn();
-            _view.AbilityListView.Select(selected.View);
+            _view.AbilityListView.Select(selected.View);    
             _selectableAbilityPresenter = selected;
+            
+            _uiSoundService.Play(UISoundIDs.SelectedClick);
+
+            if (selected.IsUnlocked() == false)
+                SetViewCanBuy(selected.PowerupConfig.CostInDiamonds);
+            else
+                SetViewAlreadyOwned();
+        }
+
+        private void SetViewCanBuy(int price)
+        {
+            _view.BuyButtonOn();
+            _view.SetAdditionalText($"Price: {price} diamonds");
+        }
+
+        private void SetViewAlreadyOwned()
+        {
+            _view.BuyButtonOff();
+            _view.SetAdditionalText("Already owned");
         }
 
         private void OnBuyButtonClicked()
         {
             int price = _selectableAbilityPresenter.PowerupConfig.CostInDiamonds;
-            
+
             if (_walletService.Enough(CurrencyTypes.Diamond, price) == false)
+            {
+                _uiSoundService.Play(UISoundIDs.CannotBuy);
+                _selectableAbilityPresenter.AnimateCannotBuy();
                 return;
-            
+            }
+
             _walletService.Spend(CurrencyTypes.Diamond, price);
             
             _selectableAbilityPresenter.Provide();
             
             _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
             
-            _uiSoundService.Play(UISoundIDs.PopupOpen);
+            _selectableAbilityPresenter.UpdateByAbilityConfig();
+            SetViewAlreadyOwned();
+            
+            _uiSoundService.Play(UISoundIDs.SuccessfulBuy);
+            _selectableAbilityPresenter.AnimateSuccessfulBuy();
         }
 
         protected override void OnPreHide()
         {
             base.OnPreHide();
             
-            _view.BuyButtonOff();
-
             _view.BuyButtonClicked -= OnBuyButtonClicked;
 
             foreach (SelectableAbilityPresenter abilityPresenter in _presenters)

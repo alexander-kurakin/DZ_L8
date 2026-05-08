@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
 {
@@ -12,8 +13,6 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
         public event Action<SelectableAbilityPresenter> Selected;
         
         private readonly PowerupService _powerupService;
-        private readonly PlayerDataProvider _playerDataProvider;
-        private readonly ICoroutinesPerformer _coroutinesPerformer;
 
         public PowerupConfig PowerupConfig { get; }
         public SelectableAbilityView View { get; }
@@ -21,16 +20,12 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
         public SelectableAbilityPresenter(
             PowerupConfig powerupConfig,
             SelectableAbilityView view,
-            PowerupService powerupService,
-            PlayerDataProvider playerDataProvider,
-            ICoroutinesPerformer coroutinesPerformer)
+            PowerupService powerupService)
         {
             PowerupConfig = powerupConfig;
             View = view;
             
             _powerupService = powerupService;
-            _playerDataProvider = playerDataProvider;
-            _coroutinesPerformer = coroutinesPerformer;
         }
         
         public void Initialize()
@@ -39,9 +34,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
             View.SetDescription(PowerupConfig.Description);
             View.Icon.SetIcon(PowerupConfig.Icon);
             
-            //
-
-            InitByAbilityConfig();
+            UpdateByAbilityConfig();
 
             View.Clicked += OnViewClicked;
         }
@@ -50,19 +43,31 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
         {
             View.Clicked -= OnViewClicked;
         }
-        
-        public void Provide()
-        {
-            _powerupService.UnlockPowerup(PowerupConfig.ID);
-            _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
-        }
+
+        public void AnimateCannotBuy() => View.CannotBuy();
+
+        public void AnimateSuccessfulBuy() => View.SuccessfulBuy();
+
+        public bool IsUnlocked() => _powerupService.GetPowerupDataByID(PowerupConfig.ID).Unlocked;
+
+        public void Provide() => _powerupService.UnlockPowerup(PowerupConfig.ID);
 
         private void OnViewClicked() => Selected?.Invoke(this);
 
-        private void InitByAbilityConfig()
+        public void UpdateByAbilityConfig()
         {
             View.Icon.HideLevel();
-            View.SetTabletText("NEW");
+
+            if (_powerupService.GetPowerupDataByID(PowerupConfig.ID).Unlocked)
+            {
+                View.SetTabletText("OWNED");
+                View.SetTabletColor(Color.green);
+            }
+            else
+            {
+                View.SetTabletText("NEW");
+                View.SetTabletColor(Color.magenta);
+            }
         }
     }
 }

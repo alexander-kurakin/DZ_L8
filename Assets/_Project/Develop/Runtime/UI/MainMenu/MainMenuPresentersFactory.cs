@@ -42,9 +42,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu
             return new SelectableAbilityPresenter(
                 powerupConfig,
                 view,
-                _container.Resolve<PowerupService>(),
-                _container.Resolve<PlayerDataProvider>(),
-                _container.Resolve<ICoroutinesPerformer>());
+                _container.Resolve<PowerupService>());
         }
         
         public ShopPopupPresenter CreateShopPopupPresenter(ShopPopupView view)

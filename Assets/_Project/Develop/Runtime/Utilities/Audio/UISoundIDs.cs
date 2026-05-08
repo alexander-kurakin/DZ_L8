@@ -6,5 +6,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
         PopupOpen,
         WinFanfare,
         DefeatFanfare,
+        CannotBuy,
+        SuccessfulBuy,
+        SelectedClick,
     }
 }

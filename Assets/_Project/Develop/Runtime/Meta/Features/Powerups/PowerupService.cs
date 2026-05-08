@@ -36,6 +36,17 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
             return powerupUIData;
         }
 
+        public PowerupSaveData GetPowerupDataByID(string ID)
+        {
+            PowerupSaveData powerupSaveData = _powerupData[ID];
+
+            return new PowerupSaveData
+            {
+                Level = powerupSaveData.Level,
+                Unlocked = powerupSaveData.Unlocked,
+            };
+        }
+
         public void UnlockPowerup(string ID)
         {
             PowerupSaveData powerupSaveData = _powerupData[ID];

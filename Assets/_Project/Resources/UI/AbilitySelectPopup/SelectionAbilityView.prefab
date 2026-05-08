@@ -194,6 +194,7 @@ MonoBehaviour:
   _description: {fileID: 7669634046130370700}
   _textOnTablet: {fileID: 3585595642105973691}
   _selectImage: {fileID: 8336952645245958949}
+  _tabletImage: {fileID: 4927661240611355145}
 --- !u!114 &8814167101347917193
 MonoBehaviour:
   m_ObjectHideFlags: 0
