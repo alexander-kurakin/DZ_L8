@@ -17,15 +17,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             container.RegisterAsSingle(CreateMainMenuPresentersFactory);
             container.RegisterAsSingle(CreateMainMenuScreenPresenter).NonLazy();
             container.RegisterAsSingle(CreateMainMenuPopupService);
-            
-            container.RegisterAsSingle(CreatePowerupFactory);
         }
         
-        private static PowerupFactory CreatePowerupFactory(DIContainer c)
-        {
-            return new PowerupFactory(c);
-        }
-
         private static MainMenuPopupService CreateMainMenuPopupService(DIContainer c)
         {
             return new MainMenuPopupService(

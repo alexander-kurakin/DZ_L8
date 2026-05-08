@@ -1,5 +1,7 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+﻿using _Project.Develop.Runtime.Meta.Features.Powerups;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
@@ -24,6 +26,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MainHeroHolderService _mainHeroHolderService;
 		private readonly MouseInput _mouseInput;
+        private readonly PowerupConfigsContainer  _powerupConfigsContainer;
+        private readonly PowerupService _powerupService;
+        private readonly PowerupFactory _powerupFactory;
+        
         private Transform _townWalkerSpawnPoint;
         private int _currentLevelNumber;
 
@@ -37,6 +43,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _abilitiesFactory =  _container.Resolve<AbilitiesFactory>();
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
 			_mouseInput = _container.Resolve<MouseInput>();
+            _powerupConfigsContainer = _configsProviderService.GetConfig<PowerupConfigsContainer>();
+            _powerupService = _container.Resolve<PowerupService>();
+            _powerupFactory = _container.Resolve<PowerupFactory>();
+            
             _currentLevelNumber =  currentLevelNumber;
         }
 
@@ -58,7 +68,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             entity
                 .AddPowerup()
                 .AddSystem(new PowerupOnAddActivatorSystem());
-
+            
+            ApplyPermanentPowerups(entity);
             _abilitiesFactory.SetupAbilitiesForMainHero(entity);
             
             _entitiesLifeContext.Add(entity);
@@ -67,7 +78,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             return entity;
         }
-        
+
+        private void ApplyPermanentPowerups(Entity mainHero)
+        {
+            foreach (PowerupConfig powerupConfig in _powerupConfigsContainer.PowerupConfigs)
+            {
+                PowerupSaveData powerupSaveData = _powerupService.GetPowerupDataByID(powerupConfig.ID);
+
+                if (powerupSaveData.Unlocked == false)
+                    continue;
+
+                Powerup powerup = _powerupFactory.CreatePowerupFor(mainHero, powerupConfig, powerupSaveData.Level);
+                mainHero.Powerup.Add(powerup);
+            }
+        }
+
         public Entity CreateTowerWalker()
         {
             

@@ -1,9 +1,9 @@
 {
   "WalletData": {
-    "Gold": 1000,
-    "Diamond": 0
+    "Gold": 1600,
+    "Diamond": 1182
   },
-  "Wins": 5,
+  "Wins": 11,
   "Losses": 0,
   "PowerupsData": {
     "RegenTowerHP": {
@@ -16,7 +16,7 @@
     },
     "MultiplyMainAbilityDamage": {
       "Level": 1,
-      "Unlocked": true
+      "Unlocked": false
     }
   }
 }
