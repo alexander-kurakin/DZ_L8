@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.AbilitySystems;
 using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
+using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -17,11 +18,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     public class AbilitiesFactory
     {
         private readonly EntitiesLifeContext _entitiesLifeContext;
-        private readonly EntitiesFactory _entitiesFactory; //mines
-        private readonly WalletService _walletService; //mines
+        private readonly WalletService _walletService;
         private readonly ConfigsProviderService _configsProviderService;
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly StageProviderService _stageProviderService;
+        private readonly PlantableObjectsFactory _plantableObjectsFactory;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         private float _modifiedDamage;
@@ -29,11 +30,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         public AbilitiesFactory(DIContainer container)
         {
             _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
-            _entitiesFactory = container.Resolve<EntitiesFactory>();
             _walletService = container.Resolve<WalletService>();
             _configsProviderService = container.Resolve<ConfigsProviderService>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _stageProviderService = container.Resolve<StageProviderService>();
+            _plantableObjectsFactory = container.Resolve<PlantableObjectsFactory>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -42,9 +43,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         {
             Dictionary<AbilityType, Entity> mapping = mainHero.AbilityUserAllAbilities;
 
-            Entity plantMineAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantMine, _configsProviderService.GetConfig<MineConfig>());
-            Entity plantTurretAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantTurret, _configsProviderService.GetConfig<TurretConfig>());
-            Entity plantToxicAreaAbility = CreatePlantableObjectAbility(mainHero, AbilityType.PlantToxicArea, _configsProviderService.GetConfig<ToxicAreaConfig>());
+            Entity plantMineAbility = CreatePlantMineAbility(
+                mainHero, _configsProviderService.GetConfig<MineConfig>());
+            
+            Entity plantTurretAbility = CreatePlantTurretAbility(
+                mainHero, _configsProviderService.GetConfig<TurretConfig>());
+            
+            Entity plantToxicAreaAbility = CreatePlantToxicAreaAbility(
+                mainHero, _configsProviderService.GetConfig<ToxicAreaConfig>());
+            
             Entity explodeAtPointAbility = CreateExplodeAtPointAbility(mainHero);
             
             mapping[AbilityType.PlantMine] = plantMineAbility;
@@ -61,32 +68,72 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _entitiesLifeContext.Add(explodeAtPointAbility);
         }
         
-        //TODO: common pattern is 1 method per 1 type of created entity. Need to de-merge the Plantable ability into 3
-        private Entity CreatePlantableObjectAbility(
+        private Entity CreatePlantMineAbility(
             Entity abilityOwner,
-            AbilityType abilityType,
             PurchasableEntityConfig purchasableEntityConfig)
         {
             Entity entity = CreateEmpty();
             
-            Teams ownerTeam = Teams.MainHero; //default
-            
-            if (abilityOwner.TryGetTeam(out ReactiveVariable<Teams>team))
-                ownerTeam = team.Value;
+            Teams ownerTeam = abilityOwner.Team.Value;
             
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
                 .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
-                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(abilityType))
+                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.PlantMine))
                 .AddAbilityUseRequest();
 
             entity
-                .AddSystem(new PlantPurchasedObjectsSystem(
+                .AddSystem(new PlantMineSystem(
                     _walletService, 
-                    _entitiesFactory,
+                    _plantableObjectsFactory,
+                    purchasableEntityConfig));
+
+            return entity;
+        }
+        
+        private Entity CreatePlantTurretAbility(
+            Entity abilityOwner,
+            PurchasableEntityConfig purchasableEntityConfig)
+        {
+            Entity entity = CreateEmpty();
+            
+            Teams ownerTeam = abilityOwner.Team.Value;
+            
+            entity
+                .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
+                .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
+                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.PlantTurret))
+                .AddAbilityUseRequest();
+
+            entity
+                .AddSystem(new PlantTurretSystem(
+                    _walletService, 
+                    _plantableObjectsFactory,
+                    purchasableEntityConfig));
+
+            return entity;
+        }
+        
+        private Entity CreatePlantToxicAreaAbility(
+            Entity abilityOwner,
+            PurchasableEntityConfig purchasableEntityConfig)
+        {
+            Entity entity = CreateEmpty();
+            
+            Teams ownerTeam = abilityOwner.Team.Value;
+            
+            entity
+                .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
+                .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
+                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.PlantToxicArea))
+                .AddAbilityUseRequest();
+
+            entity
+                .AddSystem(new PlantToxicAreaSystem(
+                    _walletService, 
+                    _plantableObjectsFactory,
                     purchasableEntityConfig,
-                    _stageProviderService
-                    ));
+                    _stageProviderService));
 
             return entity;
         }
@@ -95,10 +142,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         {
             Entity entity = CreateEmpty();
 
-            Teams ownerTeam = Teams.MainHero; //default
-            
-            if (abilityOwner.TryGetTeam(out ReactiveVariable<Teams>team))
-                ownerTeam = team.Value;
+            Teams ownerTeam = abilityOwner.Team.Value;
             
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))

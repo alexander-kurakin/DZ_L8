@@ -1,4 +1,5 @@
 using System;
+using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
@@ -8,32 +9,33 @@ using UnityEngine;
 
 namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 {
-    public class PlantPurchasedObjectsSystem : IInitializableSystem, IDisposableSystem
+    public class PlantToxicAreaSystem : IInitializableSystem, IDisposableSystem
     {
         private readonly WalletService _walletService;
-        private readonly EntitiesFactory _entitiesFactory;
+        private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
         private readonly StageProviderService _stageProviderService;
         
-        private Entity _entity;
+        private Entity _parent;
+        private Entity _child;
         private IDisposable _requestDisposable;
 
-        public PlantPurchasedObjectsSystem(
+        public PlantToxicAreaSystem(
             WalletService walletService,
-            EntitiesFactory entitiesFactory,
+            PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
             StageProviderService stageProviderService)
         {
             _walletService = walletService;
-            _entitiesFactory = entitiesFactory;
+            _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
             _stageProviderService = stageProviderService;
         }
 
         public void OnInit(Entity entity)
         {
-            _entity = entity;
-            _requestDisposable = _entity.AbilityUseRequest.Subscribe(OnAbilityUse);
+            _parent = entity;
+            _requestDisposable = _parent.AbilityUseRequest.Subscribe(OnAbilityUse);
         }
 
         private void OnAbilityUse(Vector3 usePoint)
@@ -41,28 +43,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             if (_walletService.Enough(CurrencyTypes.Gold, _purchasableEntityConfig.CostInGold)) 
             {
                 _walletService.Spend(CurrencyTypes.Gold, _purchasableEntityConfig.CostInGold);
-
-                switch (_purchasableEntityConfig)
-                {
-                    case MineConfig mineConfig:
-                    {
-                        _entitiesFactory.CreateMine(usePoint, mineConfig);
-                        break;
-                    }
-                    case TurretConfig turretConfig:
-                    {
-                        _entitiesFactory.CreateTurret(usePoint, turretConfig);
-                        break;
-                    }
-                    case ToxicAreaConfig toxicAreaConfig:
-                    {
-                        Entity toxicEntity = _entitiesFactory.CreateToxicArea(usePoint, toxicAreaConfig);
-                        _stageProviderService.AddToxicArea(toxicEntity);
-                        break;
-                    }
-                    default:
-                        throw new ArgumentException($"Not supported {_purchasableEntityConfig.GetType()} type config");
-                } 
+                _child = _plantableObjectsFactory.Create(usePoint, _purchasableEntityConfig);
+                _stageProviderService.AddTemporaryEntity(_child);
             }            
         }
 

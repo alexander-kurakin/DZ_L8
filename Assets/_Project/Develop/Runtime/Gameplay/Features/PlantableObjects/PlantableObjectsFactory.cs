@@ -1,5 +1,6 @@
 using System;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
@@ -29,27 +30,30 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
 
-        public Entity Create(Vector3 position, EntityConfig config)
+        public Entity Create(Vector3 position, EntityConfig entityConfig)
         {
             Entity entity;
 
-            switch (config)
+            switch (entityConfig)
             {
-                case WalkingEnemyConfig walkingEnemyConfig:
-                    entity = _entitiesFactory.CreateWalkingEnemy(position, walkingEnemyConfig);
-                    _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                case TurretConfig turretConfig:
+                    entity = _entitiesFactory.CreateTurret(position, turretConfig);
+                    _brainsFactory.CreateTurretBrain(entity, new NearestDamageableTargetSelector(entity));
                     break;
 
-                case RangedEnemyConfig rangedEnemyConfig:
-                    entity = _entitiesFactory.CreateRangedEnemy(position, rangedEnemyConfig);
-                    _brainsFactory.CreateRangedEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                case MineConfig mineConfig:
+                    entity = _entitiesFactory.CreateMine(position, mineConfig);
+                    break;
+                
+                case ToxicAreaConfig toxicAreaConfig:
+                    entity = _entitiesFactory.CreateToxicArea(position, toxicAreaConfig);
                     break;
 
                 default:
-                    throw new ArgumentException($"Not support {config.GetType()} type config");
+                    throw new ArgumentException($"{entityConfig.GetType()} config type is not supported");
             }
 
-            entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
+            entity.AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             _entitiesLifeContext.Add(entity);
 

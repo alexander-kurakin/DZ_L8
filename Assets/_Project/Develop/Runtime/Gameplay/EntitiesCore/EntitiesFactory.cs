@@ -323,7 +323,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactsDetectingMask(Layers.CharactersMask)
                 .AddContactCollidersBuffer(new Buffer<Collider>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.Damage))
                 .AddAreaImpactRadius(new ReactiveVariable<float>(mineConfig.ExplosionRadius))
                 .AddAreaImpactMask(Layers.CharactersMask)
@@ -339,8 +338,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new AreaDamageEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DealAreaDamageSystem());
 
-            _entitiesLifeContext.Add(entity);
-            
             return entity;
         }
         
@@ -351,7 +348,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, turretConfig.PrefabPath);
 
             entity
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(turretConfig.RotationSpeed))
                 .AddCurrentTarget()
@@ -388,10 +384,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem());
                 
-            _entitiesLifeContext.Add(entity);
-            
-            _brainsFactory.CreateTurretBrain(entity, new NearestDamageableTargetSelector(entity));
-            
             return entity;
         }
         
@@ -407,16 +399,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddDamagePerTick(new ReactiveVariable<float>(toxicAreaConfig.DamagePerTick))
                 .AddDamageInterval(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
-                .AddDamageTimer(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+                .AddDamageTimer(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval));
             
             entity
                 .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
                 .AddSystem(new DamageOverTimeSystem());
 
-            _entitiesLifeContext.Add(entity);
-            
             return entity;
         }
         

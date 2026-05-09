@@ -16,7 +16,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         private IStage _currentStage;
         
-        private List<Entity> _spawnedToxicAreas = new();
+        private List<Entity> _spawnedTemporaryEntities = new();
         private EntitiesLifeContext _entitiesLifeContext;
 
         private IDisposable _stageEndedDisposable;
@@ -52,18 +52,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[_currentStageNumber.Value - 1]);
         }
         
-        public void AddToxicArea(Entity entity)
+        public void AddTemporaryEntity(Entity entity)
         {
-            if (entity != null && !_spawnedToxicAreas.Contains(entity))
-                _spawnedToxicAreas.Add(entity);
+            if (entity != null && !_spawnedTemporaryEntities.Contains(entity))
+                _spawnedTemporaryEntities.Add(entity);
         }
 
-        private void ClearToxicAreas()
+        private void ClearTemporaryEntities()
         {
-            foreach (Entity entity in _spawnedToxicAreas)
+            foreach (Entity entity in _spawnedTemporaryEntities)
                 _entitiesLifeContext.Release(entity);
             
-            _spawnedToxicAreas.Clear();
+            _spawnedTemporaryEntities.Clear();
         }
 
         public void StartCurrent()
@@ -75,7 +75,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private void OnStageCompleted()
         {
             _currentStageResult.Value = StageResults.Completed;
-            ClearToxicAreas();
+            ClearTemporaryEntities();
         }
 
         public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);

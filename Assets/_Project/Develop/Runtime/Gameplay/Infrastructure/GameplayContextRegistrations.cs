@@ -1,5 +1,6 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
@@ -75,6 +76,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayPopupService);
             
             container.RegisterAsSingle(CreatePowerupFactory);
+            
+            container.RegisterAsSingle(CreatePlantableObjectsFactory);
+        }
+        private static PlantableObjectsFactory CreatePlantableObjectsFactory(DIContainer c)
+        {
+            return new PlantableObjectsFactory(c);
         }
         
         private static PowerupFactory CreatePowerupFactory(DIContainer c)
