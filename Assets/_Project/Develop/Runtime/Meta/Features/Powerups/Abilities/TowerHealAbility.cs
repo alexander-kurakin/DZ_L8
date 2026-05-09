@@ -8,23 +8,23 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
 {
     public class TowerHealAbility : Powerup, IDisposable
     {
-        private Entity _entity;
+        private Entity _mainHero;
         private PermanentTowerHealConfig _permanentTowerHealConfig;
 
         private IDisposable _gameplayStateDisposable;
         
         public TowerHealAbility(
-            Entity entity,
+            Entity mainHero,
             PermanentTowerHealConfig permanentTowerHealConfig,
             int currentLevel) : base(permanentTowerHealConfig.ID, currentLevel, permanentTowerHealConfig.MaxLevel)
         {
-            _entity = entity;
+            _mainHero = mainHero;
             _permanentTowerHealConfig = permanentTowerHealConfig;
         }
 
         public override void Activate()
         {
-            _gameplayStateDisposable = _entity.GameplayPhase.Subscribe(OnGameplayPhaseChanged);
+            _gameplayStateDisposable = _mainHero.GameplayPhase.Subscribe(OnGameplayPhaseChanged);
         }
 
         private void OnGameplayPhaseChanged(GameplayStates oldState, GameplayStates newState)
@@ -35,11 +35,11 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
 
         private void Heal()
         {
-            float maxHealth = _entity.MaxHealth.Value;
-            float currentHealth = _entity.CurrentHealth.Value;
+            float maxHealth = _mainHero.MaxHealth.Value;
+            float currentHealth = _mainHero.CurrentHealth.Value;
 
             float newCurrentHealth = MathF.Min(maxHealth, currentHealth + maxHealth * _permanentTowerHealConfig.PercentOfTowerLifeHealed);
-            _entity.CurrentHealth.Value = newCurrentHealth;
+            _mainHero.CurrentHealth.Value = newCurrentHealth;
         }
 
         public void Dispose()
