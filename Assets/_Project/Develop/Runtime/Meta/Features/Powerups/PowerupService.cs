@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
-using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace _Project.Develop.Runtime.Meta.Features.Powerups
 {
@@ -86,7 +85,6 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
                     });                    
                 }
             }
-
         }
 
         public void WriteTo(PlayerData data)
