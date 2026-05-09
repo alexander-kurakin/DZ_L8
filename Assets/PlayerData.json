@@ -1,10 +1,10 @@
 {
   "WalletData": {
-    "Gold": 1600,
-    "Diamond": 1182
+    "Gold": 3700,
+    "Diamond": 1231
   },
-  "Wins": 11,
-  "Losses": 0,
+  "Wins": 24,
+  "Losses": 1,
   "PowerupsData": {
     "RegenTowerHP": {
       "Level": 1,
@@ -12,7 +12,7 @@
     },
     "DamageFirstEnemies": {
       "Level": 1,
-      "Unlocked": false
+      "Unlocked": true
     },
     "MultiplyMainAbilityDamage": {
       "Level": 1,

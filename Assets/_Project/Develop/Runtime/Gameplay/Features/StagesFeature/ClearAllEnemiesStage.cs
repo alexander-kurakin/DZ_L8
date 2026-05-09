@@ -37,11 +37,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private Entity _towerWalker;
         private bool _inProcess;
 
-        private int _targetDebuffedEnemiesCount;
-        private int _currentDebuffedEnemiesCount;
-        private float _debuffPercent;
-        private bool _shouldDebuff;
-
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
 
         public ClearAllEnemiesStage(
@@ -172,18 +167,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             for (int i = 0; i < enemyItemConfig.EnemiesCount; i++)
             {
-                if (_shouldDebuff && _currentDebuffedEnemiesCount >= _targetDebuffedEnemiesCount)
-                    _shouldDebuff = false;
-                
-                float healthDebuffPercent = 0f;
-                
-                if (_shouldDebuff)
-                    healthDebuffPercent = _debuffPercent;
-
-                Entity spawnedEnemy = _enemiesFactory.Create(GenerateRandomPositionInCircle(), enemyItemConfig.EnemyConfig, healthDebuffPercent);
-
-                if (_shouldDebuff)
-                    _currentDebuffedEnemiesCount++;
+                Entity spawnedEnemy = _enemiesFactory.Create(GenerateRandomPositionInCircle(), enemyItemConfig.EnemyConfig);
 
                 IDisposable removeReason = spawnedEnemy.IsDead.Subscribe((oldValue, isDead) =>
                 {

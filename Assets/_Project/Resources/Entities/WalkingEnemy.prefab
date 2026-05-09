@@ -273,6 +273,8 @@ MonoBehaviour:
   _effectSpawnPoint: {fileID: 2952238018204608046}
   _takeDamageEffectPrefab: {fileID: 6523699520211762466, guid: 0edef91621bb6b34384ccc9dbb98729c,
     type: 3}
+  _damageNumberPrefab: {fileID: 7821128393817716321, guid: 4731d76092b0c8b4da146ab30a8dc7f9,
+    type: 3}
 --- !u!95 &6959166531336482203 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7204030942818582262, guid: ba1aa7e7060c8774096f6e3c34c02896,

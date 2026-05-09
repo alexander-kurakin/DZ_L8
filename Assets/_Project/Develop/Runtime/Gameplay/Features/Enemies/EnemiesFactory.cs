@@ -29,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
 
-        public Entity Create(Vector3 position, EntityConfig config, float healthDebuffPercent = 0f)
+        public Entity Create(Vector3 position, EntityConfig config)
         {
             Entity entity;
 
@@ -48,9 +48,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");
             }
-
-            if (healthDebuffPercent != 0)
-                entity.CurrentHealth.Value = entity.MaxHealth.Value * (1 - healthDebuffPercent);
 
             entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
 
