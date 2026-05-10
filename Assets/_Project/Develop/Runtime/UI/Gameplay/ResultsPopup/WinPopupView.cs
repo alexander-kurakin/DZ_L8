@@ -12,9 +12,13 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
         public event Action ContinueClicked;
 
         [SerializeField] private TMP_Text _title;
+        [SerializeField] private TMP_Text _goldReward;
+        [SerializeField] private TMP_Text _diamondReward;
         [SerializeField] private List<Transform> _stars;
 
         public void SetTitle(string title) => _title.text = title;
+        public void SetGoldReward(int goldReward) => _goldReward.text = goldReward.ToString();
+        public void SetDiamondReward(int diamondReward) => _diamondReward.text = diamondReward.ToString();
 
         public void OnContinueClick() => ContinueClicked?.Invoke();
 

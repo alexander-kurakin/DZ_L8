@@ -12,11 +12,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     public class WinState : EndGameState
     {
         private readonly WalletService _walletService;
+        private readonly GameplayPopupService _popupService;
+        
         private readonly int _rewardGold;
         private readonly int _rewardDiamondMin;
         private readonly int _rewardDiamondMax;
-        private readonly GameplayPopupService _popupService;
-        
         
         public WinState(
             IInputService inputService,
@@ -37,20 +37,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _rewardDiamondMax = rewardDiamondMax;
         }
 
-        protected override void OnEndGameStateEntered()
-        {
-            _popupService.OpenWinPopup();
-        }
-
         protected override void RecordResults()
         {
             Stats.RecordWin();
             
-            if (_rewardGold > 0)
-                _walletService.Add(CurrencyTypes.Gold, _rewardGold);
-            
-            _walletService.Add(CurrencyTypes.Diamond, Random.Range(_rewardDiamondMin, _rewardDiamondMax));            
-        }
+            RewardsData rewardsData = new RewardsData();
 
+            if (_rewardGold > 0)
+            {
+                _walletService.Add(CurrencyTypes.Gold, _rewardGold);
+                rewardsData.RewardGold = _rewardGold;
+            }
+
+            int randomDiamondReward = Random.Range(_rewardDiamondMin, _rewardDiamondMax);
+            _walletService.Add(CurrencyTypes.Diamond, randomDiamondReward);
+            rewardsData.RewardDiamond = randomDiamondReward;
+            
+            _popupService.OpenWinPopup(rewardsData);
+        }
+    }
+
+    public class RewardsData
+    {
+        public int RewardGold;
+        public int RewardDiamond;
     }
 }

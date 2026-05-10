@@ -2,6 +2,8 @@
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using System;
+using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
@@ -15,19 +17,22 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly IUISoundService _uiSoundService;
         private readonly IBackgroundMusicService _backgroundMusicService;
+        private readonly RewardsData _rewardsData;
 
         public WinPopupPresenter(
             ICoroutinesPerformer coroutinesPerformer,
             WinPopupView view,
             SceneSwitcherService sceneSwitcher,
             IUISoundService uiSoundService,
-            IBackgroundMusicService backgroundMusicService) : base(coroutinesPerformer, uiSoundService)
+            IBackgroundMusicService backgroundMusicService,
+            RewardsData rewardsData) : base(coroutinesPerformer, uiSoundService)
         {
             _coroutinesPerformer = coroutinesPerformer;
             _view = view;
             _sceneSwitcher = sceneSwitcher;
             _uiSoundService = uiSoundService;
             _backgroundMusicService = backgroundMusicService;
+            _rewardsData = rewardsData;
         }
 
         protected override PopupViewBase PopupView => _view;
@@ -37,6 +42,8 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
             base.Initialize();
 
             _view.SetTitle(TitleName);
+            _view.SetGoldReward(_rewardsData.RewardGold);
+            _view.SetDiamondReward(_rewardsData.RewardDiamond);
 
             _view.ContinueClicked += OnContinueClicked;
             

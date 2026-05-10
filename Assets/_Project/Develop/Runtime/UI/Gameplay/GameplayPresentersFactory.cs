@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
+using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -29,14 +30,15 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _gameplayInputArgs = gameplayInputArgs;
         }
         
-        public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view)
+        public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view, RewardsData rewardsData)
         {
             return new WinPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
                 view,
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<IUISoundService>(),
-                _container.Resolve<IBackgroundMusicService>());
+                _container.Resolve<IBackgroundMusicService>(),
+                rewardsData);
         }
 
         public DefeatPopupPresenter CreateDefeatPopupPresenter(DefeatPopupView view)

@@ -32,7 +32,6 @@ namespace Assets._Project.Develop.Editor
             }
         }
 
-
         [MenuItem(MenuPath)]
         private static void Toggle()
         {

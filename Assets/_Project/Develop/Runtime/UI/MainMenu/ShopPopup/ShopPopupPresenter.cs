@@ -164,7 +164,5 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
 
             _presenters.Clear();
         }
-
-
     }
 }

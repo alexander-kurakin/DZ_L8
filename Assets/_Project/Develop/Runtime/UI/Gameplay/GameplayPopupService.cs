@@ -1,4 +1,5 @@
 using System;
+using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
@@ -24,11 +25,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         protected override Transform PopupLayer => _gameplayUIRoot.PopupsLayer;
         
-        public WinPopupPresenter OpenWinPopup(Action closedCallback = null)
+        public WinPopupPresenter OpenWinPopup(RewardsData rewardsData, Action closedCallback = null)
         {
             WinPopupView view = ViewsFactory.Create<WinPopupView>(ViewIDs.WinPopup, PopupLayer);
 
-            WinPopupPresenter popup = _gameplayPresentersFactory.CreateWinPopupPresenter(view);
+            WinPopupPresenter popup = _gameplayPresentersFactory.CreateWinPopupPresenter(view, rewardsData);
 
             OnPopupCreated(popup, view, closedCallback);
 
