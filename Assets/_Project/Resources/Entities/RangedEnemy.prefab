@@ -191,6 +191,10 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 1249170983873124, guid: fe26bb11371f851488f694336262e8a1,
         type: 3}
       insertIndex: -1
+      addedObject: {fileID: 4641919159732991598}
+    - targetCorrespondingSourceObject: {fileID: 1249170983873124, guid: fe26bb11371f851488f694336262e8a1,
+        type: 3}
+      insertIndex: -1
       addedObject: {fileID: 3035206620673331153}
     - targetCorrespondingSourceObject: {fileID: 1249170983873124, guid: fe26bb11371f851488f694336262e8a1,
         type: 3}
@@ -230,6 +234,19 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4641919159732991598
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6310921680747709959}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c7186fe74a74da291cda81518a0091b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _soundToPlay: 1
 --- !u!114 &3035206620673331153
 MonoBehaviour:
   m_ObjectHideFlags: 0

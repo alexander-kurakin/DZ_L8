@@ -5,11 +5,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 {
     public abstract class EntityView : MonoBehaviour
     {
-        protected IGameSoundsService GameSoundsesService { get;  private set; }
+        protected IGameSoundsService GameSoundsService { get;  private set; }
         
         public void Link(Entity entity, IGameSoundsService gameSoundsService)
         {
-            GameSoundsesService = gameSoundsService;
+            GameSoundsService = gameSoundsService;
             entity.Initialized += OnEntityStartedWork;
         }
 

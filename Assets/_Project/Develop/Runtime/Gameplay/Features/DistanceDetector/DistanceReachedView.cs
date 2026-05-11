@@ -11,12 +11,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
     {
         [SerializeField] private ParticleSystem _distanceReachedBeamPrefab;
         [SerializeField] private Transform _beamSource;
+        [SerializeField] private AudioSource _localAudioSource;
 
         private ReactiveEvent _isDistanceReached;
         private Transform _currentTargetTransform;
         
         private IDisposable _isDistanceReachedDisposable;
         private IDisposable _currentTargetChangedDisposable;
+        private IDisposable _isDeadDisposable;
 
         private bool _hasTargetToFireABeamAt;
 
@@ -26,6 +28,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
             
             _currentTargetChangedDisposable = entity.CurrentTarget.Subscribe(OnCurrentTargetChanged);
             _isDistanceReachedDisposable = _isDistanceReached.Subscribe(OnDistanceReached);
+            _isDeadDisposable = entity.IsDead.Subscribe(OnIsDeadChanged);
+        }
+
+        private void OnIsDeadChanged(bool oldDead, bool newDead)
+        {
+            if (newDead)
+                _localAudioSource.Stop();
         }
 
         private void OnCurrentTargetChanged(Entity oldTarget, Entity newTarget)
@@ -41,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         {
             if (_hasTargetToFireABeamAt)
             {
-                GameSoundsesService.Play(GameSoundsIDs.DragonBurn);
+                GameSoundsService.PlayLocal(_localAudioSource,GameSoundsIDs.DragonBurn);
                 
                 Quaternion targetRotation;
                 Vector3 targetDirection = _currentTargetTransform.position - _beamSource.position;
@@ -69,6 +78,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
 
             _isDistanceReachedDisposable.Dispose();
             _currentTargetChangedDisposable.Dispose();
+            _isDeadDisposable.Dispose();
         }
     }
 }
