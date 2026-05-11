@@ -404,7 +404,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             entity
                 .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DamageOverTimeSystem());
+                .AddSystem(new DamageOverTimeInAreaSystem());
 
             return entity;
         }

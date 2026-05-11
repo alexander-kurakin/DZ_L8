@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace _Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime
 {
-    public class DamageOverTimeSystem : IInitializableSystem, IUpdatableSystem
+    public class DamageOverTimeInAreaSystem : IInitializableSystem, IUpdatableSystem
     {
         private Entity _damageSource;
         private Buffer<Entity> _contactEntities;

@@ -39,6 +39,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
 
         private void OnIsDeadChanged(bool oldIsDead, bool isDead) => UpdateIsDead(isDead);
 
-        private void UpdateIsDead(bool value) => _animator.SetBool(IsDeadKey, value);
+        private void UpdateIsDead(bool value)
+        {
+            if (_animator != null)
+                _animator.SetBool(IsDeadKey, value);
+        }
     }
 }

@@ -1,10 +1,10 @@
 {
   "WalletData": {
-    "Gold": 2550,
-    "Diamond": 260
+    "Gold": 4100,
+    "Diamond": 341
   },
-  "Wins": 45,
-  "Losses": 2,
+  "Wins": 48,
+  "Losses": 9,
   "PowerupsData": {
     "RegenTowerHP": {
       "Level": 1,
