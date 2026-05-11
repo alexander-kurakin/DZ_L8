@@ -1,4 +1,5 @@
-﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+﻿using _Project.Develop.Runtime.Configs.Utilities.Audio;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
@@ -17,6 +18,7 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using UnityEngine;
 
@@ -78,7 +80,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreatePowerupFactory);
             
             container.RegisterAsSingle(CreatePlantableObjectsFactory);
+            
+            container.RegisterAsSingle<IGameSoundsService>(CreateGameSoundsService);
         }
+        
+        private static IGameSoundsService CreateGameSoundsService(DIContainer c)
+        {
+            AudioHub audioHub = c.Resolve<AudioHub>();
+            GameSoundsConfig config = c.Resolve<ConfigsProviderService>()
+                .GetConfig<GameSoundsConfig>();
+            
+            return new GameSoundsesService(audioHub.GameSoundSource, config);
+        }
+        
         private static PlantableObjectsFactory CreatePlantableObjectsFactory(DIContainer c)
         {
             return new PlantableObjectsFactory(c);
@@ -191,7 +205,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new MonoEntitiesFactory(
                 c.Resolve<ResourcesAssetsLoader>(),
                 c.Resolve<EntitiesLifeContext>(),
-                c.Resolve<CollidersRegistryService>());
+                c.Resolve<CollidersRegistryService>(),
+                c.Resolve<IGameSoundsService>());
         }
 
         private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer c)

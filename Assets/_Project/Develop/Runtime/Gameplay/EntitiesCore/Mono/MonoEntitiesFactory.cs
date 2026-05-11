@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using System;
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -14,17 +15,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         private readonly EntitiesLifeContext _entitiesLifeContext;
 
         private readonly CollidersRegistryService _collidersRegistryService;
+        private readonly IGameSoundsService _gameSoundsService;
 
         private readonly Dictionary<Entity, MonoEntity> _entityToMono = new();
 
         public MonoEntitiesFactory(
             ResourcesAssetsLoader resources,
             EntitiesLifeContext entitiesLifeContext,
-            CollidersRegistryService collidersRegistryService)
+            CollidersRegistryService collidersRegistryService,
+            IGameSoundsService gameSoundsService)
         {
             _resources = resources;
             _entitiesLifeContext = entitiesLifeContext;
             _collidersRegistryService = collidersRegistryService;
+            _gameSoundsService = gameSoundsService;
         }
 
         public MonoEntity Create(Entity entity, Vector3 position, string path)
@@ -33,7 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
             MonoEntity viewInstance = Object.Instantiate(prefab, position, Quaternion.identity, null);
 
-            viewInstance.Initialize(_collidersRegistryService);
+            viewInstance.Initialize(_collidersRegistryService, _gameSoundsService);
 
             viewInstance.Link(entity);
 

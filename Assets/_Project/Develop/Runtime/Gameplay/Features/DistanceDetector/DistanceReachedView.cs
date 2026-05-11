@@ -1,6 +1,7 @@
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -40,6 +41,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         {
             if (_hasTargetToFireABeamAt)
             {
+                GameSoundsesService.Play(GameSoundsIDs.DragonBurn);
+                
                 Quaternion targetRotation;
                 Vector3 targetDirection = _currentTargetTransform.position - _beamSource.position;
 

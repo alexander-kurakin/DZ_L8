@@ -28,7 +28,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
             _distanceToTargetCurrent = entity.DistanceToTargetCurrent;
             _targetDistanceReachedEvent = entity.DistanceToTargetReachedEvent;
             _targetDistanceReached = entity.DistanceToTargetReached;
-
         }
 
         public void OnUpdate(float deltaTime)

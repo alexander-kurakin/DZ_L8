@@ -1,18 +1,21 @@
-﻿using UnityEngine;
+﻿using Assets._Project.Develop.Runtime.Utilities.Audio;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 {
     public class MonoEntity : MonoBehaviour
     {
         private CollidersRegistryService _collidersRegistryService;
+        private IGameSoundsService _gameSoundsService;
 
         private Entity _linkedEntity;
 
         public Entity LinkedEntity => _linkedEntity;
 
-        public void Initialize(CollidersRegistryService collidersRegistryService)
+        public void Initialize(CollidersRegistryService collidersRegistryService, IGameSoundsService gameSoundsService)
         {
             _collidersRegistryService = collidersRegistryService;
+            _gameSoundsService = gameSoundsService;
         }
 
         public void Link(Entity entity)
@@ -29,7 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
             if (views != null)
                 foreach (EntityView view in views)
-                    view.Link(entity);
+                    view.Link(entity, _gameSoundsService);
 
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 _collidersRegistryService.Register(collider, entity);
