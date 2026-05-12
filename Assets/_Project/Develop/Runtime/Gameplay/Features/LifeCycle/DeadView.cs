@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
@@ -12,6 +13,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         private readonly int IsDeadKey = Animator.StringToHash("IsDead");
 
         [SerializeField] private Animator _animator;
+        
+        [SerializeField] private GameSoundsIDs _deadSoundToPlay;
+        [SerializeField] private AudioSource _localAudioSource;
 
         private ReactiveVariable<bool> _isDead;
 
@@ -43,6 +47,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle
         {
             if (_animator != null)
                 _animator.SetBool(IsDeadKey, value);
+            
+            if (value)
+                GameSoundsService.PlayOneShot(_deadSoundToPlay, _localAudioSource);
         }
     }
 }

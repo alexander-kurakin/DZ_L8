@@ -11,5 +11,6 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
         CastIceSpell,
         TowerHealed,
         TowerDamaged,
+        RegularImpact,
     }
 }

@@ -379,6 +379,8 @@ MonoBehaviour:
     type: 3}
   _damageNumberPrefab: {fileID: 7821128393817716321, guid: 4731d76092b0c8b4da146ab30a8dc7f9,
     type: 3}
+  _impactSoundToPlay: 9
+  _localAudioSource: {fileID: 210792810182457716}
 --- !u!1001 &7644644957186306521
 PrefabInstance:
   m_ObjectHideFlags: 0
