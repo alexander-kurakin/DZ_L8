@@ -50,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         {
             if (_hasTargetToFireABeamAt)
             {
-                GameSoundsService.PlayLocal(_localAudioSource,GameSoundsIDs.DragonBurn);
+                GameSoundsService.Play(GameSoundsIDs.DragonBurn, _localAudioSource);
                 
                 Quaternion targetRotation;
                 Vector3 targetDirection = _currentTargetTransform.position - _beamSource.position;

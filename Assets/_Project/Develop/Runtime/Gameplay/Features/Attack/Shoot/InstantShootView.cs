@@ -9,7 +9,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
 {
     public class InstantShootView : EntityView
     {
-        [SerializeField] private GameSoundsIDs _soundToPlay;
+        [SerializeField] private GameSoundsIDs _shootSoundToPlay;
+        [SerializeField] private AudioSource _localAudioSource;
         
         private ReactiveEvent _attackDelayEndEvent;
         private IDisposable _attackDelayEndDisposable;
@@ -22,7 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot
 
         private void OnAttackDelayEnd()
         {
-            GameSoundsService.PlayGlobal(_soundToPlay);
+            GameSoundsService.PlayOneShot(_shootSoundToPlay, _localAudioSource);
         }
 
         public override void Cleanup(Entity entity)

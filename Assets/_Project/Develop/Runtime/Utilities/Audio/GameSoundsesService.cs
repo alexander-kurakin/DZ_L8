@@ -17,21 +17,27 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
             _audioSource.playOnAwake = false;
         }
 
-        public void PlayGlobal(GameSoundsIDs id)
+        public void Play(GameSoundsIDs soundID, AudioSource localAudioSource = null)
         {
-            if (TryGetClip(id, out AudioClip clipToPlay) == false)
+            if (TryGetClip(soundID, out AudioClip clipToPlay) == false)
                 return;
-
-            _audioSource.PlayOneShot(clipToPlay);
+            
+            AudioSource finalAudioSource = 
+                localAudioSource==null ? _audioSource : localAudioSource;
+            
+            finalAudioSource.clip = clipToPlay;
+            finalAudioSource.Play();
         }
         
-        public void PlayLocal(AudioSource localAudioSource, GameSoundsIDs id)
+        public void PlayOneShot(GameSoundsIDs soundID, AudioSource localAudioSource = null)
         {
-            if (TryGetClip(id, out AudioClip clipToPlay) == false)
+            if (TryGetClip(soundID, out AudioClip clipToPlay) == false)
                 return;
 
-            localAudioSource.clip = clipToPlay;
-            localAudioSource.Play();
+            AudioSource finalAudioSource = 
+                localAudioSource==null ? _audioSource : localAudioSource;
+            
+            finalAudioSource.PlayOneShot(clipToPlay);
         }
     }
 }

@@ -30,3 +30,9 @@ MonoBehaviour:
   - <Id>k__BackingField: 2
     <Clip>k__BackingField:
     - {fileID: 8300000, guid: da895b025eb2a2642b7589d15dc232dc, type: 3}
+  - <Id>k__BackingField: 4
+    <Clip>k__BackingField:
+    - {fileID: 8300000, guid: 9b47fa1dc88ce8a42b85c4d92dcb98de, type: 3}
+  - <Id>k__BackingField: 5
+    <Clip>k__BackingField:
+    - {fileID: 8300000, guid: 9338fb64823134d4d87061c5f6faf1a2, type: 3}

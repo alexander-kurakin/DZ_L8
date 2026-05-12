@@ -6,5 +6,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
         TankShoot,
         DragonBurn,
         PrincessCry,
+        SpawnTank,
+        SpawnDragon,
     }
 }
