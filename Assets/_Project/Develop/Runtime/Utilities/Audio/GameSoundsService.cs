@@ -3,9 +3,9 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Utilities.Audio
 {
-    public class GameSoundsesService : AudioPlaybackService<GameSoundsIDs>, IGameSoundsService
+    public class GameSoundsService : AudioPlaybackService<GameSoundsIDs>, IGameSoundsService
     {
-        public GameSoundsesService(
+        public GameSoundsService(
             AudioSource audioSource,
             GameSoundsConfig config) : base(audioSource, config)
         {

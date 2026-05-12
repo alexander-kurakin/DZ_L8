@@ -1,6 +1,7 @@
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
@@ -12,8 +13,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
         [SerializeField] private Animator _animator;
         [SerializeField] private ParticleSystem _castVfxPrefab;
-        [SerializeField] private AudioClip _castVfxSound;
-        [SerializeField] private AudioSource _audioSource;
+        
+        [SerializeField] private GameSoundsIDs _castSound;
+        [SerializeField] private AudioSource _localAudioSource;
 
         private IDisposable _magicCastRequest;
 
@@ -40,7 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
             Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
             
-            _audioSource.PlayOneShot(_castVfxSound);
+            GameSoundsService.PlayOneShot(_castSound, _localAudioSource);
         }
     }
 }

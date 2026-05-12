@@ -90,7 +90,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             GameSoundsConfig config = c.Resolve<ConfigsProviderService>()
                 .GetConfig<GameSoundsConfig>();
             
-            return new GameSoundsesService(audioHub.GameSoundSource, config);
+            return new GameSoundsService(audioHub.GameSoundSource, config);
         }
         
         private static PlantableObjectsFactory CreatePlantableObjectsFactory(DIContainer c)

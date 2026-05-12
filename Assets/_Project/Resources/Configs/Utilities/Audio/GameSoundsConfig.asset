@@ -36,3 +36,12 @@ MonoBehaviour:
   - <Id>k__BackingField: 5
     <Clip>k__BackingField:
     - {fileID: 8300000, guid: 9338fb64823134d4d87061c5f6faf1a2, type: 3}
+  - <Id>k__BackingField: 6
+    <Clip>k__BackingField:
+    - {fileID: 8300000, guid: d230a0aac3bd5294c9712728cbd9eca6, type: 3}
+  - <Id>k__BackingField: 8
+    <Clip>k__BackingField:
+    - {fileID: 8300000, guid: 81108278429509a479cb95404b0ac67c, type: 3}
+  - <Id>k__BackingField: 7
+    <Clip>k__BackingField:
+    - {fileID: 8300000, guid: b596a01dd6067c44baa9bbb3916b6c45, type: 3}
