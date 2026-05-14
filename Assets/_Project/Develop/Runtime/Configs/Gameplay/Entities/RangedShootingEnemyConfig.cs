@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
-    [CreateAssetMenu(menuName = "Configs/Gameplay/Entities/NewRangedEnemyConfig", fileName = "RangedEnemyConfig")]
-    public class RangedEnemyConfig : EntityConfig
+    [CreateAssetMenu(menuName = "Configs/Gameplay/Entities/NewRangedShootingEnemyConfig", fileName = "RangedShootingEnemyConfig")]
+    public class RangedShootingEnemyConfig : EntityConfig
     {
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 9;
         [field: SerializeField, Min(0)] public float RotationSpeed { get; private set; } = 900;

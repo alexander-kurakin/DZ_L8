@@ -2,8 +2,8 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
-    [CreateAssetMenu(menuName = "Configs/Gameplay/Entities/NewWalkingEnemyConfig", fileName = "WalkingEnemyConfig")]
-    public class WalkingEnemyConfig : EntityConfig
+    [CreateAssetMenu(menuName = "Configs/Gameplay/Entities/NewExplodingWalkingEnemyConfig", fileName = "ExplodingWalkingEnemyConfig")]
+    public class ExplodingWalkingEnemyConfig : EntityConfig
     {
         [field: SerializeField, Min(0)] public float MoveSpeed { get; private set; } = 9;
         [field: SerializeField, Min(0)] public float RotationSpeed { get; private set; } = 900;

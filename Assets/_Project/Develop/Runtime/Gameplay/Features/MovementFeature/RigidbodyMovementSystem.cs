@@ -1,5 +1,4 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.Common;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -31,13 +30,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             if (_canMove.Evaluate() == false)
             {
                 _rigidbody.velocity = Vector3.zero;
+                _isMoving.Value = false;
                 return;
             }
 
             Vector3 velocity = _moveDirection.Value.normalized * _moveSpeed.Value;
-
             _isMoving.Value = velocity.magnitude > 0;
-
             _rigidbody.velocity = velocity;
         }
     }

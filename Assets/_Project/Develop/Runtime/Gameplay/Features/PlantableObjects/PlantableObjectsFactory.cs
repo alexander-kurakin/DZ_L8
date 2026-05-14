@@ -38,7 +38,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
             {
                 case TurretConfig turretConfig:
                     entity = _entitiesFactory.CreateTurret(position, turretConfig);
-                    _brainsFactory.CreateTurretBrain(entity, new NearestDamageableTargetSelector(entity));
+                    _brainsFactory.CreateRotatingAutoAttackBrain(entity, new NearestDamageableTargetSelector(entity));
                     break;
 
                 case MineConfig mineConfig:

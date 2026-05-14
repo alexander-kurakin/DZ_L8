@@ -35,14 +35,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
             switch (config)
             {
-                case WalkingEnemyConfig walkingEnemyConfig:
-                    entity = _entitiesFactory.CreateWalkingEnemy(position, walkingEnemyConfig);
-                    _brainsFactory.CreateWalkingEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                case RangedDotWalkingEnemyConfig rangedDotWalkingEnemyConfig:
+                    entity = _entitiesFactory.CreateRangedDoTWalkingEnemy(position, rangedDotWalkingEnemyConfig);
+                    _brainsFactory.CreateWalkingTowardsTargetBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
 
-                case RangedEnemyConfig rangedEnemyConfig:
-                    entity = _entitiesFactory.CreateRangedEnemy(position, rangedEnemyConfig);
-                    _brainsFactory.CreateRangedEnemyBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                case RangedShootingEnemyConfig rangedShootingEnemyConfig:
+                    entity = _entitiesFactory.CreateRangedShootingEnemy(position, rangedShootingEnemyConfig);
+                    _brainsFactory.CreateWalkingToRangedAutoAttackBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
 
                 default:

@@ -13,13 +13,13 @@ MonoBehaviour:
   m_Name: ClearAllEnemiesStage_2
   m_EditorClassIdentifier: 
   _enemyItems:
-  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 60329ca20f0d89a46a07a8de16f3f534,
+  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 9150831a2f4a78c4d95177b1c9e5f563,
       type: 2}
     <EnemiesCount>k__BackingField: 3
-  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 0832b7ce3f48e2d4c88a4b8df97f7565,
+  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
       type: 2}
     <EnemiesCount>k__BackingField: 1
-  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 0832b7ce3f48e2d4c88a4b8df97f7565,
+  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
       type: 2}
     <EnemiesCount>k__BackingField: 1
-  <EnemySpawnRadius>k__BackingField: 25
+  <EnemySpawnRadius>k__BackingField: 28

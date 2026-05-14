@@ -106,7 +106,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _mainHeroHolderService.RegisterTowerWalker(entity);
 
             _entitiesLifeContext.Add(entity);
-            _brainsFactory.CreateTowerWalkerBrain(entity, _mouseInput);
+            _brainsFactory.CreateWalkingTowardsCursorBrain(entity, _mouseInput);
             
             return entity;
         }

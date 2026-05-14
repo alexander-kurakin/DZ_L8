@@ -5,18 +5,20 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached
 {
-    public class DealDamageOnTargetReachedSystem : IInitializableSystem, IDisposableSystem
+    public class DealOneOffDamageOnTargetReachedSystem : IInitializableSystem, IDisposableSystem
     {
         private IDisposable _targetReachedRequest;
-        private ReactiveVariable<float> _explosionDamage;
+        private ReactiveVariable<float> _oneOffDamage;
         private ReactiveVariable<Entity> _target;
-        private Entity _entity;
+        private Entity _source;
         
         public void OnInit(Entity entity)
         {
-            _explosionDamage = entity.ExplosionDamage;
+            _source = entity;
+            
+            _oneOffDamage = entity.ExplosionDamage;
             _target = entity.CurrentTarget;
-            _entity = entity;
+            
             _targetReachedRequest = entity.DistanceToTargetReachedEvent.Subscribe(OnTargetReached);
         }
 
@@ -25,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetRe
             if (_target.Value == null)
                 return;
             
-            EntitiesHelper.TryTakeDamageFrom(_entity, _target.Value, _explosionDamage.Value);
+            EntitiesHelper.TryTakeDamageFrom(_source, _target.Value, _oneOffDamage.Value);
         }
 
         public void OnDispose()

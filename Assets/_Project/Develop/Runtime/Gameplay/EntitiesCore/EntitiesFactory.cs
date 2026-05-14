@@ -125,7 +125,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
         
-        public Entity CreateRangedEnemy(Vector3 position, RangedEnemyConfig config)
+        public Entity CreateRangedShootingEnemy(Vector3 position, RangedShootingEnemyConfig config)
         {
             Entity entity = CreateEmpty();
 
@@ -218,8 +218,84 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             return entity;
         }
+        
+        public Entity CreateRangedDoTWalkingEnemy(Vector3 position, RangedDotWalkingEnemyConfig config)
+        {
+            Entity entity = CreateEmpty();
 
-        public Entity CreateWalkingEnemy(Vector3 position, WalkingEnemyConfig config)
+            _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
+
+            entity
+                .AddMoveDirection()
+                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddIsMoving()
+                .AddRotationDirection()
+                .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
+                .AddMaxHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(config.MaxHealth))
+                .AddIsDead()
+                .AddInDeathProcess()
+                .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
+                .AddDeathProcessCurrentTime()
+                .AddTakeDamageRequest()
+                .AddTakeDamageEvent()
+                .AddCurrentTarget()
+                .AddDistanceToTargetGoal(new ReactiveVariable<float>(config.DistanceToTargetGoal))
+                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.DistanceToTargetGoal))
+                .AddDistanceToTargetReachedEvent()
+                .AddDistanceToTargetReached()
+                .AddDamageInterval(new ReactiveVariable<float>(config.DamageInterval))
+                .AddDamagePerTick(new ReactiveVariable<float>(config.DamagePerTick))
+                .AddDamageTimer()
+                .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
+                .AddSpawnCurrentTime()
+                .AddInSpawnProcess();
+            
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+
+            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
+                
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value))
+                .Add(new FuncCondition(() => entity.InDeathProcess.Value == false));
+
+            ICompositeCondition canTakeDamage = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+            
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease)
+                .AddCanTakeDamage(canTakeDamage);
+            
+            entity
+                .AddSystem(new SpawnProcessTimerSystem())
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new TakeDamageSystem())
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new DeathProcessTimerSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
+                .AddSystem(new DistanceDetectorSystem())
+                .AddSystem(new DealDoTDamageOnTargetReachedSystem());
+
+            return entity;
+        }
+
+        public Entity CreateExplodingWalkingEnemy(Vector3 position, ExplodingWalkingEnemyConfig config)
         {
             Entity entity = CreateEmpty();
 
@@ -288,7 +364,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 .AddSystem(new DistanceDetectorSystem())
-                .AddSystem(new DealDamageOnTargetReachedSystem());
+                .AddSystem(new DealOneOffDamageOnTargetReachedSystem());
 
             return entity;
         }

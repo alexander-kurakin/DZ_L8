@@ -7,78 +7,118 @@ using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
 {
+    [RequireComponent(typeof(Animator))]
     public class DistanceReachedView : EntityView
     {
+        private readonly int IsTargetReachedKey = Animator.StringToHash("IsTargetReached");
+
+        [SerializeField] private Animator _animator;
+        
         [SerializeField] private ParticleSystem _distanceReachedBeamPrefab;
         [SerializeField] private Transform _beamSource;
         [SerializeField] private AudioSource _localAudioSource;
 
-        private ReactiveEvent _isDistanceReached;
-        private Transform _currentTargetTransform;
+        private ReactiveEvent _distanceReachedEvent;
+        private ReactiveVariable<Entity> _currentTarget;
+        private ReactiveVariable<bool> _ownerIsDead;
+        private ReactiveVariable<bool> _ownerIsWalking;
+        private ParticleSystem _beamInstance;
         
-        private IDisposable _isDistanceReachedDisposable;
+        private IDisposable _distanceReachedDisposable;
         private IDisposable _currentTargetChangedDisposable;
-        private IDisposable _isDeadDisposable;
-
-        private bool _hasTargetToFireABeamAt;
+       
+        private IDisposable _ownerIsDeadDisposable;
+        private IDisposable _targetIsDeadDisposable;
+        
+        private void OnValidate()
+        {
+            _animator ??= GetComponent<Animator>();
+        }
 
         protected override void OnEntityStartedWork(Entity entity)
         {
-            _isDistanceReached = entity.DistanceToTargetReachedEvent;
+            _distanceReachedEvent = entity.DistanceToTargetReachedEvent;
+            _currentTarget = entity.CurrentTarget;
+            _ownerIsDead = entity.IsDead;
+            _ownerIsWalking = entity.IsMoving;
             
-            _currentTargetChangedDisposable = entity.CurrentTarget.Subscribe(OnCurrentTargetChanged);
-            _isDistanceReachedDisposable = _isDistanceReached.Subscribe(OnDistanceReached);
-            _isDeadDisposable = entity.IsDead.Subscribe(OnIsDeadChanged);
+            _currentTargetChangedDisposable = _currentTarget.Subscribe(OnCurrentTargetChanged);
+            _distanceReachedDisposable = _distanceReachedEvent.Subscribe(OnDistanceReached);
+            _ownerIsDeadDisposable = _ownerIsDead.Subscribe(OnOwnerIsDeadChanged);
+           
+            OnCurrentTargetChanged(null, _currentTarget.Value);
         }
 
-        private void OnIsDeadChanged(bool oldDead, bool newDead)
-        {
-            if (newDead)
-                _localAudioSource.Stop();
-        }
-
-        private void OnCurrentTargetChanged(Entity oldTarget, Entity newTarget)
-        {
-            if (newTarget != null)
-            {
-                _currentTargetTransform = newTarget.Transform;
-                _hasTargetToFireABeamAt = true;
-            }
-        }
 
         private void OnDistanceReached()
         {
-            if (_hasTargetToFireABeamAt)
+            _animator.SetBool(IsTargetReachedKey, true);
+            
+            if (_currentTarget.Value == null || _beamInstance != null)
+                return;
+            
+            Vector3 direction = _currentTarget.Value.Transform.position - _beamSource.position;
+            
+            Quaternion rotation = direction.sqrMagnitude < 0.05f
+                ? Quaternion.identity
+                : Quaternion.LookRotation(direction.normalized);
+            
+            _beamInstance = Instantiate(
+                _distanceReachedBeamPrefab,
+                _beamSource.position,
+                rotation);
+            
+            GameSoundsService.Play(GameSoundsIDs.DragonBurn, _localAudioSource);
+        }
+        
+        private void OnCurrentTargetChanged(Entity oldTarget, Entity newTarget)
+        {
+            _targetIsDeadDisposable?.Dispose();
+            
+            if (newTarget == null)
             {
-                GameSoundsService.Play(GameSoundsIDs.DragonBurn, _localAudioSource);
-                
-                Quaternion targetRotation;
-                Vector3 targetDirection = _currentTargetTransform.position - _beamSource.position;
-
-                if (targetDirection.sqrMagnitude < 0.05f)
-                {
-                    targetRotation = Quaternion.identity;
-                }
-                else
-                {
-                    Vector3 normalizedDirection = targetDirection.normalized;
-                    targetRotation = Quaternion.LookRotation(normalizedDirection);
-                }
-
-                Instantiate(
-                    _distanceReachedBeamPrefab,
-                    _beamSource.position,
-                    targetRotation);
+                StopBeam();
+                return;
             }
+            
+            _targetIsDeadDisposable = newTarget.IsDead.Subscribe(OnTargetIsDeadChanged);     
+        }
+
+        private void OnTargetIsDeadChanged(bool oldDead, bool newDead)
+        {
+            if (newDead)
+                StopBeam();
+        }
+
+        private void OnOwnerIsDeadChanged(bool oldDead, bool newDead)
+        {
+            if (newDead)
+                StopBeam();       
+        }
+
+        private void StopBeam()
+        {
+            _localAudioSource.Stop();
+            
+            if (_beamInstance == null)
+                return;
+            
+            ParticleSystem beam = _beamInstance;
+            
+            _beamInstance = null;
+            beam.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            
+            Destroy(beam.gameObject);
         }
 
         public override void Cleanup(Entity entity)
         {
             base.Cleanup(entity);
 
-            _isDistanceReachedDisposable.Dispose();
-            _currentTargetChangedDisposable.Dispose();
-            _isDeadDisposable.Dispose();
+            _distanceReachedDisposable?.Dispose();
+            _currentTargetChangedDisposable?.Dispose();
+            _ownerIsDeadDisposable?.Dispose();
+            _targetIsDeadDisposable?.Dispose();
         }
     }
 }

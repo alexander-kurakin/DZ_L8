@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
         }
 
-        public StateMachineBrain CreateWalkingEnemyBrain(Entity entity, ITargetSelector targetSelector)
+        public StateMachineBrain CreateWalkingTowardsTargetBrain(Entity entity, ITargetSelector targetSelector)
         {
             FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
             MoveToTargetState moveToTargetState = new MoveToTargetState(entity);
@@ -50,7 +50,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
         
-        public StateMachineBrain CreateTowerWalkerBrain(Entity entity, MouseInput mouseInput)
+        public StateMachineBrain CreateWalkingTowardsCursorBrain(Entity entity, MouseInput mouseInput)
         {
             MovingTowardsCursorState state = new MovingTowardsCursorState(entity, mouseInput);
             
@@ -64,7 +64,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
         
-        public StateMachineBrain CreateRangedEnemyBrain(Entity entity, ITargetSelector targetSelector)
+        public StateMachineBrain CreateWalkingToRangedAutoAttackBrain(Entity entity, ITargetSelector targetSelector)
         {
             FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
             
@@ -104,7 +104,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
 
-        public StateMachineBrain CreateTurretBrain(Entity entity, ITargetSelector targetSelector)
+        public StateMachineBrain CreateRotatingAutoAttackBrain(Entity entity, ITargetSelector targetSelector)
         {
             FindTargetState findTargetState = new FindTargetState(targetSelector, _entitiesLifeContext, entity);
             AIStateMachine autoAttackState = CreateAutoAttackStateMachine(entity);
