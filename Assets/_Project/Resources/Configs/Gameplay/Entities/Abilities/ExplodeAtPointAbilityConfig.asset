@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d485acb9775742a6bf08c7dbb4e80bbc, type: 3}
   m_Name: ExplodeAtPointAbilityConfig
   m_EditorClassIdentifier: 
+  <PrefabPath>k__BackingField: 
   <ExplosionDamage>k__BackingField: 100
   <ExplosionRadius>k__BackingField: 5

@@ -1,6 +1,9 @@
-﻿using _Project.Develop.Runtime.Meta.Features.Powerups;
+﻿using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
@@ -63,11 +66,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddAbilityUserActiveAbility()
                 .AddAbilityUserAllAbilities()
-                .AddAbilityUserPlantAbilityPreference();
+                .AddAbilityUserPlantAbilityPreference()
+                .AddExplosionPreviewWorldPoint()
+                .AddExplosionPreviewVisible();
 
             entity
                 .AddPowerup()
-                .AddSystem(new PowerupOnAddActivatorSystem());
+                .AddSystem(new PowerupOnAddActivatorSystem())
+                .AddSystem(new ExplosionAbilityPreviewSystem(
+                    _mouseInput,
+                    _container.Resolve<MouseRaycastService>(),
+                    _configsProviderService.GetConfig<RaycastConfig>()
+                    ));
             
             ApplyPermanentPowerups(entity);
             _abilitiesFactory.SetupAbilitiesForMainHero(entity);

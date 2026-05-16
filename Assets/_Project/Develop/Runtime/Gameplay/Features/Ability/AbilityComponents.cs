@@ -35,4 +35,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     {
         public ReactiveVariable<AbilityType> Value;
     }
+    
+    public class ExplosionPreviewWorldPoint : IEntityComponent
+    {
+        public ReactiveVariable<Vector3> Value;
+    }
+    
+    public class ExplosionPreviewVisible : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
 }

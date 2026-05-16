@@ -12,10 +12,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         private readonly int MagicCastedHash = Animator.StringToHash("MagicCasted");
 
         [SerializeField] private Animator _animator;
-        [SerializeField] private ParticleSystem _castVfxPrefab;
-        
-        [SerializeField] private GameSoundsIDs _castSound;
-        [SerializeField] private AudioSource _localAudioSource;
 
         private IDisposable _magicCastRequest;
 
@@ -40,9 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         {
             _animator.SetTrigger(MagicCastedHash);
 
-            Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
-            
-            GameSoundsService.PlayOneShot(_castSound, _localAudioSource);
+
         }
     }
 }
