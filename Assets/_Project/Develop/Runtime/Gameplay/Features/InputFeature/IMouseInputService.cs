@@ -8,5 +8,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         float HorizontalDelta { get; }
         bool FireButtonPressed { get; }
         Vector2 PointerScreenPosition { get; }
+        void HideCursor();
+        void ShowCursor();
     }
 }

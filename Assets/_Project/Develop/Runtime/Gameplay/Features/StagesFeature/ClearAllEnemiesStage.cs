@@ -136,6 +136,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             ResetSpawnSectorOrderForWave();
             EnqueueAllEnemiesForDelayedSpawn();
             
+            _mouseInputService.HideCursor();
+            
             _inProcess = true;
         }
 
@@ -203,6 +205,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private void ProcessEnd()
         {
             _inProcess = false;
+            _mouseInputService.ShowCursor();
             _completed.Invoke();
         }
 

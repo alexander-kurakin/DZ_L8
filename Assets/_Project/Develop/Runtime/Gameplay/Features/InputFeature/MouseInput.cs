@@ -28,5 +28,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
         }
         
         public bool FireButtonPressed => IsEnabled && Input.GetMouseButtonDown(0);
+        
+        public void HideCursor() => Cursor.visible = false;
+
+        public void ShowCursor() => Cursor.visible = true;
     }
 }

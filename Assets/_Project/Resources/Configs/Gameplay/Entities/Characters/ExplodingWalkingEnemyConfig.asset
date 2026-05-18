@@ -20,4 +20,4 @@ MonoBehaviour:
   <DistanceToTargetGoal>k__BackingField: 15
   <ExplosionDamage>k__BackingField: 25
   <SpawnProcessTime>k__BackingField: 1
-  <HideExplosionSourceDelayTime>k__BackingField: 0.35
+  <HideExplosionSourceDelayTime>k__BackingField: 0.1
