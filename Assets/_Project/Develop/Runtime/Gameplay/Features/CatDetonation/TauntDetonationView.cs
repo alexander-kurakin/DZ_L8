@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using CartoonFXPack;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
 {
