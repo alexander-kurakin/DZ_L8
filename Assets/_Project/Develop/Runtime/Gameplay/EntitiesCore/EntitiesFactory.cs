@@ -263,7 +263,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
-                
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value))
@@ -323,7 +322,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddExplosionDamage(new ReactiveVariable<float>(config.ExplosionDamage))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
-                .AddInSpawnProcess();
+                .AddInSpawnProcess()
+                .AddInDetonateProcess()
+                .AddStartTauntEvent()
+                .AddTauntFinishedEvent()
+                .AddDetonateTauntIndex()
+                .AddDetonateProcessCurrentTime()
+                .AddInExplosionProcess()
+                .AddStartExplosionEvent()
+                .AddExplosionCurrentTime()
+                .AddHideExplosionSourceEvent()
+                .AddHideExplosionSourceDelayTime(new ReactiveVariable<float>(config.HideExplosionSourceDelayTime));
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
@@ -336,8 +345,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value));
+                .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
 
             ICompositeCondition mustSelfRelease = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value))
@@ -346,25 +354,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             ICompositeCondition canTakeDamage = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
                 .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition canDetonate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
+                .Add(new FuncCondition(() => entity.InDetonateProcess.Value == false))
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
             
             entity
                 .AddCanMove(canMove)
                 .AddCanRotate(canRotate)
+                .AddCanStartDetonate(canDetonate)
                 .AddMustDie(mustDie)
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanTakeDamage(canTakeDamage);
-            
+
             entity
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
                 .AddSystem(new TakeDamageSystem())
+                .AddSystem(new DistanceDetectorSystem())
+                .AddSystem(new StartDetonationSequence())
+                .AddSystem(new DetonationProcessTimerSystem())
+                .AddSystem(new TauntProcessSystem())
+                .AddSystem(new StartExplosionSystem())
+                .AddSystem(new ExplosionProcessTimerSystem())
+                .AddSystem(new ExplosionDelayEndTriggerSystem())
+                .AddSystem(new ExplosionDamageOnDetonationSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
-                .AddSystem(new DistanceDetectorSystem())
-                .AddSystem(new DealOneOffDamageOnTargetReachedSystem());
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             return entity;
         }

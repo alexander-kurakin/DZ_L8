@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
 {
     [RequireComponent(typeof(Animator))]
-    public class DistanceReachedView : EntityView
+    public class DragonBeamDistanceReachedView : EntityView
     {
         private readonly int IsTargetReachedKey = Animator.StringToHash("IsTargetReached");
 
@@ -21,7 +21,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         private ReactiveEvent _distanceReachedEvent;
         private ReactiveVariable<Entity> _currentTarget;
         private ReactiveVariable<bool> _ownerIsDead;
-        private ReactiveVariable<bool> _ownerIsWalking;
         private ParticleSystem _beamInstance;
         
         private IDisposable _distanceReachedDisposable;
@@ -40,15 +39,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
             _distanceReachedEvent = entity.DistanceToTargetReachedEvent;
             _currentTarget = entity.CurrentTarget;
             _ownerIsDead = entity.IsDead;
-            _ownerIsWalking = entity.IsMoving;
             
             _currentTargetChangedDisposable = _currentTarget.Subscribe(OnCurrentTargetChanged);
             _distanceReachedDisposable = _distanceReachedEvent.Subscribe(OnDistanceReached);
             _ownerIsDeadDisposable = _ownerIsDead.Subscribe(OnOwnerIsDeadChanged);
-           
-            OnCurrentTargetChanged(null, _currentTarget.Value);
         }
-
 
         private void OnDistanceReached()
         {
@@ -74,12 +69,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         private void OnCurrentTargetChanged(Entity oldTarget, Entity newTarget)
         {
             _targetIsDeadDisposable?.Dispose();
-            
-            if (newTarget == null)
-            {
-                StopBeam();
-                return;
-            }
             
             _targetIsDeadDisposable = newTarget.IsDead.Subscribe(OnTargetIsDeadChanged);     
         }

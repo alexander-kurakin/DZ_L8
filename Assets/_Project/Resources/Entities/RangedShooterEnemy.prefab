@@ -245,7 +245,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 0.621
   m_Pitch: 1
   Loop: 0
@@ -392,7 +392,7 @@ PrefabInstance:
     - target: {fileID: 62956036438060799, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}
       propertyPath: m_Name
-      value: RangedEnemy
+      value: RangedShooterEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 266444240801978367, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}

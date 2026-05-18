@@ -13,5 +13,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
         TowerDamaged,
         RegularImpact,
         Die,
+        CatSpawn,
+        CatTaunt,
+        Explosion
     }
 }

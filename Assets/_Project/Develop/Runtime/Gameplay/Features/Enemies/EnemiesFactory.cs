@@ -44,6 +44,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
                     entity = _entitiesFactory.CreateRangedShootingEnemy(position, rangedShootingEnemyConfig);
                     _brainsFactory.CreateWalkingToRangedAutoAttackBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
                     break;
+                
+                case ExplodingWalkingEnemyConfig explodingWalkingEnemyConfig:
+                    entity = _entitiesFactory.CreateExplodingWalkingEnemy(position, explodingWalkingEnemyConfig);
+                    _brainsFactory.CreateWalkingTowardsTargetBrain(entity, new MainHeroTargetSelector(_mainHeroHolderService));
+                    break;
 
                 default:
                     throw new ArgumentException($"Not support {config.GetType()} type config");

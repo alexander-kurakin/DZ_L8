@@ -50,8 +50,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
                     _pointDisposable = _previewWorldPoint.Subscribe(OnPreviewWorldPointChanged);
                     _radiusDisposable = _explosionRadius.Subscribe(OnExplosionRadiusChanged);
                     _explosionRequestedDisposable = _explodeAbility.DealAreaImpactDamageRequest.Subscribe(OnExplosionRequested);
-
-                    OneOffSyncFromState();
                 }
             }
         }
@@ -98,13 +96,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 
         private void OnExplosionRadiusChanged(float oldRadius, float newRadius)
         {
-            ApplyRadiusScale();
-        }
-
-        private void OneOffSyncFromState()
-        {
-            _indicator.gameObject.SetActive(_previewVisible.Value);
-            OnPreviewWorldPointChanged(default, _previewWorldPoint.Value);
             ApplyRadiusScale();
         }
 

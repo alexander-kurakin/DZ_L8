@@ -36,7 +36,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
             _inSpawnProcess = entity.InSpawnProcess;
 
             _inSpawnProcessChangedDisposable = _inSpawnProcess.Subscribe(OnSpawnProcessChanged);
-            OnSpawnProcessChanged(default, _inSpawnProcess.Value);
+            UpdateSpawnProcessKey(_inSpawnProcess.Value);
+            
+            if (_inSpawnProcess.Value)
+                PlayEffects();
         }
 
         public override void Cleanup(Entity entity)
@@ -46,22 +49,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
             _inSpawnProcessChangedDisposable.Dispose();
         }
 
-        private void OnSpawnProcessChanged(bool arg1, bool newValue)
+        private void OnSpawnProcessChanged(bool oldValue, bool newValue)
         {
             UpdateSpawnProcessKey(newValue);
+
+            if (newValue && oldValue == false)
+                PlayEffects();
+        }
+
+        private void PlayEffects()
+        {
+            if (_spawnEffectPrefab == null || _spawnEffectPoint == null)
+                return;
             
-            if (newValue)
-            {
-                Instantiate(
-                    _spawnEffectPrefab,
-                    _spawnEffectPoint.position,
-                    _spawnEffectPrefab.transform.rotation,
-                    null);
+            Instantiate(
+                _spawnEffectPrefab,
+                _spawnEffectPoint.position,
+                _spawnEffectPrefab.transform.rotation,
+                null);
+
+            if (_localAudioSource == null)
+                return;
                 
-                SetupRandomSettingsOnAudioSource();
-                GameSoundsService.PlayOneShot(_spawnSoundToPlay, _localAudioSource);
-                
-            }
+            SetupRandomSettingsOnAudioSource();
+            GameSoundsService.PlayOneShot(_spawnSoundToPlay, _localAudioSource);
         }
 
         private void SetupRandomSettingsOnAudioSource()

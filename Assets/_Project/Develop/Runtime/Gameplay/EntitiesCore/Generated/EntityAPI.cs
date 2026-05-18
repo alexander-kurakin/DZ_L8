@@ -851,102 +851,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal DistanceToTargetGoalC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DistanceToTargetGoal => DistanceToTargetGoalC.Value;
-
-		public bool TryGetDistanceToTargetGoal(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetGoal()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetGoal(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent DistanceToTargetCurrentC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DistanceToTargetCurrent => DistanceToTargetCurrentC.Value;
-
-		public bool TryGetDistanceToTargetCurrent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetCurrent()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetCurrent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent DistanceToTargetReachedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent DistanceToTargetReachedEvent => DistanceToTargetReachedEventC.Value;
-
-		public bool TryGetDistanceToTargetReachedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReachedEvent()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReachedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached DistanceToTargetReachedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> DistanceToTargetReached => DistanceToTargetReachedC.Value;
-
-		public bool TryGetDistanceToTargetReached(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReached()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReached(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached() {Value = value}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick DamagePerTickC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamagePerTick => DamagePerTickC.Value;
@@ -1194,6 +1098,361 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBodyContactDamage(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess InDetonateProcessC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> InDetonateProcess => InDetonateProcessC.Value;
+
+		public bool TryGetInDetonateProcess(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInDetonateProcess()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInDetonateProcess(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartTauntEvent StartTauntEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartTauntEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent StartTauntEvent => StartTauntEventC.Value;
+
+		public bool TryGetStartTauntEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartTauntEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStartTauntEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartTauntEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStartTauntEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartTauntEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.CanStartDetonate CanStartDetonateC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.CanStartDetonate>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanStartDetonate => CanStartDetonateC.Value;
+
+		public bool TryGetCanStartDetonate(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.CanStartDetonate component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanStartDetonate(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.CanStartDetonate() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateTauntIndex DetonateTauntIndexC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateTauntIndex>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> DetonateTauntIndex => DetonateTauntIndexC.Value;
+
+		public bool TryGetDetonateTauntIndex(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateTauntIndex component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDetonateTauntIndex()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateTauntIndex() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDetonateTauntIndex(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateTauntIndex() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.TauntFinishedEvent TauntFinishedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.TauntFinishedEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent TauntFinishedEvent => TauntFinishedEventC.Value;
+
+		public bool TryGetTauntFinishedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.TauntFinishedEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTauntFinishedEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.TauntFinishedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTauntFinishedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.TauntFinishedEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateProcessCurrentTime DetonateProcessCurrentTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateProcessCurrentTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DetonateProcessCurrentTime => DetonateProcessCurrentTimeC.Value;
+
+		public bool TryGetDetonateProcessCurrentTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateProcessCurrentTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDetonateProcessCurrentTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateProcessCurrentTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDetonateProcessCurrentTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DetonateProcessCurrentTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.ExplosionCurrentTime ExplosionCurrentTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.ExplosionCurrentTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionCurrentTime => ExplosionCurrentTimeC.Value;
+
+		public bool TryGetExplosionCurrentTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.ExplosionCurrentTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionCurrentTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.ExplosionCurrentTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionCurrentTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.ExplosionCurrentTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InExplosionProcess InExplosionProcessC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InExplosionProcess>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> InExplosionProcess => InExplosionProcessC.Value;
+
+		public bool TryGetInExplosionProcess(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InExplosionProcess component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInExplosionProcess()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InExplosionProcess() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddInExplosionProcess(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InExplosionProcess() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartExplosionEvent StartExplosionEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartExplosionEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent StartExplosionEvent => StartExplosionEventC.Value;
+
+		public bool TryGetStartExplosionEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartExplosionEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStartExplosionEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartExplosionEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddStartExplosionEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.StartExplosionEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceEvent HideExplosionSourceEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent HideExplosionSourceEvent => HideExplosionSourceEventC.Value;
+
+		public bool TryGetHideExplosionSourceEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHideExplosionSourceEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHideExplosionSourceEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceDelayTime HideExplosionSourceDelayTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceDelayTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> HideExplosionSourceDelayTime => HideExplosionSourceDelayTimeC.Value;
+
+		public bool TryGetHideExplosionSourceDelayTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceDelayTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHideExplosionSourceDelayTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceDelayTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHideExplosionSourceDelayTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.HideExplosionSourceDelayTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal DistanceToTargetGoalC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DistanceToTargetGoal => DistanceToTargetGoalC.Value;
+
+		public bool TryGetDistanceToTargetGoal(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetGoal()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetGoal(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetGoal() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent DistanceToTargetCurrentC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DistanceToTargetCurrent => DistanceToTargetCurrentC.Value;
+
+		public bool TryGetDistanceToTargetCurrent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetCurrent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetCurrent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetCurrent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent DistanceToTargetReachedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent DistanceToTargetReachedEvent => DistanceToTargetReachedEventC.Value;
+
+		public bool TryGetDistanceToTargetReachedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReachedEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReachedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReachedEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached DistanceToTargetReachedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> DistanceToTargetReached => DistanceToTargetReachedC.Value;
+
+		public bool TryGetDistanceToTargetReached(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReached()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDistanceToTargetReached(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.DistanceToTargetReached() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Attack.StartAttackRequest StartAttackRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Attack.StartAttackRequest>();
@@ -1841,6 +2100,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddTransform(UnityEngine.Transform value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.TransformComponent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent AnimatorC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent>();
+
+		public UnityEngine.Animator Animator => AnimatorC.Value;
+
+		public bool TryGetAnimator(out UnityEngine.Animator value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Animator);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddAnimator(UnityEngine.Animator value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Common.AnimatorComponent() {Value = value}); 
 		}
 
 	}

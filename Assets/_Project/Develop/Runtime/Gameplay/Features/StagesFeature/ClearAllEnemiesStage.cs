@@ -44,11 +44,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         
         private readonly Queue<EntityConfig> _enemySpawnQueue = new Queue<EntityConfig>();
         private float _secondsUntilNextEnemySpawn;
-        private float _minTimeBetweenSpawns = 0.5f;
-        private float _maxTimeBetweenSpawns = 1.5f; 
+        private float _minTimeBetweenSpawns = 1f;
+        private float _maxTimeBetweenSpawns = 2f; 
         
         private float _burstSpawnProbability = 0.15f;
-        private int _burstMinimumEnemies = 2;
+        private int _burstMinimumEnemies = 1;
         private int _burstMaximumEnemies = 3;
 
         public ClearAllEnemiesStage(
@@ -167,7 +167,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 }
             }
 
-            if (_spawnedEnemiesToRemoveReason.Count == 0)
+            if (_enemySpawnQueue.Count == 0 && _spawnedEnemiesToRemoveReason.Count == 0)
             {
                 ProcessEnd();
                 return;
@@ -258,9 +258,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             Vector3 spawnPosition = GenerateRandomPositionInCircleShuffledSectors();
             Entity spawnedEnemy = _enemiesFactory.Create(spawnPosition, enemyConfig);
 
-            IDisposable removeReason = spawnedEnemy.IsDead.Subscribe((oldValue, isDead) =>
+            IDisposable removeReason = spawnedEnemy.InDeathProcess.Subscribe((oldValue, inDead) =>
             {
-                if (isDead)
+                if (inDead == false && spawnedEnemy.IsDead.Value)
                 {
                     IDisposable disposable = _spawnedEnemiesToRemoveReason[spawnedEnemy];
                     disposable.Dispose();

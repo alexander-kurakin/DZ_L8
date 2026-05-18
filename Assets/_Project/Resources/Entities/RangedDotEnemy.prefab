@@ -264,8 +264,8 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 0}
-  m_PlayOnAwake: 1
-  m_Volume: 0.304
+  m_PlayOnAwake: 0
+  m_Volume: 0.4
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -426,6 +426,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42b826f7fa8a425a8dd3ba75b0586046, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _animator: {fileID: 6959166531336482203}
   _distanceReachedBeamPrefab: {fileID: 198015459346078236, guid: d9c1fac1f620ebd4f9e47ef7b9ca6bca,
     type: 3}
   _beamSource: {fileID: 8215524678562774554}
@@ -447,7 +448,7 @@ PrefabInstance:
     - target: {fileID: 62956036438060799, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}
       propertyPath: m_Name
-      value: WalkingEnemy
+      value: RangedDotEnemy
       objectReference: {fileID: 0}
     - target: {fileID: 266444240801978367, guid: 6866f045f7996a24bb1312cb86a91d79,
         type: 3}

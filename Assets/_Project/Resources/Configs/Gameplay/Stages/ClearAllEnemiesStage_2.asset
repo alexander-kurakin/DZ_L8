@@ -22,4 +22,7 @@ MonoBehaviour:
   - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
       type: 2}
     <EnemiesCount>k__BackingField: 1
+  - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 5cc873a76e19ae443bc1ef57e3f1bf48,
+      type: 2}
+    <EnemiesCount>k__BackingField: 1
   <EnemySpawnRadius>k__BackingField: 28
