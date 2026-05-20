@@ -108,7 +108,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             
 			Entity entity = _entitiesFactory.CreateTowerWalker(_townWalkerSpawnPoint.position);
             
-            
             entity
                 .AddGameplayPhase()
                 .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
@@ -117,6 +116,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
             _entitiesLifeContext.Add(entity);
             _brainsFactory.CreateWalkingTowardsCursorBrain(entity, _mouseInput);
+            
+            return entity;
+        }
+        
+        public Entity CreateTowerBrother()
+        {
+            
+            Entity entity = _entitiesFactory.CreateTowerBrother(_townWalkerSpawnPoint.position + (Vector3.right * 2));
+            
+            entity
+                .AddGameplayPhase()
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+
+            _mainHeroHolderService.RegisterTowerBrother(entity);
+
+            _entitiesLifeContext.Add(entity);
+            _brainsFactory.CreateSimpleRandomWalkerBrain(entity);
             
             return entity;
         }

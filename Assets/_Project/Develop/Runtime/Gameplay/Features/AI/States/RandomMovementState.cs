@@ -9,30 +9,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
     {
         private ReactiveVariable<Vector3> _movementDirection;
         private ReactiveVariable<Vector3> _rotationDirection;
+        private Vector3 _lastMovementDirection;
 
-        private float _cooldownBetweenDirectionGeneration;
-
-        private float _time;
-
-        public RandomMovementState(
-            Entity entity,
-            float cooldownBetweenDirectionGeneration)
+        public RandomMovementState(Entity entity)
         {
             _movementDirection = entity.MoveDirection;
             _rotationDirection = entity.RotationDirection;
-
-            _cooldownBetweenDirectionGeneration = cooldownBetweenDirectionGeneration;
         }
 
         public override void Enter()
         {
             base.Enter();
 
-            Vector3 randomDirection = new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
-            _movementDirection.Value = randomDirection;
-            _rotationDirection.Value = randomDirection;
-
-            _time = 0;
+            if (_lastMovementDirection.sqrMagnitude > 0.05f)
+                SetDirection(GenerateNewInverseTurnDirection(_lastMovementDirection));
+            else
+                SetDirection(GenerateNewRandomDirection());
+            
+            _lastMovementDirection = _movementDirection.Value;
         }
 
         public override void Exit()
@@ -40,27 +34,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             base.Exit();
 
             _movementDirection.Value = Vector3.zero;
+            _rotationDirection.Value = Vector3.zero;
         }
 
-        public void Update(float deltaTime)
-        {
-            _time += deltaTime;
+        public void Update(float deltaTime) { }
 
-            if(_time >= _cooldownBetweenDirectionGeneration)
-            {
-                GenerateNewDirection();
-                _time = 0;
-            }
+        private Vector3 GenerateNewRandomDirection()
+        {
+            return new Vector3(Random.Range(-1f, 1f), 0, Random.Range(-1f, 1f)).normalized;
         }
 
-        private void GenerateNewDirection()
+        private Vector3 GenerateNewInverseTurnDirection(Vector3 previousDirection)
         {
-            Vector3 inverseDirection = -_movementDirection.Value.normalized;
+            Vector3 inverseDirection = -previousDirection.normalized;
             Quaternion randomTurn = Quaternion.Euler(0, Random.Range(-30, 30), 0);
-            Vector3 newDirection = randomTurn * inverseDirection;
-
-            _movementDirection.Value = newDirection;
-            _rotationDirection.Value = newDirection;
+            
+            return randomTurn * inverseDirection;
+        }
+        
+        private void SetDirection(Vector3 direction)
+        {
+            _movementDirection.Value = direction;
+            _rotationDirection.Value = direction;
         }
     }
 }

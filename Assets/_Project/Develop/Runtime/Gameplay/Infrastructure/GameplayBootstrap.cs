@@ -48,6 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             
             _container.Resolve<MainHeroFactory>().Create();
 			_container.Resolve<MainHeroFactory>().CreateTowerWalker();
+            _container.Resolve<MainHeroFactory>().CreateTowerBrother();
             
             _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
             yield break;

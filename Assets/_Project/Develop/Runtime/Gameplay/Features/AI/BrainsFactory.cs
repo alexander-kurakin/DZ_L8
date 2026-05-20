@@ -1,4 +1,6 @@
-﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+﻿using System;
+using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -12,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
     public class BrainsFactory
     {
         private readonly DIContainer _container;
+        private readonly TimerServiceFactory _timerServiceFactory;
         private readonly AIBrainsContext _brainsContext;
         private readonly EntitiesLifeContext _entitiesLifeContext;
 
@@ -20,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _container = container;
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+            _timerServiceFactory = _container.Resolve<TimerServiceFactory>();
         }
 
         public StateMachineBrain CreateWalkingTowardsTargetBrain(Entity entity, ITargetSelector targetSelector)
@@ -170,5 +174,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return stateMachine;
         }        
         
+        private AIStateMachine CreateRandomMovementStateMachine(Entity entity)
+        {
+            List<IDisposable> disposables = new List<IDisposable>();
+
+            RandomMovementState randomMovementState = new RandomMovementState(entity);
+            InformativeIdleState informativeIdleState = new InformativeIdleState(entity);
+
+            TimerService movementTimer = _timerServiceFactory.Create(3f);
+            disposables.Add(movementTimer);
+            disposables.Add(randomMovementState.Entered.Subscribe(movementTimer.Restart));
+
+            TimerService idleTimer = _timerServiceFactory.Create(5f);
+            disposables.Add(idleTimer);
+            disposables.Add(informativeIdleState.Entered.Subscribe(idleTimer.Restart));
+
+            FuncCondition movementTimerEndedCondition = new FuncCondition(() => movementTimer.IsOver);
+            FuncCondition idleTimerEndedCondition = new FuncCondition(() => idleTimer.IsOver);
+
+            AIStateMachine stateMachine = new AIStateMachine(disposables);
+
+            stateMachine.AddState(randomMovementState);
+            stateMachine.AddState(informativeIdleState);
+
+            stateMachine.AddTransition(randomMovementState, informativeIdleState, movementTimerEndedCondition);
+            stateMachine.AddTransition(informativeIdleState, randomMovementState, idleTimerEndedCondition);
+
+            return stateMachine;
+        }
+        
+        public StateMachineBrain CreateSimpleRandomWalkerBrain(Entity entity)
+        {
+            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity);
+            StateMachineBrain brain = new StateMachineBrain(stateMachine);
+
+            _brainsContext.SetFor(entity, brain);
+
+            return brain;
+        }
     }
 }

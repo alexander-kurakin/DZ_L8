@@ -87,6 +87,43 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             
             return entity;
         }
+        
+        public Entity CreateTowerBrother(Vector3 position)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, "Entities/TowerBrother");
+
+            entity
+                .AddMoveDirection()
+                .AddMoveSpeed(new ReactiveVariable<float>(3))
+                .AddIsMoving()
+                .AddIsCurrentlyIdle()
+                .AddRotationDirection()
+                .AddRotationSpeed(new ReactiveVariable<float>(900));
+            
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.GameplayPhase.Value == GameplayStates.StageProcess));
+            
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => true)); //tower walker always rotates towards mouse cursor
+            
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => _mainHeroHolderService.MainHero.IsDead.Value))
+                .Add(new FuncCondition(() => _mainHeroHolderService.MainHero.InDeathProcess.Value == false));
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new RigidbodyMovementSystem())
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            return entity;
+        }
 
         public Entity CreateTowerWalker(Vector3 position)
         {

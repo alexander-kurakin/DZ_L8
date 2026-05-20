@@ -12,6 +12,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
 
         private Entity _mainHero;
         private Entity _towerWalker;
+        private Entity _towerBrother;
 
         public MainHeroHolderService(EntitiesLifeContext entitiesLifeContext)
         {
@@ -23,10 +24,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         public Entity MainHero => _mainHero;
 
         public Entity TowerWalker => _towerWalker;
+        public Entity TowerBrother => _towerBrother;
 
         public void RegisterTowerWalker(Entity entity)
         {
             _towerWalker = entity;
+        }
+        
+        public void RegisterTowerBrother(Entity entity)
+        {
+            _towerBrother = entity;
         }
 
         public void Initialize()

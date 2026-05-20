@@ -58,6 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             
             _mainHero.GameplayPhase.Value = GameplayStates.Preparation;
             _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
+            _mainHeroHolderService.TowerBrother.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
 
             _mainHero.AbilityUserActiveAbility.Value = _mainHero.AbilityUserPlantAbilityPreference.Value;
             

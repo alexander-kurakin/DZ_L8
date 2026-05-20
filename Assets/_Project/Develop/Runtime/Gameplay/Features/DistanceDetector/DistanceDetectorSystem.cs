@@ -18,6 +18,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
         private ReactiveVariable<bool> _targetDistanceReached;
         private ReactiveEvent _targetDistanceReachedEvent;
         
+        private Entity _entity;
 
         public void OnInit(Entity entity)
         {
@@ -28,6 +29,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
             _distanceToTargetCurrent = entity.DistanceToTargetCurrent;
             _targetDistanceReachedEvent = entity.DistanceToTargetReachedEvent;
             _targetDistanceReached = entity.DistanceToTargetReached;
+            
+            _entity = entity;
+            
         }
 
         public void OnUpdate(float deltaTime)
@@ -41,7 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector
 
             if (_distanceToTargetCurrent.Value <= _distanceToTargetGoal.Value)
             {
-                Debug.Log("Я дошел до цели!");
+                Debug.Log(_entity + "дошел до цели!");
                 _targetDistanceReached.Value = true;
                 _targetDistanceReachedEvent?.Invoke();
             }

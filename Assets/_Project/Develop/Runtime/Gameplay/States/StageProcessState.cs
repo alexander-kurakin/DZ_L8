@@ -32,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
          
             _mainHero.GameplayPhase.Value = GameplayStates.StageProcess;
             _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
+            _mainHeroHolderService.TowerBrother.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
             
             _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
         }

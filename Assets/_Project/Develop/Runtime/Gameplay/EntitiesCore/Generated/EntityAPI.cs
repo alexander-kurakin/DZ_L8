@@ -1872,6 +1872,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.AI.IsCurrentlyIdle IsCurrentlyIdleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.AI.IsCurrentlyIdle>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsCurrentlyIdle => IsCurrentlyIdleC.Value;
+
+		public bool TryGetIsCurrentlyIdle(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.AI.IsCurrentlyIdle component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsCurrentlyIdle()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.AI.IsCurrentlyIdle() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsCurrentlyIdle(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.AI.IsCurrentlyIdle() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility AbilityUserActiveAbilityC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserActiveAbility>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityType> AbilityUserActiveAbility => AbilityUserActiveAbilityC.Value;
