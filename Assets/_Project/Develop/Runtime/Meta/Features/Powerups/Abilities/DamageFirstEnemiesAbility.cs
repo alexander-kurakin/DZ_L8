@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -14,17 +15,20 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
         private readonly Entity _mainHero;
         private readonly PermanentDamageFirstEnemiesConfig _damageFirstEnemiesConfig;
         private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly StageProviderService _stageProviderService;
 
         private readonly Dictionary<Entity, IDisposable> _spawnedEnemies = new();
         
         private IDisposable _gameplayStateDisposable;
         private int _enemiesDamagedThisWave;
+        private int _damageableEnemiesCountThisWave;
         
         public DamageFirstEnemiesAbility(
             Entity mainHero,
             PermanentDamageFirstEnemiesConfig damageFirstEnemiesConfig,
             int currentLevel,
-            EntitiesLifeContext entitiesLifeContext) : base(damageFirstEnemiesConfig.ID, currentLevel, damageFirstEnemiesConfig.MaxLevel)
+            EntitiesLifeContext entitiesLifeContext,
+            StageProviderService stageProviderService) : base(damageFirstEnemiesConfig.ID, currentLevel, damageFirstEnemiesConfig.MaxLevel)
         {
             _mainHero = mainHero;
             _damageFirstEnemiesConfig = damageFirstEnemiesConfig;
@@ -40,12 +44,33 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
         private void OnGameplayPhaseChanged(GameplayStates oldState, GameplayStates newState)
         {
             if (newState == GameplayStates.Preparation)
-                _enemiesDamagedThisWave = 0;            
+            {
+                _enemiesDamagedThisWave = 0;
+                _damageableEnemiesCountThisWave = 0;
+                return;
+            }
+            
+            if (newState == GameplayStates.StageProcess)
+            {
+                _enemiesDamagedThisWave = 0;
+                _damageableEnemiesCountThisWave = CalculateDamageableEnemiesCountForCurrentWave();
+            }     
+        }
+
+        private int CalculateDamageableEnemiesCountForCurrentWave()
+        {
+            int enemiesCount = _stageProviderService.CurrentStageEnemiesCount;
+            
+            float percent = _damageFirstEnemiesConfig.PercentOfWaveEnemiesDamaged;
+            
+            int result = (int)MathF.Ceiling(enemiesCount * percent);
+            
+            return Math.Min(enemiesCount, Math.Max(0, result));
         }
 
         private void OnEntityAdded(Entity entity)
         {
-            if (_enemiesDamagedThisWave >= _damageFirstEnemiesConfig.DamageableEnemiesCount)
+            if (_enemiesDamagedThisWave >= _damageableEnemiesCountThisWave)
                 return;
 
             if (entity.TryGetTeam(out ReactiveVariable<Teams> team) == false || team.Value != Teams.Enemies)
@@ -77,7 +102,7 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
                 _spawnedEnemies.Remove(entity);
             }
             
-            if (_enemiesDamagedThisWave >= _damageFirstEnemiesConfig.DamageableEnemiesCount)
+            if (_enemiesDamagedThisWave >= _damageableEnemiesCountThisWave)
                 return;
                 
             ApplyDamage(entity);

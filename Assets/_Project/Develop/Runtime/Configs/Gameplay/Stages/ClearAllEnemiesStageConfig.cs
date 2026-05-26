@@ -10,5 +10,18 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Stages
 
         public IReadOnlyList<EnemyItemConfig> EnemyItems => _enemyItems;
         [field: SerializeField] public float EnemySpawnRadius { get; private set; }
+
+        public int EnemiesCount
+        {
+            get
+            {
+                int count = 0;
+                
+                foreach (EnemyItemConfig enemyItem in _enemyItems)
+                    count += enemyItem.EnemiesCount;
+                
+                return count;
+            }            
+        }
     }
 }

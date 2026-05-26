@@ -17,5 +17,5 @@ MonoBehaviour:
   <Description>k__BackingField: You regen small %HP every wave
   <Icon>k__BackingField: {fileID: 21300000, guid: 70f2b1a5ab38444a989bed3ac6cc25a3,
     type: 3}
-  <CostInDiamonds>k__BackingField: 150
-  <PercentOfTowerLifeHealed>k__BackingField: 0.15
+  <CostInGold>k__BackingField: 500000
+  <PercentOfTowerLifeHealed>k__BackingField: 0.25

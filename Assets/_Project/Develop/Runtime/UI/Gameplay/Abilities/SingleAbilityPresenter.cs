@@ -46,11 +46,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             switch (type)
             {
                 case AbilityType.PlantMine:
-                    return configsProviderService.GetConfig<MineConfig>().CostInGold;
+                    return configsProviderService.GetConfig<MineConfig>().CostInDiamonds;
                 case AbilityType.PlantTurret:
-                    return configsProviderService.GetConfig<TurretConfig>().CostInGold;
+                    return configsProviderService.GetConfig<TurretConfig>().CostInDiamonds;
                 case AbilityType.PlantToxicArea:
-                    return configsProviderService.GetConfig<ToxicAreaConfig>().CostInGold;
+                    return configsProviderService.GetConfig<ToxicAreaConfig>().CostInDiamonds;
                 default:
                     return 1;
             }

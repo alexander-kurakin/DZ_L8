@@ -97,7 +97,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
             _uiSoundService.Play(UISoundIDs.SelectedClick);
 
             if (selected.IsUnlocked() == false)
-                SetViewCanBuy(selected.PowerupConfig.CostInDiamonds);
+                SetViewCanBuy(selected.PowerupConfig.CostInGold);
             else
                 SetViewAlreadyOwned();
         }
@@ -116,16 +116,16 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
 
         private void OnBuyButtonClicked()
         {
-            int price = _selectableAbilityPresenter.PowerupConfig.CostInDiamonds;
+            int price = _selectableAbilityPresenter.PowerupConfig.CostInGold;
 
-            if (_walletService.Enough(CurrencyTypes.Diamond, price) == false)
+            if (_walletService.Enough(CurrencyTypes.Gold, price) == false)
             {
                 _uiSoundService.Play(UISoundIDs.CannotBuy);
                 _selectableAbilityPresenter.AnimateCannotBuy();
                 return;
             }
 
-            _walletService.Spend(CurrencyTypes.Diamond, price);
+            _walletService.Spend(CurrencyTypes.Gold, price);
             
             _selectableAbilityPresenter.Provide();
             

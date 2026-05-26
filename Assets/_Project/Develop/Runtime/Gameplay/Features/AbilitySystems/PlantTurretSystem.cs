@@ -35,9 +35,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
         private void OnAbilityUse(Vector3 usePoint)
         {
-            if (_walletService.Enough(CurrencyTypes.Gold, _purchasableEntityConfig.CostInGold)) 
+            if (_walletService.Enough(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds)) 
             {
-                _walletService.Spend(CurrencyTypes.Gold, _purchasableEntityConfig.CostInGold);
+                _walletService.Spend(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds);
                 _plantableObjectsFactory.Create(usePoint, _purchasableEntityConfig);
             }            
         }

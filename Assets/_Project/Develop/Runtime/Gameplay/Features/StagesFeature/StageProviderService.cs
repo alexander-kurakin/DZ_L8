@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
@@ -33,6 +34,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
         public IReadOnlyVariable<StageResults> CurrentStageResult => _currentStageResult;
+        
+        public int CurrentStageEnemiesCount
+        {
+            get
+            {
+                int stageIndex = _currentStageNumber.Value - 1;
+                
+                if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
+                    return 0;
+                
+                if (_levelConfig.StageConfigs[stageIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig)
+                    return clearAllEnemiesStageConfig.EnemiesCount;
+                
+                return 0;
+            }
+        }
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
 
