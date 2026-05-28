@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: PowerupConfigsContainer
   m_EditorClassIdentifier: 
   _powerupConfigs:
+  - {fileID: 11400000, guid: ce243c294ae6ac44d9e07f31a6f03c29, type: 2}
   - {fileID: 11400000, guid: 3bda5d02c173fd440986c94ad62141cc, type: 2}
   - {fileID: 11400000, guid: ea5eca31bc6d4454889bc49969c6c0da, type: 2}
-  - {fileID: 11400000, guid: ce243c294ae6ac44d9e07f31a6f03c29, type: 2}

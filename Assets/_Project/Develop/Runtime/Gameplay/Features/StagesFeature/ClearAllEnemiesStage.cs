@@ -34,6 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private IBackgroundMusicService _backgroundMusicService;
         
         private ReactiveEvent _completed = new();
+        
         private Entity _mainHero;
         private Entity _towerWalker;
         private bool _inProcess;
@@ -41,16 +42,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
         private readonly int[] _spawnSectorOrder = new int[SpawnMaxSectors];
         private int _spawnSectorCursor;
-        
-        private readonly Queue<EntityConfig> _enemySpawnQueue = new Queue<EntityConfig>();
-        private float _secondsUntilNextEnemySpawn;
-        private float _minTimeBetweenSpawns = 1f;
-        private float _maxTimeBetweenSpawns = 2f; 
-        
-        private float _burstSpawnProbability = 0.15f;
-        private int _burstMinimumEnemies = 1;
-        private int _burstMaximumEnemies = 3;
 
+
+        private readonly Queue<SpawnGroupConfig> _spawnGroupsQueue = new();
+        private readonly Queue<EntityConfig> _currentEnemyQueue = new();
+        private SpawnGroupConfig _currentSpawnGroup;
+        private float _secondsUntilNextEnemySpawn;
+        private bool _waitingGroupPause;
+        
+        
         public ClearAllEnemiesStage(
             ClearAllEnemiesStageConfig config,
             EnemiesFactory enemiesFactory,
@@ -75,54 +75,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         }
 
         public IReadOnlyEvent Completed => _completed;
-
-        public void Cleanup()
-        {
-            foreach (KeyValuePair<Entity, IDisposable> item in _spawnedEnemiesToRemoveReason)
-            {
-                item.Value.Dispose();
-                _entitiesLifeContext.Release(item.Key);
-            }
-
-            _spawnedEnemiesToRemoveReason.Clear();
-            _enemySpawnQueue.Clear();
-
-            _inProcess = false;
-        }
-
-        public void Dispose()
-        {
-            foreach (KeyValuePair<Entity, IDisposable> item in _spawnedEnemiesToRemoveReason)
-            {
-                item.Value.Dispose();
-            }
-
-            _spawnedEnemiesToRemoveReason.Clear();
-            _enemySpawnQueue.Clear();
-            
-            _inProcess = false;
-        }
         
-        private int PickEnemySpawnCountForCurrentTick()
-        {
-            int remainingInQueue = _enemySpawnQueue.Count;
-
-            if (remainingInQueue <= 0)
-                return 0;
-
-            if (remainingInQueue == 1)
-                return 1;
-
-            bool shouldSpawnBurst = Random.Range(0f, 1f) < _burstSpawnProbability;
-
-            if (shouldSpawnBurst == false)
-                return 1;
-
-            int desiredBurstCount = Random.Range(_burstMinimumEnemies, _burstMaximumEnemies + 1);
-
-            return Mathf.Min(desiredBurstCount, remainingInQueue);
-        }
-
         public void Start()
         {
             if (_inProcess)
@@ -134,47 +87,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _towerWalker = _mainHeroHolderService.TowerWalker;
 
             ResetSpawnSectorOrderForWave();
-            EnqueueAllEnemiesForDelayedSpawn();
+            PrepareGroupsQueue();
+            MoveToNextGroupOrFinishSpawn();
             
             _mouseInputService.HideCursor();
-            
             _inProcess = true;
         }
-
+        
         public void Update(float deltaTime)
         {
             if (_inProcess == false)
                 return;
-            
-            if (_enemySpawnQueue.Count > 0)
-            {
-                _secondsUntilNextEnemySpawn -= deltaTime;
 
-                if (_secondsUntilNextEnemySpawn <= 0f)
-                {
-                    int spawnCountThisTick = PickEnemySpawnCountForCurrentTick();
+            ProcessSpawn(deltaTime);
 
-                    for (int spawnIndex = 0; spawnIndex < spawnCountThisTick; spawnIndex++)
-                    {
-                        EntityConfig nextEnemyConfig = _enemySpawnQueue.Dequeue();
-                        SpawnSingleEnemyAtNextSectorPosition(nextEnemyConfig);
-                    }
-
-                    if (_enemySpawnQueue.Count > 0)
-                    {
-                        _secondsUntilNextEnemySpawn = Random.Range(
-                            _minTimeBetweenSpawns,
-                            _maxTimeBetweenSpawns);
-                    }
-                }
-            }
-
-            if (_enemySpawnQueue.Count == 0 && _spawnedEnemiesToRemoveReason.Count == 0)
+            if (IsSpawnCompleted() && _spawnedEnemiesToRemoveReason.Count == 0)
             {
                 ProcessEnd();
                 return;
             }
-
+            
             if (MouseClickedOnGenericLayer(out Vector3 hitPoint))
             {
                 if (_towerWalker != null)
@@ -185,6 +117,112 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
         }
 
+         private void ProcessSpawn(float deltaTime)
+        {
+            if (IsSpawnCompleted())
+                return;
+            
+            _secondsUntilNextEnemySpawn -= deltaTime;
+            if (_secondsUntilNextEnemySpawn > 0f)
+                return;
+            
+            if (_waitingGroupPause)
+            {
+                _waitingGroupPause = false;
+                MoveToNextGroupOrFinishSpawn();
+                return;
+            }
+
+            if (_currentEnemyQueue.Count == 0)
+            {
+                _waitingGroupPause = true;
+                _secondsUntilNextEnemySpawn = _currentSpawnGroup.PauseAfterGroup;
+                return;
+            }
+            
+            EntityConfig enemyConfig = _currentEnemyQueue.Dequeue();
+            SpawnSingleEnemyAtNextSectorPosition(enemyConfig);
+            
+            if (_currentEnemyQueue.Count > 0)
+            {
+                _secondsUntilNextEnemySpawn = Random.Range(
+                    _currentSpawnGroup.MinTimeBetweenSpawns,
+                    _currentSpawnGroup.MaxTimeBetweenSpawns);
+            }
+            else
+            {
+                _waitingGroupPause = true;
+                _secondsUntilNextEnemySpawn = _currentSpawnGroup.PauseAfterGroup;
+            }
+        }
+         
+        private void PrepareGroupsQueue()
+        {
+            _spawnGroupsQueue.Clear();
+            _currentEnemyQueue.Clear();
+            
+            foreach (SpawnGroupConfig spawnConfigGroup in _config.SpawnGroups)
+                _spawnGroupsQueue.Enqueue(spawnConfigGroup);
+        }
+        
+        private void MoveToNextGroupOrFinishSpawn()
+        {
+            _currentEnemyQueue.Clear();
+            
+            if (_spawnGroupsQueue.Count == 0)
+            {
+                _currentSpawnGroup = null;
+                return;
+            }
+            
+            _currentSpawnGroup = _spawnGroupsQueue.Dequeue();
+            
+            foreach (EnemyItemConfig enemyItem in _currentSpawnGroup.EnemyItems)
+            {
+                for (int i = 0; i < enemyItem.EnemiesCount; i++)
+                    _currentEnemyQueue.Enqueue(enemyItem.EnemyConfig);
+            }
+            
+            _secondsUntilNextEnemySpawn = 0f;
+        }
+        
+        private bool IsSpawnCompleted() =>
+            _spawnGroupsQueue.Count == 0 &&
+            _currentEnemyQueue.Count == 0 &&
+            _currentSpawnGroup == null &&
+            _waitingGroupPause == false;
+
+        public void Cleanup()
+        {
+            foreach (KeyValuePair<Entity, IDisposable> item in _spawnedEnemiesToRemoveReason)
+            {
+                item.Value.Dispose();
+                _entitiesLifeContext.Release(item.Key);
+            }
+
+            _spawnedEnemiesToRemoveReason.Clear();
+            _spawnGroupsQueue.Clear();
+            _currentEnemyQueue.Clear();
+
+            _currentSpawnGroup = null;
+            _waitingGroupPause = false;
+            _inProcess = false;
+        }
+
+        public void Dispose()
+        {
+            foreach (KeyValuePair<Entity, IDisposable> item in _spawnedEnemiesToRemoveReason)
+                item.Value.Dispose();
+
+            _spawnedEnemiesToRemoveReason.Clear();
+            _spawnGroupsQueue.Clear();
+            _currentEnemyQueue.Clear();
+
+            _currentSpawnGroup = null;
+            _waitingGroupPause = false;
+            _inProcess = false;
+        }
+        
         private bool MouseClickedOnGenericLayer(out Vector3 hitPoint)
         {
             if (_mouseInputService.FireButtonPressed)
@@ -241,19 +279,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
 
             _spawnSectorCursor = 0;
-        }
-        
-        private void EnqueueAllEnemiesForDelayedSpawn()
-        {
-            _enemySpawnQueue.Clear();
-
-            foreach (EnemyItemConfig enemyItemConfig in _config.EnemyItems)
-            {
-                for (int enemyIndex = 0; enemyIndex < enemyItemConfig.EnemiesCount; enemyIndex++)
-                    _enemySpawnQueue.Enqueue(enemyItemConfig.EnemyConfig);
-            }
-
-            _secondsUntilNextEnemySpawn = 0f;
         }
         
         private void SpawnSingleEnemyAtNextSectorPosition(EntityConfig enemyConfig)

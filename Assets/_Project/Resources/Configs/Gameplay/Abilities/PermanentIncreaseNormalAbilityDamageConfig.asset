@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <ID>k__BackingField: MultiplyMainAbilityDamage
   <Name>k__BackingField: PowerfulAttacks+
-  <Description>k__BackingField: Applies a multiplier to the main attack damage
+  <Description>k__BackingField: Become 3x stronger
   <Icon>k__BackingField: {fileID: 21300000, guid: 26fcede424aae4d88811869e6fe8f1ae,
     type: 3}
-  <CostInGold>k__BackingField: 750000
+  <CostInGold>k__BackingField: 250000
   <DamageMultiplier>k__BackingField: 3
