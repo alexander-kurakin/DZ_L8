@@ -33,6 +33,7 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups.Abilities
             _mainHero = mainHero;
             _damageFirstEnemiesConfig = damageFirstEnemiesConfig;
             _entitiesLifeContext = entitiesLifeContext;
+            _stageProviderService =  stageProviderService;
         }
 
         public override void Activate()

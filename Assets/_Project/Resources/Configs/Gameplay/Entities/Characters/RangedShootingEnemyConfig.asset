@@ -15,11 +15,11 @@ MonoBehaviour:
   <PrefabPath>k__BackingField: Entities/RangedShooterEnemy
   <MoveSpeed>k__BackingField: 9
   <RotationSpeed>k__BackingField: 900
-  <MaxHealth>k__BackingField: 100
+  <MaxHealth>k__BackingField: 500
   <DeathProcessTime>k__BackingField: 1
   <AttackRange>k__BackingField: 20
   <AttackProcessTime>k__BackingField: 1
   <AttackDelayTime>k__BackingField: 0.3
   <AttackCooldown>k__BackingField: 2
-  <InstantDamage>k__BackingField: 50
+  <InstantDamage>k__BackingField: 100
   <SpawnProcessTime>k__BackingField: 2
