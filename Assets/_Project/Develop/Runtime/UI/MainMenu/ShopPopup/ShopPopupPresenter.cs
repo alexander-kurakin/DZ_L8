@@ -105,7 +105,7 @@ namespace Assets._Project.Develop.Runtime.UI.MainMenu.ShopPopup
         private void SetViewCanBuy(int price)
         {
             _view.BuyButtonOn();
-            _view.SetAdditionalText($"Price: {price} diamonds");
+            _view.SetAdditionalText($"Price: {price} gold");
         }
 
         private void SetViewAlreadyOwned()
