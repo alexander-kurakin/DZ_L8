@@ -1,13 +1,9 @@
-using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.UI;
-using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.UI.Gameplay.Abilities

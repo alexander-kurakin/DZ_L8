@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly PlayerDataProvider _playerDataProvider;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly IMouseInputService _mouseInputService;
         private readonly StatsService _statsService;
 
         protected EndGameState(
@@ -21,13 +22,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             PlayerDataProvider playerDataProvider,
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
-            StatsService statsService)
+            StatsService statsService,
+            IMouseInputService mouseInputService)
         {
             _inputService = inputService;
             _playerDataProvider = playerDataProvider;
             _sceneSwitcherService = sceneSwitcherService;
             _coroutinesPerformer = coroutinesPerformer;
             _statsService = statsService;
+            _mouseInputService = mouseInputService;
         }
         
         public override void Enter()
@@ -35,6 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             base.Enter();
             
             _inputService.IsEnabled = false;
+            _mouseInputService.ShowCursor();
 
             OnEndGameStateEntered();
             RecordResults();

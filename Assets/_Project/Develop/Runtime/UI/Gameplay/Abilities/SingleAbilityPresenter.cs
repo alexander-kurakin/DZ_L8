@@ -61,7 +61,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(_abilityType));
 
             _view.IconTextView.SetText(_costInGold.ToString());
-            _view.IconTextView.SetIcon(_currencyIconsConfig.GetSpriteFor(CurrencyTypes.Gold));
+            _view.IconTextView.SetIcon(_currencyIconsConfig.GetSpriteFor(CurrencyTypes.Diamond));
             
             _view.IconView.IconClicked += OnIconClicked;
             

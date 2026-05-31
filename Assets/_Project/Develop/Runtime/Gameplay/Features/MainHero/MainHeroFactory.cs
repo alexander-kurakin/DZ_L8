@@ -28,7 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly ConfigsProviderService _configsProviderService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MainHeroHolderService _mainHeroHolderService;
-		private readonly MouseInput _mouseInput;
+		private readonly IMouseInputService _mouseInput;
         private readonly PowerupConfigsContainer  _powerupConfigsContainer;
         private readonly PowerupService _powerupService;
         private readonly PowerupFactory _powerupFactory;
@@ -45,7 +45,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _abilitiesFactory =  _container.Resolve<AbilitiesFactory>();
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
-			_mouseInput = _container.Resolve<MouseInput>();
+			_mouseInput = _container.Resolve<IMouseInputService>();
             _powerupConfigsContainer = _configsProviderService.GetConfig<PowerupConfigsContainer>();
             _powerupService = _container.Resolve<PowerupService>();
             _powerupFactory = _container.Resolve<PowerupFactory>();

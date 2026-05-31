@@ -17,7 +17,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
             StatsService statsService,
-            GameplayPopupService popupService) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService)
+            IMouseInputService mouseInputService,
+            GameplayPopupService popupService) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService, mouseInputService)
         {
             _popupService =  popupService;
         }

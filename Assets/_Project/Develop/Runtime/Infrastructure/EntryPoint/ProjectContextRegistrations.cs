@@ -104,8 +104,6 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             return new PowerupService(c.Resolve<PlayerDataProvider>());
         }
         
-
-        
         private static StatsService CreateStatsService(DIContainer c)
         {
             ReactiveVariable<int> wins =  new();

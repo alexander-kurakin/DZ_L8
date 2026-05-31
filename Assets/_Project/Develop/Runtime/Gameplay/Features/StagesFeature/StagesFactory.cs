@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                         _container.Resolve<EntitiesLifeContext>(),
                         _container.Resolve<ConfigsProviderService>(),
                         _container.Resolve<MainHeroHolderService>(),
-                        _container.Resolve<MouseInput>(),
+                        _container.Resolve<IMouseInputService>(),
                         _container.Resolve<MouseRaycastService>(),
                         _container.Resolve<IBackgroundMusicService>());
 

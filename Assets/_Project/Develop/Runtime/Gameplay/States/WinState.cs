@@ -26,9 +26,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             StatsService statsService,
             WalletService walletService,
             GameplayPopupService  popupService,
+            IMouseInputService mouseInputService,
             int rewardGold,
             int rewardDiamondMin,
-            int rewardDiamondMax) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService)
+            int rewardDiamondMax) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService, mouseInputService)
         {
             _walletService = walletService;
             _rewardGold = rewardGold;

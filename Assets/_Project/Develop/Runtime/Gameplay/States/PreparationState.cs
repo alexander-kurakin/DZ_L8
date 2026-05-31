@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             ConfigsProviderService  configsProviderService,
             MainHeroHolderService mainHeroHolderService,
             MouseRaycastService mouseRaycastService,
-            MouseInput mouseInputService,
+            IMouseInputService mouseInputService,
             IBackgroundMusicService backgroundMusicService,
             MouseOverUIService mouseOverUIService)
         {

@@ -51,7 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateStagesFactory);
             container.RegisterAsSingle(CreateStageProviderService);
 
-            container.RegisterAsSingle(CreatePreperationTriggerService);
+            container.RegisterAsSingle(CreatePreparationTriggerService);
 
             container.RegisterAsSingle(CreateGameplayStatesFactory);
 
@@ -61,7 +61,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
             
-            container.RegisterAsSingle(CreateMouseInput);
+            container.RegisterAsSingle<IMouseInputService>(CreateMouseInput);
             
             container.RegisterAsSingle(CreateMouseRaycastService);
             
@@ -147,12 +147,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new MainHeroHolderService(c.Resolve<EntitiesLifeContext>());
         }
 
-        private static PreparationTriggerService CreatePreperationTriggerService(DIContainer c)
+        private static PreparationTriggerService CreatePreparationTriggerService(DIContainer c)
         {
             return new PreparationTriggerService(
                 c.Resolve<EntitiesFactory>(),
                 c.Resolve<EntitiesLifeContext>(),
-                c.Resolve<MouseInput>(),
+                c.Resolve<IMouseInputService>(),
                 c.Resolve<MouseRaycastService>(),
                 c.Resolve<ConfigsProviderService>());
         }

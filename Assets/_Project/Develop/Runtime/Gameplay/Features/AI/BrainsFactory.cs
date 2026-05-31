@@ -54,7 +54,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
         
-        public StateMachineBrain CreateWalkingTowardsCursorBrain(Entity entity, MouseInput mouseInput)
+        public StateMachineBrain CreateWalkingTowardsCursorBrain(Entity entity, IMouseInputService mouseInput)
         {
             MovingTowardsCursorState state = new MovingTowardsCursorState(entity, mouseInput);
             

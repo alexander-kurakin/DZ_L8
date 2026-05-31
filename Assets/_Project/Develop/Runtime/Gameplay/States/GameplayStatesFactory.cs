@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<ConfigsProviderService>(),
                 _container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<MouseRaycastService>(),
-                _container.Resolve<MouseInput>(),
+                _container.Resolve<IMouseInputService>(),
                 _container.Resolve<IBackgroundMusicService>(),
                 _container.Resolve<MouseOverUIService>());
         }
@@ -56,6 +56,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<StatsService>(),
                 _container.Resolve<WalletService>(),
                 _container.Resolve<GameplayPopupService>(),
+                _container.Resolve<IMouseInputService>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(inputArgs.LevelNumber).GoldReward,
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(inputArgs.LevelNumber).DiamondRewardMin,
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(inputArgs.LevelNumber).DiamondRewardMax
@@ -70,6 +71,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<StatsService>(),
+                _container.Resolve<IMouseInputService>(),
                 _container.Resolve<GameplayPopupService>());
         }
 
