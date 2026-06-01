@@ -106,9 +106,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
             float healthPct = (_health.Value / _maxHealth.Value) * 100f;
 
-            if (healthPct <= 25f)
+            if (healthPct <= 35f)
                 colorToSet = Color.red;
-            else if (healthPct <= 50f)
+            else if (healthPct <= 65f)
                 colorToSet = Color.yellow;
                     
             _bar.SetTextColor(colorToSet);
