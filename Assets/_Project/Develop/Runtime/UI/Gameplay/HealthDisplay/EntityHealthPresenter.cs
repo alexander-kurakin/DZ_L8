@@ -44,7 +44,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
             _disposables.Add(_maxHealth.Subscribe(OnMaxHealthChanged));
             _disposables.Add(_team.Subscribe(OnTeamChanged));
 
-            UpdateHealth();
+            SyncHealth();
             UpdateFillerColorBy(_team.Value);
         }
 
@@ -76,10 +76,15 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         private void OnTeamChanged(Teams oldValue, Teams newTeam) => UpdateFillerColorBy(newTeam);
 
-        private void OnMaxHealthChanged(float oldValue, float newValue) => UpdateHealth();
+        private void OnMaxHealthChanged(float oldValue, float newValue) => SyncHealth();
 
-        private void OnHealthChanged(float oldValue, float newValue) => UpdateHealth();
-        
+        private void OnHealthChanged(float oldValue, float newValue) => SyncHealth();
+
+        private void SyncHealth()
+        {
+            UpdateHealth();
+            UpdateHPTextColor();
+        }
 
         private void UpdateHealth()
         {
@@ -93,6 +98,20 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
                 _bar.SetFillerColor(Color.green);
             else if (team == Teams.Enemies)
                 _bar.SetFillerColor(Color.red);
+        }
+
+        private void UpdateHPTextColor()
+        {
+            Color colorToSet = Color.black;
+
+            float healthPct = (_health.Value / _maxHealth.Value) * 100f;
+
+            if (healthPct <= 25f)
+                colorToSet = Color.red;
+            else if (healthPct <= 50f)
+                colorToSet = Color.yellow;
+                    
+            _bar.SetTextColor(colorToSet);
         }
     }
 }

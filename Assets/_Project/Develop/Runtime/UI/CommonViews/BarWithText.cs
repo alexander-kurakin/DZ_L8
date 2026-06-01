@@ -11,6 +11,7 @@ namespace Assets._Project.Develop.Runtime.UI.CommonViews
         [SerializeField] private Bar _bar;
 
         public void UpdateText(string text) => _text.text = text;
+        public void SetTextColor(Color color) => _text.color = color;
         
         public void SetDebugText(string debugText) => _debugText.text = debugText;
 
