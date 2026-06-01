@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Tower
   <DeathProcessTime>k__BackingField: 1
-  <StartPosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <StartPosition>k__BackingField: {x: 2, y: 0, z: -1.5}

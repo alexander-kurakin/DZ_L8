@@ -41,4 +41,4 @@ MonoBehaviour:
     MinTimeBetweenSpawns: 0
     MaxTimeBetweenSpawns: 0
     PauseAfterGroup: 0
-  <EnemySpawnRadius>k__BackingField: 30
+  <EnemySpawnRadius>k__BackingField: 90
