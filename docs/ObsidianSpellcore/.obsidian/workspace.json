@@ -1,0 +1,210 @@
+{
+  "main": {
+    "id": "ea9d74b900372298",
+    "type": "split",
+    "children": [
+      {
+        "id": "92964e027177951f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "42b5a7e5e20bba56",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "systems/meta-progression.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "meta-progression"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "915f1dcb863f8a11",
+    "type": "split",
+    "children": [
+      {
+        "id": "d7293034aabc1953",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "56f001391b68e70a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Файловый менеджер"
+            }
+          },
+          {
+            "id": "2c294db740e84d97",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "bf3200b318118b2d",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "e20a0037f1656438",
+    "type": "split",
+    "children": [
+      {
+        "id": "e4948442d8c85e6d",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "3f356cd97060c4e9",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "systems/meta-progression.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Обратные ссылки для meta-progression"
+            }
+          },
+          {
+            "id": "e3333e9f3fd7563c",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "systems/spellcore-gameplay.md",
+                "linksCollapsed": true,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from spellcore-gameplay"
+            }
+          },
+          {
+            "id": "3fccd644e34bc9b9",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "53414b6a99c3dc71",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "All properties"
+            }
+          },
+          {
+            "id": "7008212da64dd032",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "systems/spellcore-gameplay.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of spellcore-gameplay"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 363.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Меню быстрого перехода": false,
+      "graph:Граф": false,
+      "canvas:Создать новый холст": false,
+      "daily-notes:Сегодняшняя заметка": false,
+      "templates:Вставить шаблон": false,
+      "command-palette:Открыть палитру команд": false,
+      "bases:Создать новую базу": false
+    }
+  },
+  "active": "56f001391b68e70a",
+  "lastOpenFiles": [
+    "pillars.md",
+    "world/concepts/spellcore-concept.md",
+    "systems/spellcore-gameplay.md",
+    "world/spellcore.md",
+    "Pasted/Pasted image 20260609131630.png",
+    "concept_AI.png",
+    "world/style-and-tone.md",
+    "systems/meta-progression.md",
+    "00-hub.md.md",
+    "essence.md",
+    "genre-references.md",
+    "open-questions.md",
+    "synopsis.md",
+    "systems",
+    "Pasted/Pasted image 20260609210624.png",
+    "world/concepts",
+    "Pasted/Pasted image 20260609131727.png",
+    "Pasted/Pasted image 20260609131712.png",
+    "Pasted",
+    "Pasted/Pasted image 20260609131643.png",
+    "world",
+    "Welcome.md"
+  ]
+}

@@ -77,7 +77,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public GameplayStateMachine CreateGameplayStateMachine(GameplayInputArgs inputArgs)
         {
-            PreparationTriggerService preparationTriggerService = _container.Resolve<PreparationTriggerService>();
             StageProviderService stageProviderService = _container.Resolve<StageProviderService>();
             MainHeroHolderService mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
 

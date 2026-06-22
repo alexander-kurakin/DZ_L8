@@ -4,7 +4,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using System;
 using System.Collections;
@@ -43,7 +42,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _brainsContext = _container.Resolve<AIBrainsContext>();
-
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             
             _container.Resolve<MainHeroFactory>().Create();
@@ -66,13 +64,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
-
-            if (Input.GetKeyDown(KeyCode.F))
-            {
-                SceneSwitcherService sceneSwitcherService = _container.Resolve<SceneSwitcherService>();
-                ICoroutinesPerformer coroutinesPerformer = _container.Resolve<ICoroutinesPerformer>();
-                coroutinesPerformer.StartPerform(sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu));
-            }
         }
         
         private void LateUpdate()

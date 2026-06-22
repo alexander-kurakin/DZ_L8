@@ -1,0 +1,299 @@
+﻿Design document – Spellcore Princess
+Жанр игры: Idle топ даун тавер дефенс
+Игры подобного жанра: Toy Defense, Lichgate: Tower Survivor, King is watching
+
+Синопсис: девочка и ее брат в магическом сеттинге защищают себя от волн магических и технических врагов (драконы, роботы танки, роботы кошки). Спеллкор – это магическая сетка на полу, которая помогает игроку с восприятием правил игры.
+
+Управление: классическая мышка без нагрузок на другие клавиши.
+Управление геймпадом возможно – курсор на стики + кнопка А для подтверждения действия
+Стиль игры:
+
+- враги идут по секторам
+- посадочные площадки – призваны контролировать сектора (подробнее в разделе «Абилки»)
+- есть зона «активации атак врагов» - в основном подходя на определенную дистанцию в секторе внутреннего круга (подробнее в разделе «Враги»)
+Мир игры сосредоточен на постоянно улучшающейся паутинке - Спеллкор. 
+Планируется подсвечивать посадочные места определенным цветом и мотивировать игрока развивать свою паутинку в метагейме – слоты открываются по мере прохождения. Вариативность уровней – полностью зашита в параметры наполнения волн врагов.
+Есть «активные» абилки – они располагаются в дырках, и «пассивные» - их можно купить в магазине – они в целом влияют на геймплей. 
+Есть очень слабая атака на ЛКМ подходящая только на первые несколько уровней – чтобы нафармить ресурсы на установку первых абилок в слоты.
+Архитектура проекта (крупные модули)
+МодульСутьEntitesCore - ECSДанные = компоненты, которыми должна обладать сущность
+Системы = реализация логики (типы: инит, апдейт, удаление) 
+Entity = объект на котором висят данные и системы
+Связи организованы событиями (например, AtackStartEvent)
+Присутствует жизненный цикл сущностей – порядок компонентов и систем – важен
+Все реализованные E+C+S (26) лежат в папке Gameplay/FeaturesEntitiesCore - MonoEntityBridgeСвязка Entity ↔ и монобехов. Можно регистрировать свои монобех компоненты (Ригидбоди, трансформа, аниматор). Также есть связь для сущностей и вьюшек систем.EntitiesCore - EntityAPIАвтоматическая генерация кода для ECS компонентов (своя)EntitiesCore – Entities FactoryФабрика для сборки сущностей (главная)Infra - DIСвой DI контейнер для резолва зависимостейInfra - ContextsКоробка контекстов сервисов. Project, MainMenu, Gameplay
+Проектные сервисы доступны везде.  Infra - EntryPointВходная точка проекта – самый главный бустрапInfra - BootstrapMainMenu / Gameplay бустрапы. 
+Gameplay = контейнер с сервисами + обновление контекстов (мозги, сущности, стейт геймплея, главный презентер UI)
+MainMenu = контейнер с сервисами + BGMGameplay - StatesCoreLoopState = 
+Preparation -> StageProcessing (нажат триггер и есть следующая стадия)
+StageProcessing -> Preparation (текущая стадия завершена)
+GamePlayStateMachine = 
+CoreLoopState -> DefeatState (главный герой умер)
+CoreLoopState -> WinState (текущая стадия завершена и нет больше стадий в уровне)UI – MVP - общие вьюНабор общих вью для проекта + дженерик вью вида List<TElement>.UI – MVP - coreИнтерфейсы для вью, презентора, вью с твинами, презентора с подпиской. 
+Сервис попапов (вью, презентор, анимации).
+Фабрика вью, словарик вью+путь UI – MVP - реализацииMainMenu: сервис попапов(магазин), маппинг UI, вью + презентер + фабрика презентеров + презентер превью персонажей
+Gameplay: сервис попапов (поражение и победа), маппинг UI, вью + презентер + фабрика презентеров. 
+Отображение абилок, хп баров, прогресса уровняUI – MVP – общие презенторыВалюта, победы/пораженияUtility Базовая реактивность (своя)
+Управление ассетами (Resources.Load)
+Аудио (BGM, UI SFX, SFX) + словари
+Логические условия для ECS
+Управление конфигами + словарь конфиг+путь
+Сервис сохранений (локальное/префсы. Сериализация в JSON)
+Корутины (dontdestroyonload)
+Загрузочный экран (dontdestroyonload)
+Сервис загрузки сцен (через Empty сцену) + словарь сцен
+Сервисы таймера, стейт машины
+Буфер, словарь слоев (маски)ConfigsScriptableObject – все параметры для 
+абилки, сущности, уровней, настроек управления, стейджей, также для магазина, валюты, побед/поражений, и даже утилити (звуки).
+Также выведены уровни в виде набора стейджей.
+
+
+Системы и механики
+ 
+Abilities (Features/Ability + Features/AbilitySystems)
+Способности игрока - отдельные Entity.
+
+Общие компоненты данных: 
+КомпонентТип поляAbilityUserActiveAbilityReactiveVariable<AbilityType>AbilityUserAllAbilitiesDictionary<AbilityType, Entity>AbilityOwnerReactiveVariable<Entity>AbilityTypeNameReactiveVariable<AbilityType>AbilityUseRequestReactiveEvent<Vector3>AbilityUserPlantAbilityPreferenceReactiveVariable<AbilityType>ExplosionPreviewWorldPointReactiveVariable<Vector3>ExplosionPreviewVisibleReactiveVariable<bool>
+Фабрика сборки абилок: AbilitiesFactory
+
+Типы абилок:
+Plantable: PlantMine, PlantTurret, PlantToxicArea 
+КомпонентЗначениеAbilityOwnerabilityOwner из фабрикиTeamownerTeam = abilityOwner.Team.ValueAbilityTypeNameAbilityType.PlantMine, AbilityType.PlantTurret, AbilityType.PlantToxicAreaAbilityUseRequest
+СистемаЧто делаетPlantXSystemОбщее:
+Подписывается на entity.AbilityUseRequest(точка).
+При получении события – проверяет что может потратить валюту, тратит стоимость X из конфига, и ставит объект в точку через фабрику PlantableObjectsFactory.Create (конфиг X).
+
+Отличия: 
+ToxicArea регистрирует себя в StageProviderService как временный объект, требующий очистки по окончанию Stage.
+Turret в своей PlantableObjectsFactory вешает на себя мозг
+CreateRotatingAutoAttackBrain из BrainsFactory
+
+
+
+
+
+
+Clickable: ExplodeAtPoint
+КомпонентЗначениеAbilityOwnerabilityOwner из фабрикиTeamownerTeam = abilityOwner.Team.ValueAbilityTypeNameAbilityType.ExplodeAtPointAbilityUseRequestAreaImpactDamageУрон взрыва из конфигаAreaImpactRadiusРадиус взрыва из конфигаAreaImpactMaskМаска слоя по кому идет уронAreaImpactCollidersBufferБуфер коллайдеровAreaImpactEntitiesBufferБуфер сущностейAreaImpactDamageRequest
+СистемаЧто делаетExplodeAtPointSystemПодписываемся на entity.AbilityUseRequest
+Когда эвент придёт – шлём событие на урон
+DealAreaImpactDamageRequest?.Invoke(usePoint);AreaDamageContactDetectingSystemПо приходу entity.DealAreaImpactDamageRequest(impactPoint) - 
+кидает Physics.OverlapSphereNonAlloc в точку с радиусом 
+AreaImpactRadius, буфером коллайдеров AreaImpactCollidersBuffer и маской AreaImpactMask.
+Удаляет «свои» коллайдеры из буфера.AreaDamageEntitiesFilterSystemКаждый кадр заполняет AreaImpactEntitiesBuffer
+ поиском по AreaImpactCollidersBuffer через СollidersRegistryService.GetBy(collider)DealAreaDamageSystemКаждый кадр проходит по AreaImpactEntitiesBuffer, проверяет что уже не обработала сущность, добавляет сущность в processedEntities массив, наносит урон с помощью EntitiesHelper.TryTakeDamageFrom (источник = владелец абилки, цель – сущность из буфера, урон = AreaImpactDamage) 
+
+
+
+
+
+
+
+
+
+
+
+AI (Features/AI)
+AIBrainsContext – мост между entity и Brain. 
+Внутри служебный класс EntityToBrain с публичными сущностью и мозгом. 
+Есть публичный метод SetFor для установки связи IBrain и сущности, работает со списком _entityToBrains - если сущность в списке есть – то выключаем и диспоузим текущий мозг и ставим и включаем новый. 
+В апдейте – также работает со списком _entityToBrains, если сущность еще не проинициализирована (или была уже disposed) – убираем ее из списка. 
+Также апдейтим мозг через Brain.Update
+
+AIComponents – компоненты CurrentTarget, IsCurrentlyIdle
+
+AIParallelState – имплементация ParallelState<IUpdatableState> + IUpdatableState
+В базовый класс передается массив IUpdatableState.
+В апдейте – по каждому IUpdatableState вызываем его апдейт.
+
+AIStateMachine – имплементация StateMachine<IUpdatableState>
+В базовый класс передается список IDisposable, также есть перегрузка с пустым списком. 
+В апдейте – обновляем логику базового класса, плюс обновляем CurrentState.
+
+IBrain – интерфейс, описывающий контракт для любого мозга. Enable / Disable + Update.
+
+StateMachineBrain – реализация IBrain на стейт машинах.
+Достаточно простая, во всех своих методах просто переключает соответствующий метод в стейт машине AIStateMachine. Disable -> Exit(), Dispose -> Dispose(), Enable -> Enter(), Update -> Update.
+
+BrainsFactory – фабрика мозгов на разных стейтах
+CreateWalkingTowardsTargetBrain – ищем цель + идем и поворачиваемся к цели
+Выхода из chaseState нет – мозг не знает этих условий
+
+CreateWalkingTowardsCursorBrain – ставим вектора для движения и поворота на основе текущей позиции мыши (стейт машина из одного стейта)
+
+CreateWalkingToRangedAutoAttackBrain – ищем цель + идем и поворачиваемся к цели. 
+Доходим до DistanceToTargetReached и включаем состояние автоатаки – мини стейт машина между поворотом к цели – и выстрелом. Переход в поворот обратно по завершению процесса атаки. 
+
+CreateRotatingAutoAttackBrain - ищем цель, поворачиваемся к ней и включаем автоатаку
+Если цель мертва – ищем новую цель
+
+CreateSimpleRandomWalkerBrain – используя сервисы таймеров – чередуем 5с idle для проигрыша анимации и 3с хождения для хождения в рандомную точку. 
+Стейт машина рандомного движения кэширует последнее направление, и если оно было задано – инвертирует последнее известное и отклоняется на раномные -+ 30 градусов от него.
+Если его не было задано – генерирует направление полностью рандомно по (X, Z) Y=0 всегда
+
+
+
+
+States (Features/AI/States)
+
+AttackTriggerState
+При заходе в стейт – один раз триггерим entity.StartAttackRequest
+
+EmptyState
+Пустышка
+
+FindTargetState
+В апдейте постоянно ставим entity.CurrentTarget на основе переданного ITargetSelector. SelectTargetFrom()
+
+InformativeIdleState
+При входе – ставим MoveDirection и RotationDirection в Vector3.zero.
+Также проставляем bool IsCurrentlyIdle = true. При выходе ставим IsCurrentlyIdle = false.
+
+MainHeroTargetSelector
+Хелпер который возвращает сущность главного героя в SelectTargetFrom(IEnumerable<Entity> targets)  из MainHeroHolderService.
+
+NearestDamageableTargetSelector
+Хелпер, который проходит по всем переданным IEnumerable<Entity> targets,
+Затем с помощью Linq возвращает те цели, у которых есть компонент TakeDamage + они в другой команде. Затем считает дистанцию до каждой из них, и возвращает цель с минимальной дистанцией.
+
+MoveToTargetState
+В апдейте – если текущая цель не пустая – ставим MoveDirection = нормализованное направление (CurrentTarget – своя позиция).
+Если текущая цель пустая – ставим MoveDirection в Vector3.zero
+
+MovingTowardsCursorState
+При входе – кэшируем мэйн камеру. 
+В апдейте – забираем точку WorldToScreenPoint для сущности в entityScreenPoint. 
+Также считаем точку mousePointerAtDepth в глубине entityScreenPoint.z + MouseInput.PointerScreenPosition.x + MouseInput.PointerScreenPosition.y
+Считаем ScreenToWorldPoint для позиции mousePointerAtDepth = pointerAtWorldPoint.
+Ставим MoveDirection = нормализованное направление (pointerAtWorldPoint – своя позиция) с обрезанной Y координатой (=0).
+Если результирующий вектор < 0.05f – MoveDirection = Vector3.zero
+
+PlayerInputMovementState
+В апдейте – ставим MoveDirection + RotationDirection значением InputService.Direction.
+При выходе из стейта ставим MoveDirection = Vector3.zero
+
+RandomMovementState
+При входе – проверяем если вектор последнего направления движения не пустой. 
+Если не пустой – генерируем инверсивное направление с отклонением в 30 градусов.
+Если пустой – генерируем рандомное направление (-1..1 по Х, 0 по Y, -1..1 по Z).
+В обоих случаях ставим этот вектор в MoveDirection и RotationDirection.
+При выходе из стейта ставим MoveDirection = Vector3.zero
+RotateToTargetState
+В апдейте – если CurrentTarget не пустой – ставим RotationDirection в нормализованное направление (CurrentTarget – своя позиция).
+
+Attack (Features/Attack) 
+Набор компонентов и систем поддерживающих атаки.
+
+КомпонентЗначениеStartAttackRequestСобытие запроса атакиStartAttackEventСобытие фактического начала процесса атакиCanStartAttackКомпозитное условие проверкиEndAttackEventСобытие окончания атакиCooldownEndEventСобытие окончания кулдаунаAttackProcessInitialTimeМакс значение времени процесса атакиAttackProcessCurrentTimeТекущее значение времени процесса атакиInAttackProcessБулька в процессе ли мы атакиAttackDelayTimeВремя задержки перед непосредственным фактом атакиAttackDelayEndEventСобытие о том что задержка прошлаInstantAttackDamageЗначение урона из конфигаShootPointТрансформа точки из который надо делать выстрелMustCancelAttackКомпозитное условиеAttackCanceledEventСобытие о том что игрок успешно отменил кулдаун атакиAttackCooldownInitialTimeМакс значение времени кулдауна атакиAttackCooldownCurrentTimeТекущее значение времени кулдауна атакиInAttackCooldownБулька в процессе ли мы кулдауна
+СистемаЧто делаетStartAttackSystemВ ините - подписываемся на StartAttackRequest.
+В диспоузе – отписываемся.
+По приходу такого запроса – проверяем, если можем CanStartAttack, ставим InAttackProcess в true и выпускаем эвент StartAttackEventAttackProcessTimerSystemВ ините – подписываемся на StartAttackEvent.
+В диспоузе – отписываемся.
+По приходу запроса – ставим AttackProcessCurrentTime в 0.
+В апдейте – если InAttackProcess = false – выходим
+Если нет – то двигаем AttackProcessCurrentTime на += deltaTimeAttackDelayEndTriggerSystemВ ините подписываемся на изменение AttackProcessCurrentTime, и на событие StartAttackEvent.
+В диспоузе – отписываемся.
+По приходу StartAttackEvent – ставим локальную бульку _alreadyAttacked в false
+По приходу изменения AttackProcessCurrentTime – 
+если уже атаковали – выходим.
+Иначе, проверяем если текущее значение больше чем AttackDelayTime, если да – шлем событие AttackDelayEndEvent
+и ставим бульку _alreadyAttacked в trueEndAttackSystemВ ините подписываемся на AttackProcessCurrentTime.
+В диспоузе – отписываемся.
+При изменении AttackProcessCurrentTime – проверяем если AttackProcessCurrentTime > AttackProcessInitialTime.
+Если да – ставим InAttackProcess в false и шлем EndAttackEventAttackCooldownTimerSystemВ ините подписываемся на EndAttackEvent. 
+В диспоузе – отписываемся.
+По приходу EndAttackEvent – ставим AttackCooldownCurrentTime = AttackCooldownInitialTime, и InAttackCooldown = true.
+В апдейте – если InAttackCooldown = false - выходим. 
+Тикаем AttackCooldownCurrentTime в -= deltaTime.
+Если AttackCooldownCurrentTime дошел до 0 – ставим InAttackCooldown = false.CurrentTargetView(не используется пока что – но надо прикрутить к турелькам) 
+Вью для атаки, наследующий EntityView.
+При начале работы сущности – забираем с нее CurrentTarget. 
+Спавним ParticleSystem без указания точки.
+Подписываемся на изменения CurrentTarget, при изменении дергаем логику UpdateBacklightFor – если цели нет – прячем партикл систему и ставим _currentTargetTransform = null, если есть – делаем активной и ставим _currentTargetTransform = трансформу цели.
+В лейт апдейте – если _currentTargetTransform не пустой – двигаем туда трансформ партикл системы.
+Shoot (Features/Attack/Shoot)
+ShootPointEntityRegistrator – класс регистрирует точку откуда идет выстрел через entity.AddShootPoint
+
+InstantShootSystem – обрабатываем логику выстрела.
+В конструкторе – передаем фабрику сущностей EntitiesFactory
+В ините – подписываемся на AttackDelayEndEvent
+В диспоузе – отписываемся.
+При приходе события один раз спавним пульку через EntitiesFactory.CreateProjectile
+Передаем ShootPoint.position, ShootPoint.forward, InstantAttackDamage и ссылку на сущность родителя.
+
+InstantShootView – вью для выстрела, на основе EntityView.
+При начале работы сущности – подписываемся на AttackDelayEndEvent.
+В диспоузе отписываемся.
+При приходе события – один раз играем клип _shootSoundToPlay через GameSoundsService.PlayOneShot
+
+
+
+
+CatDetonation (Features/CatDetonation)
+Набор компонентов и систем, описывающих поведение взрыв-кошки.
+Note: Detonation = Taunt + Explosion
+Таунт = спец анимация = дразнящая эмоция
+КомпонентЗначениеInDetonateProcessБулька в процессе ли мы ДетонацииStartTauntEventСобытие запроса ТаунтаCanStartDetonateКомпозитное условие проверкиDetonateTauntIndexИндекс используемого ТаунтаTauntFinishedEventСобытие окончания ТаунтаDetonateProcessCurrentTimeТекущее значение времени процесса ДетонацииExplosionCurrentTimeТекущее значение времени процесса ВзрываInExplosionProcessБулька в процессе ли мы ВзрываStartExplosionEventСобытие начала ВзрываHideExplosionSourceEventСобытие о том что можно спрятать модельHideExplosionSourceDelayTimeСколько времени ждать до спрятывания модели
+СистемаЧто делаетAnimatorRegistratorРегистрируем компонент аниматора через entity.AddAnimatorStartDetonationSequenceВ ините подписываемся на DistanceToTargetReachedEvent
+При достижении – проверяем CanStartDetonate, и если да – InDetonateProcess ставим в true, генерируем и выставляем рандомный DetonateTauntIndex, инвокаем событие StartTauntEventDetonationProcessTimerSystemВ ините подписываемся на StartTauntEvent
+При достижении ставим DetonateProcessCurrentTime = 0
+В апдейте – если InDetonateProcess = false - выходим
+Иначе – тикаем DetonateProcessCurrentTime += deltaTimeTauntProcessSystemВ ините подписываемся на StartTauntEvent
+При достижении ставим локальную бульку _isTrackingTaunt в true (а мог бы просто иметь компонент для этой части тоже)
+В апдейте – если isTrackingTaunt = false – выходим
+Если InDetonateProcess = false – тоже выходим
+Забираем из аниматора состояние о текущем стейте через entity.Animator.GetCurrentAnimatorStateInfo(0)
+Если shortNameHash этого стейта = ALL DONE – ставим isTrackingTaunt в false, инвокаем событие TauntFinishedEventStartExplosionSystemВ ините подписываемся на TauntFinishedEvent
+При достижении ставим InExplosionProcess в true и инвокаем StartExplosionEventExplosionDamageOnDetonationSystemВ ините подписываемся на StartExplosionEvent
+При достижении – если цели нет – ничего не делаем
+Если цель есть – пытаемся нанести цели урон через EntitiesHelper.TryTakeDamageFrom(_source,CurrentTarget, ExplosionDamage)ExplosionProcessTimerSystemВ ините подписываемся на StartExplosionEvent
+При достижении ставим ExplosionCurrentTime = 0
+В апдейте – если InExplosionProcess = false – выходим
+Иначе – тикаем ExplosionCurrentTime += deltaTimeExplosionDelayEndTriggerSystemВ ините – подписываемся на StartExplosionEvent и изменение ExplosionCurrentTime. При старте взрыва – ставим локальную бульку _alreadyHidden в false. При изменении таймера – если _alreadyHidden = true -> выходим. Иначе – если ExplosionCurrentTime >= HideExplosionSourceDelayTime, 
+ставим IsDead = true, InExplosionProcess = false, InDetonateProcess = false, alreadyHidden = true, инвокаем HideExplosionSourceEvent TauntDetonationViewОбщая вью для таунта, взрыва и хайда.
+Прокидываем ссылки на аниматор, точку для эффекта взрыва, партикл систему взрыва, звук таунта, звук взрыва, локальный источник звука.
+В ините сущности подписываемся на StartTauntEvent, StartExplosionEvent, HideExplosionSourceEvent
+В обработчике Таунта – ставим в аниматор TauntIndexKey = DetonateTauntIndex, и триггерим DetonateKey.
+Если источник звука не пустой – играем ван шотом звук таунта.
+В обработчике взрыва – если точка и эффекта взрыва заданы – идем дальше. Инстанциируем в точке этот эффект и играем звук если задан источник звука.
+В обработчике прятания – просто ставим объект в выключенное состояние.
+
+
+
+StageProviderService
+Уровень = LevelConfig со списком StageConfig.
+Сейчас поддерживается один тип стадии: ClearAllEnemies.
+Счётчик стадий, результат (Completed / Uncompleted), очистка временных сущностей после Stage.
+
+PreparationTriggerService
+Спавнит Contact Trigger в точке из конфига.
+Клик по коллайдеру триггера → событие PrepareTriggerClicked → старт Stage.
+
+TakeDamageSystem
+Применение урона к entity.CurrentHealth (без проверки команд)
+
+DeathSystem
+Обработка entity.IsDead на основе entity.MustDie
+
+DeathProcessTimerSystem
+Таймер анимации/задержки перед удалением.
+
+DisableCollidersOnDeathSystem
+Отключение коллайдеров.
+
+SelfReleaseSystem
+Возврат entity в EntitiesLifeContext.Release.
+
+Движение (MovementFeature)
+RigidbodyMovementSystem, RigidbodyRotationSystem – физическое движение и поворот
+
+
+
+
+
+
+
+
+
+

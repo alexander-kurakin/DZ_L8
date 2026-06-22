@@ -3,7 +3,6 @@ using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
 
