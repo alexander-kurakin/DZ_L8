@@ -610,7 +610,7 @@ CapsuleCollider:
     m_Bits: 0
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 1088
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -619,7 +619,7 @@ CapsuleCollider:
   m_Radius: 4
   m_Height: 10
   m_Direction: 1
-  m_Center: {x: 0, y: 1.39, z: -0.71}
+  m_Center: {x: 0, y: 5, z: -0.71}
 --- !u!114 &4756335019239703012
 MonoBehaviour:
   m_ObjectHideFlags: 0

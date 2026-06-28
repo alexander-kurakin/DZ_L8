@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -47,6 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             
             _container.Resolve<SectorGridFactory>().Create();
+            _container.Resolve<PlantPlacementService>().ClearForNewRun();
             _container.Resolve<SpellcoreProgressionService>().InitializeForRun();
 
             _container.Resolve<MainHeroFactory>().Create();

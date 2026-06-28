@@ -4,6 +4,7 @@ using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
@@ -25,6 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly StageProviderService _stageProviderService;
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
+        private readonly PlantPlacementService _plantPlacementService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         private float _modifiedDamage;
@@ -38,6 +40,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _stageProviderService = container.Resolve<StageProviderService>();
             _plantableObjectsFactory = container.Resolve<PlantableObjectsFactory>();
             _spellcoreProgressionService = container.Resolve<SpellcoreProgressionService>();
+            _plantPlacementService = container.Resolve<PlantPlacementService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -90,7 +93,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _walletService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
-                    _spellcoreProgressionService));
+                    _spellcoreProgressionService,
+                    _plantPlacementService));
 
             return entity;
         }
@@ -114,7 +118,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _walletService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
-                    _spellcoreProgressionService));
+                    _spellcoreProgressionService,
+                    _plantPlacementService));
 
             return entity;
         }
@@ -139,7 +144,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _stageProviderService,
-                    _spellcoreProgressionService));
+                    _spellcoreProgressionService,
+                    _plantPlacementService));
 
             return entity;
         }

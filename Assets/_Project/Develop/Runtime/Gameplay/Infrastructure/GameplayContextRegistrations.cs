@@ -14,6 +14,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -46,6 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSectorRegistryService);
             container.RegisterAsSingle(CreateSectorMembershipService);
             container.RegisterAsSingle(CreateSectorGridFactory);
+            container.RegisterAsSingle(CreatePlantPlacementService);
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
 
             container.RegisterAsSingle(CreateBrainsFactory);
@@ -222,6 +224,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static SectorGridFactory CreateSectorGridFactory(DIContainer c)
         {
             return new SectorGridFactory(c);
+        }
+
+        private static PlantPlacementService CreatePlantPlacementService(DIContainer c)
+        {
+            return new PlantPlacementService(
+                c.Resolve<SectorRegistryService>(),
+                c.Resolve<SectorMembershipService>(),
+                c.Resolve<EntitiesLifeContext>());
         }
 
         private static SpellcoreProgressionService CreateSpellcoreProgressionService(DIContainer c)

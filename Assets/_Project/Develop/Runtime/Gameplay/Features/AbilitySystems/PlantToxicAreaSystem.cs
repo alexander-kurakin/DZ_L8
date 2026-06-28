@@ -4,6 +4,8 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
@@ -18,9 +20,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
         private readonly StageProviderService _stageProviderService;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
+        private readonly PlantPlacementService _plantPlacementService;
         
         private Entity _parent;
-        private Entity _child;
         private IDisposable _requestDisposable;
 
         public PlantToxicAreaSystem(
@@ -28,13 +30,15 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
             StageProviderService stageProviderService,
-            SpellcoreProgressionService spellcoreProgressionService)
+            SpellcoreProgressionService spellcoreProgressionService,
+            PlantPlacementService plantPlacementService)
         {
             _walletService = walletService;
             _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
             _stageProviderService = stageProviderService;
             _spellcoreProgressionService = spellcoreProgressionService;
+            _plantPlacementService = plantPlacementService;
         }
 
         public void OnInit(Entity entity)
@@ -48,11 +52,19 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             if (_spellcoreProgressionService.IsAbilityUnlocked(AbilityType.PlantToxicArea) == false)
                 return;
 
+            if (_plantPlacementService.TryResolvePlacement(
+                    usePoint,
+                    AbilityType.PlantToxicArea,
+                    out Vector3 plantPosition,
+                    out SectorId sectorId) == false)
+                return;
+
             if (_walletService.Enough(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds)) 
             {
                 _walletService.Spend(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds);
-                _child = _plantableObjectsFactory.Create(usePoint, _purchasableEntityConfig);
-                _stageProviderService.AddTemporaryEntity(_child);
+                Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig);
+                _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
+                _stageProviderService.AddTemporaryEntity(plantEntity);
             }            
         }
 
