@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "systems/meta-progression.md",
+                "file": "00-hub.md.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "meta-progression"
+              "title": "00-hub.md"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "systems/meta-progression.md",
+                "file": "00-hub.md.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Обратные ссылки для meta-progression"
+              "title": "Обратные ссылки для 00-hub.md"
             }
           },
           {
@@ -182,21 +182,24 @@
       "bases:Создать новую базу": false
     }
   },
-  "active": "56f001391b68e70a",
+  "active": "42b5a7e5e20bba56",
   "lastOpenFiles": [
+    "00-one-pager.md",
+    "00-hub.md.md",
+    "balance.md",
+    "world/style-and-tone.md",
+    "genre-references.md",
+    "open-questions.md",
     "pillars.md",
+    "synopsis.md",
     "world/concepts/spellcore-concept.md",
+    "concept_AI.png",
+    "essence.md",
+    "Cursor-rules.md",
+    "systems/meta-progression.md",
     "systems/spellcore-gameplay.md",
     "world/spellcore.md",
     "Pasted/Pasted image 20260609131630.png",
-    "concept_AI.png",
-    "world/style-and-tone.md",
-    "systems/meta-progression.md",
-    "00-hub.md.md",
-    "essence.md",
-    "genre-references.md",
-    "open-questions.md",
-    "synopsis.md",
     "systems",
     "Pasted/Pasted image 20260609210624.png",
     "world/concepts",

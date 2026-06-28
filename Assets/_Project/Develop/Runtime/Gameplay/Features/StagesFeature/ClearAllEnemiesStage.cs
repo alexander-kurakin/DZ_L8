@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -19,11 +20,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class ClearAllEnemiesStage : IStage
     {
-        private const int SpawnMaxSectors = 12;
-        
+        private const float SPAWN_RADIUS_SCALE_MIN = 0.9f;
+        private const float SPAWN_RADIUS_SCALE_MAX = 1f;
+
         private readonly ClearAllEnemiesStageConfig _config;
         private readonly RaycastConfig _mouseRaycastConfig;
-        private readonly TowerConfig _towerConfig;
+        private readonly SectorRegistryService _sectorRegistryService;
         
         private EntitiesLifeContext _entitiesLifeContext;
         private MainHeroHolderService _mainHeroHolderService;
@@ -40,8 +42,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private bool _inProcess;
 
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
-        private readonly int[] _spawnSectorOrder = new int[SpawnMaxSectors];
-        private int _spawnSectorCursor;
+        private readonly int[] _spawnPathOrder = new int[SectorId.SectorsPerRing];
+        private int _spawnPathCount;
+        private int _spawnPathCursor;
 
 
         private readonly Queue<SpawnGroupConfig> _spawnGroupsQueue = new();
@@ -59,7 +62,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             MainHeroHolderService mainHeroHolderService,
             IMouseInputService mouseInputService,
             MouseRaycastService mouseRaycastService,
-            IBackgroundMusicService  backgroundMusicService)
+            IBackgroundMusicService  backgroundMusicService,
+            SectorRegistryService sectorRegistryService)
         {
             _config = config;
             _enemiesFactory = enemiesFactory;
@@ -68,8 +72,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
             _backgroundMusicService = backgroundMusicService;
-            
-            _towerConfig = configsProviderService.GetConfig<TowerConfig>();
+            _sectorRegistryService = sectorRegistryService;
+
             _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
             
         }
@@ -86,7 +90,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mainHero = _mainHeroHolderService.MainHero;
             _towerWalker = _mainHeroHolderService.TowerWalker;
 
-            ResetSpawnSectorOrderForWave();
+            ResetSpawnPathOrderForWave();
             PrepareGroupsQueue();
             MoveToNextGroupOrFinishSpawn();
             
@@ -247,43 +251,41 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _completed.Invoke();
         }
 
-        private Vector3 GenerateRandomPositionInCircleShuffledSectors()
+        private Vector3 GenerateSpawnPositionInNextUnlockedPath()
         {
-            Vector3 center = _towerConfig.StartPosition;
-            float ringRadius = _config.EnemySpawnRadius * Random.Range(0.9f, 1f);
+            if (_spawnPathCount == 0)
+                throw new InvalidOperationException("No unlocked spawn paths configured.");
 
-            float sectorWidthRadians = (Mathf.PI * 2f) / SpawnMaxSectors;
-            int sectorIndex = _spawnSectorOrder[_spawnSectorCursor % SpawnMaxSectors];
-            
-            _spawnSectorCursor++;
+            int pathIndex = _spawnPathOrder[_spawnPathCursor % _spawnPathCount];
+            _spawnPathCursor++;
 
-            float angleRadians =
-                sectorIndex * sectorWidthRadians +
-                Random.Range(0f, sectorWidthRadians);
+            float sectorWidthRadians = (Mathf.PI * 2f) / SectorId.SectorsPerRing;
+            float angleOffsetRadians = Random.Range(0f, sectorWidthRadians);
+            float radiusScale = Random.Range(SPAWN_RADIUS_SCALE_MIN, SPAWN_RADIUS_SCALE_MAX);
 
-            float offsetX = Mathf.Cos(angleRadians) * ringRadius;
-            float offsetZ = Mathf.Sin(angleRadians) * ringRadius;
-
-            return new Vector3(center.x + offsetX, center.y, center.z + offsetZ);
+            return _sectorRegistryService.GetSpawnPositionInWedge(pathIndex, angleOffsetRadians, radiusScale);
         }
-        
-        private void ResetSpawnSectorOrderForWave()
-        {
-            for (int index = 0; index < SpawnMaxSectors; index++)
-                _spawnSectorOrder[index] = index;
 
-            for (int lastIndex = SpawnMaxSectors - 1; lastIndex > 0; lastIndex--)
+        private void ResetSpawnPathOrderForWave()
+        {
+            _spawnPathCount = _sectorRegistryService.UnlockedPathCount;
+
+            for (int index = 0; index < _spawnPathCount; index++)
+                _spawnPathOrder[index] = _sectorRegistryService.GetUnlockedPathIndexAt(index);
+
+            for (int lastIndex = _spawnPathCount - 1; lastIndex > 0; lastIndex--)
             {
                 int randomIndex = Random.Range(0, lastIndex + 1);
-                (_spawnSectorOrder[lastIndex], _spawnSectorOrder[randomIndex]) = (_spawnSectorOrder[randomIndex], _spawnSectorOrder[lastIndex]);
+                (_spawnPathOrder[lastIndex], _spawnPathOrder[randomIndex]) =
+                    (_spawnPathOrder[randomIndex], _spawnPathOrder[lastIndex]);
             }
 
-            _spawnSectorCursor = 0;
+            _spawnPathCursor = 0;
         }
-        
+
         private void SpawnSingleEnemyAtNextSectorPosition(EntityConfig enemyConfig)
         {
-            Vector3 spawnPosition = GenerateRandomPositionInCircleShuffledSectors();
+            Vector3 spawnPosition = GenerateSpawnPositionInNextUnlockedPath();
             Entity spawnedEnemy = _enemiesFactory.Create(spawnPosition, enemyConfig);
 
             IDisposable removeReason = spawnedEnemy.InDeathProcess.Subscribe((oldValue, inDead) =>

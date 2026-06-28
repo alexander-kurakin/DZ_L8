@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
@@ -19,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
         private readonly BrainsFactory _brainsFactory;
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MainHeroHolderService _mainHeroHolderService;
+        private readonly SectorMembershipService _sectorMembershipService;
 
         public EnemiesFactory(DIContainer container)
         {
@@ -27,6 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             _brainsFactory = _container.Resolve<BrainsFactory>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
+            _sectorMembershipService = _container.Resolve<SectorMembershipService>();
         }
 
         public Entity Create(Vector3 position, EntityConfig config)
@@ -56,9 +59,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
 
             entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
 
+            SetupSectorTracking(entity, position);
+
             _entitiesLifeContext.Add(entity);
 
             return entity;
+        }
+
+        private void SetupSectorTracking(Entity entity, Vector3 spawnPosition)
+        {
+            SectorId initialSector = _sectorMembershipService.ResolveFromWorldPosition(spawnPosition);
+
+            entity
+                .AddCurrentSector(new ReactiveVariable<SectorId>(initialSector))
+                .AddSystem(new SectorMembershipSystem(_sectorMembershipService));
         }
     }
 }

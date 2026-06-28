@@ -12,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -38,6 +39,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateEntitiesLifeContext);
 
             container.RegisterAsSingle(CreateCollidersRegistryService);
+
+            container.RegisterAsSingle(CreateSectorRegistryService);
+            container.RegisterAsSingle(CreateSectorMembershipService);
+            container.RegisterAsSingle(CreateSectorGridFactory);
 
             container.RegisterAsSingle(CreateBrainsFactory);
             
@@ -198,6 +203,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static CollidersRegistryService CreateCollidersRegistryService(DIContainer c)
         {
             return new CollidersRegistryService();
+        }
+
+        private static SectorRegistryService CreateSectorRegistryService(DIContainer c)
+        {
+            return new SectorRegistryService();
+        }
+
+        private static SectorMembershipService CreateSectorMembershipService(DIContainer c)
+        {
+            return new SectorMembershipService(c.Resolve<SectorRegistryService>());
+        }
+
+        private static SectorGridFactory CreateSectorGridFactory(DIContainer c)
+        {
+            return new SectorGridFactory(c);
         }
 
         private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer c)

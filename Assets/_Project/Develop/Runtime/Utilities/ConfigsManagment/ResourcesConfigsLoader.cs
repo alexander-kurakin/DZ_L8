@@ -8,6 +8,7 @@ using System.Collections;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
@@ -31,6 +32,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(ToxicAreaConfig), "Configs/Gameplay/Entities/Abilities/ToxicAreaConfig" },
             {typeof(ContactTriggerConfig), "Configs/Gameplay/Entities/Characters/ContactTriggerConfig" },
             {typeof(RaycastConfig), "Configs/Gameplay/MouseConfig/RaycastConfig" },
+            {typeof(SectorGridConfig), "Configs/Gameplay/Sectors/SectorGridConfig" },
+            {typeof(SectorVisualConfig), "Configs/Gameplay/Sectors/SectorVisualConfig" },
             {typeof(ExplodeAtPointAbilityConfig), "Configs/Gameplay/Entities/Abilities/ExplodeAtPointAbilityConfig" },
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },

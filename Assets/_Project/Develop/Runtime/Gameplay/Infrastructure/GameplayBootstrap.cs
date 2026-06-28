@@ -1,6 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -44,6 +45,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
             
+            _container.Resolve<SectorGridFactory>().Create();
+
             _container.Resolve<MainHeroFactory>().Create();
 			_container.Resolve<MainHeroFactory>().CreateTowerWalker();
             _container.Resolve<MainHeroFactory>().CreateTowerBrother();
