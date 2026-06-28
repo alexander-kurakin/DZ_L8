@@ -62,7 +62,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             if (_runEssenceService.Enough(_purchasableEntityConfig.CostInEssence)) 
             {
                 _runEssenceService.Spend(_purchasableEntityConfig.CostInEssence);
-                Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig);
+                Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig, sectorId);
                 _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
                 _stageProviderService.AddTemporaryEntity(plantEntity);
             }            

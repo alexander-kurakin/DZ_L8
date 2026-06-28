@@ -45,17 +45,17 @@
 
 | Plant | Параметр | Значение | Примечание |
 | ----- | -------- | -------- | ---------- |
-| **Mine** | Damage | TBD | 1 proc per enemy per sector |
-| | Proc delay | TBD | «short delay» |
+| **Mine** | Damage | **250** | 2× на танка (500 HP); sector-based |
+| | Proc delay | **0.25с** | «short delay» |
 | | Radius / sector | TBD | sector-based в demo |
 | **Toxic** | DoT per tick | TBD | |
 | | Tick interval | TBD | |
 | | Slow | **−33%** move speed | канон |
 | | Radius / sector | TBD | O/M only |
-| **Turret** | Damage per shot | TBD | |
+| **Turret** | Damage per shot | **100** | inner belt vs dragon |
 | | Fire interval | TBD | |
 | | Target arc | N±1 same belt | канон |
-| **LMB** | Cat damage | **50% current HP** | канон |
+| **LMB** | Cat damage | **50% max HP** | канон; не от current — иначе не убить |
 | | Tank / Dragon | 0 | flavor toasts |
 
 ---
@@ -64,9 +64,9 @@
 
 | Enemy | Belt | Max HP | Move speed | Другое |
 | ----- | ---- | ------ | ---------- | ------ |
-| Cat | Inner | TBD | TBD | explosion dmg TBD |
-| Tank | Middle | TBD | TBD | ranged dmg TBD, range TBD |
-| Dragon | Inner | TBD | TBD | beam DoT TBD; fly over toxic |
+| Cat | Inner | **300** | **4** | explosion dmg TBD |
+| Tank | Middle | **500** | **9** | ranged dmg 100, range 20 |
+| Dragon | Inner | **400** | **9** | beam 40/tick; fly over toxic; 2 mines or inner turret |
 
 ---
 
@@ -79,7 +79,7 @@
 | **Toxic DoT** | 1.0 + slow | 0.5 + slow | 0 (fly over) |
 | **Turret** | TBD | **0.5** (shield) | 1.0 |
 | **Mine** | 1.0 | 1.0 | 1.0 + enrage |
-| **LMB** | 50% HP | 0 | 0 |
+| **LMB** | 50% max HP | 0 | 0 |
 
 ### Особые правила (не множители)
 
@@ -97,11 +97,11 @@
 
 | Wave | Paths total | Cat count | Tank count | Dragon count | Spawn interval | Group pause | Notes |
 | ---- | ----------- | --------- | ---------- | ------------ | -------------- | ----------- | ----- |
-| 1 | 1 | TBD | 0 | 0 | TBD | TBD | teach LMB |
-| 2 | 2 | TBD | TBD | 0 | TBD | TBD | 2 mines vs tank |
-| 3 | 4 | TBD | TBD | TBD | TBD | TBD | turret + enraged dragon |
-| 4 | 6 | TBD | TBD | TBD | TBD | TBD | intro toxic |
-| 5 | 6 | TBD | TBD | TBD | TBD | TBD | full factory |
+| 1 | 1 | **3** | 0 | 0 | 4–5с | — | teach LMB |
+| 2 | 2 | **3** | **2** | 0 | 1–1.5с / 1.5–2с | 2с | 2 mines vs tank |
+| 3 | 4 | **3** | **2** | **1** | см. Intro3 | 1.5–2с | inner turret/mine vs dragon |
+| 4 | 6 | **5** | **3** | **1** | см. Intro4 | 1.5–2с | intro toxic |
+| 5 | 6 | **6** | **5** | **2** | см. Intro5 | 1–1.5с | full factory |
 
 **Difficulty scaling:** open Paths ↑ → больше направлений / микс (без per-sector % eff).
 

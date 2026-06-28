@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -19,9 +20,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly StageProviderService _stageProviderService;
         private readonly ConfigsProviderService _configsProviderService;
+        private readonly SpawnPathPreviewService _spawnPathPreviewService;
+        private readonly WaveSpawnPlanService _waveSpawnPlanService;
 
         private int _completedWaves;
         private int _freeMinesRemaining;
+        private bool _showSpawnPathPreview;
         private readonly List<int> _runUnlockedPathIndices = new();
         private IDisposable _stageCompletedSubscription;
 
@@ -29,12 +33,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             SpellcoreProgressionConfig config,
             SectorRegistryService sectorRegistryService,
             StageProviderService stageProviderService,
-            ConfigsProviderService configsProviderService)
+            ConfigsProviderService configsProviderService,
+            SpawnPathPreviewService spawnPathPreviewService,
+            WaveSpawnPlanService waveSpawnPlanService)
         {
             _config = config;
             _sectorRegistryService = sectorRegistryService;
             _stageProviderService = stageProviderService;
             _configsProviderService = configsProviderService;
+            _spawnPathPreviewService = spawnPathPreviewService;
+            _waveSpawnPlanService = waveSpawnPlanService;
         }
 
         public event Action Changed;
@@ -57,6 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
         public void OnPreparationEntered()
         {
+            _showSpawnPathPreview = true;
             ApplyPathsForWave(GetUpcomingWaveNumber());
             RefreshSectorVisuals();
             Changed?.Invoke();
@@ -64,6 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
         public void OnCombatWaveEntered(int waveNumber)
         {
+            _showSpawnPathPreview = false;
             RefreshSectorVisuals();
             Changed?.Invoke();
         }
@@ -161,7 +171,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
                 return;
 
             SectorVisualConfig visualConfig = _configsProviderService.GetConfig<SectorVisualConfig>();
-            sectorBootstrap.RefreshViews(_sectorRegistryService, visualConfig, showSpawnPathPreview: false);
+            WaveEnemyPreviewIconsConfig enemyIconsConfig =
+                _configsProviderService.GetConfig<WaveEnemyPreviewIconsConfig>();
+
+            if (_showSpawnPathPreview)
+            {
+                int upcomingWaveNumber = GetUpcomingWaveNumber();
+                ClearAllEnemiesStageConfig stageConfig =
+                    _stageProviderService.GetClearAllEnemiesStageConfigForWave(upcomingWaveNumber);
+
+                _waveSpawnPlanService.BuildForWave(stageConfig, _sectorRegistryService);
+                sectorBootstrap.RefreshViews(_sectorRegistryService, visualConfig);
+
+                _spawnPathPreviewService.Refresh(
+                    true,
+                    _sectorRegistryService,
+                    visualConfig,
+                    enemyIconsConfig,
+                    _waveSpawnPlanService.GroupPlans);
+            }
+            else
+            {
+                sectorBootstrap.RefreshViews(_sectorRegistryService, visualConfig);
+                _spawnPathPreviewService.ClearMarkers();
+            }
         }
     }
 }

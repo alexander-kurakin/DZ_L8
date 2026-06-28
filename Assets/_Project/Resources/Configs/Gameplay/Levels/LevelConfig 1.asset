@@ -16,7 +16,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: dfa2ff8c0701b8049b81f45dd02b9c2f, type: 2}
   - {fileID: 11400000, guid: 0641414d401e21a46a5645c6213c6f04, type: 2}
   - {fileID: 11400000, guid: f3b71036157c5fe4093321eb271dcd0a, type: 2}
-  - {fileID: 11400000, guid: 7e4f8a2b1c9d3e5f6a7b8c9d0e1f2a3, type: 2}
-  - {fileID: 11400000, guid: 8f5a9b3c2d0e4f6a7b8c9d1e2f3a4b5, type: 2}
+  - {fileID: 11400000, guid: ad2fbe2ff03447c0d16555d59d0edfe2, type: 2}
+  - {fileID: 11400000, guid: 0999a24fb121a4af754827e26ffee3d3, type: 2}
   _towerMaxHealth: 2500
-  _goldReward: 20000
+  _goldReward: 200000

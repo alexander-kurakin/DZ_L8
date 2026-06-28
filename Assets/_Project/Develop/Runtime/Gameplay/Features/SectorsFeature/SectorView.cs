@@ -1,4 +1,6 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
@@ -17,7 +19,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             _outline ??= GetComponentInChildren<LineRenderer>();
         }
 
-        public void Apply(SectorVisualConfig visualConfig, SectorRegistryService registry, bool showSpawnPathPreview)
+        public void Apply(SectorVisualConfig visualConfig, SectorRegistryService registry)
+        {
+            Apply(visualConfig, registry, null, false);
+        }
+
+        public void Apply(
+            SectorVisualConfig visualConfig,
+            SectorRegistryService registry,
+            IReadOnlyCollection<int> spawnPathIndices,
+            bool restrictFillToSpawnPaths)
         {
             if (visualConfig == null)
                 return;
@@ -29,17 +40,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 _fillRenderer = GetComponent<Renderer>();
 
             bool isPathUnlocked = registry != null && registry.IsPathUnlocked(_registrator.SectorId.Index);
-            SectorFillVisualData fillVisual = isPathUnlocked
+            bool isSpawnPath = spawnPathIndices != null
+                               && spawnPathIndices.Contains(_registrator.SectorId.Index);
+            bool useUnlockedFill = isPathUnlocked
+                                   && (restrictFillToSpawnPaths == false || isSpawnPath);
+
+            SectorFillVisualData fillVisual = useUnlockedFill
                 ? visualConfig.UnlockedFill
                 : visualConfig.LockedFill;
 
             ApplyFill(fillVisual);
-
-            bool highlightSpawnPath = showSpawnPathPreview
-                                      && _registrator.SectorId.Belt == SectorBelt.Spawn
-                                      && isPathUnlocked;
-
-            ApplyOutline(visualConfig, highlightSpawnPath);
+            ApplyOutline(visualConfig);
         }
 
         private void ApplyFill(SectorFillVisualData fillVisual)
@@ -51,7 +62,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             SectorVisualUtility.ApplyTransparentColor(material, fillVisual.Color, fillVisual.Alpha);
         }
 
-        private void ApplyOutline(SectorVisualConfig visualConfig, bool highlightSpawnPath)
+        private void ApplyOutline(SectorVisualConfig visualConfig)
         {
             if (_outline == null)
                 _outline = GetComponentInChildren<LineRenderer>();
@@ -59,13 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             if (_outline == null)
                 return;
 
-            if (highlightSpawnPath)
-                SectorVisualUtility.ConfigureOutline(
-                    _outline,
-                    visualConfig.SpawnPreviewOutlineColor,
-                    visualConfig.SpawnPreviewOutlineWidth);
-            else
-                SectorVisualUtility.ConfigureOutline(_outline, visualConfig);
+            SectorVisualUtility.ConfigureOutline(_outline, visualConfig);
         }
     }
 }

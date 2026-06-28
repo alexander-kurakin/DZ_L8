@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: ExplodeAtPointAbilityConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: 
-  <CooldownSeconds>k__BackingField: 5
+  <CooldownSeconds>k__BackingField: 3
   <CatMaxHealthDamageFraction>k__BackingField: 0.5

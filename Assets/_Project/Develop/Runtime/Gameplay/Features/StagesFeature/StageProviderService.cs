@@ -1,14 +1,24 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class StageProviderService : IDisposable
     {
+        private static readonly string[] STAGE_CONFIG_RESOURCE_PATHS =
+        {
+            "Configs/Gameplay/Stages/Intro1",
+            "Configs/Gameplay/Stages/Intro2",
+            "Configs/Gameplay/Stages/Intro3",
+            "Configs/Gameplay/Stages/Intro4",
+            "Configs/Gameplay/Stages/Intro5",
+        };
+
         private readonly ReactiveEvent _stageCompleted = new();
         private ReactiveVariable<int> _currentStageNumber = new();
         private ReactiveVariable<StageResults> _currentStageResult = new();
@@ -31,6 +41,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _levelConfig = levelConfig;
             _stagesFactory = stagesFactory;
             _entitiesLifeContext = entitiesLifeContext;
+            ValidateStageConfigs();
         }
 
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
@@ -67,6 +78,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
 
+        public ClearAllEnemiesStageConfig GetClearAllEnemiesStageConfigForWave(int waveNumber)
+        {
+            int stageIndex = waveNumber - 1;
+
+            if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
+                return null;
+
+            return ResolveStageConfig(stageIndex) as ClearAllEnemiesStageConfig;
+        }
+
         public void SwitchToNext()
         {
             if (HasNextStage() == false)
@@ -78,7 +99,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _currentStageNumber.Value++;
             _currentStageResult.Value = StageResults.Uncompleted;
 
-            _currentStage = _stagesFactory.Create(_levelConfig.StageConfigs[_currentStageNumber.Value - 1]);
+            int stageIndex = _currentStageNumber.Value - 1;
+            _currentStage = _stagesFactory.Create(ResolveStageConfig(stageIndex));
         }
         
         public void AddTemporaryEntity(Entity entity)
@@ -141,6 +163,59 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
 
             return previewTypes;
+        }
+
+        private void ValidateStageConfigs()
+        {
+            for (int stageIndex = 0; stageIndex < _levelConfig.StageConfigs.Count; stageIndex++)
+            {
+                if (_levelConfig.StageConfigs[stageIndex] != null)
+                    continue;
+
+                if (stageIndex >= STAGE_CONFIG_RESOURCE_PATHS.Length)
+                {
+                    throw new InvalidOperationException(
+                        $"Stage config for wave {stageIndex + 1} is missing in LevelConfig.");
+                }
+
+                StageConfig fallbackStageConfig = Resources.Load<StageConfig>(STAGE_CONFIG_RESOURCE_PATHS[stageIndex]);
+
+                if (fallbackStageConfig == null)
+                {
+                    throw new InvalidOperationException(
+                        $"Stage config for wave {stageIndex + 1} is missing at '{STAGE_CONFIG_RESOURCE_PATHS[stageIndex]}'.");
+                }
+            }
+        }
+
+        private StageConfig ResolveStageConfig(int stageIndex)
+        {
+            if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
+            {
+                throw new InvalidOperationException(
+                    $"Wave index {stageIndex} is out of range for level with {_levelConfig.StageConfigs.Count} stages.");
+            }
+
+            StageConfig stageConfig = _levelConfig.StageConfigs[stageIndex];
+
+            if (stageConfig != null)
+                return stageConfig;
+
+            if (stageIndex >= STAGE_CONFIG_RESOURCE_PATHS.Length)
+            {
+                throw new InvalidOperationException(
+                    $"Stage config for wave {stageIndex + 1} is missing in LevelConfig.");
+            }
+
+            StageConfig fallbackStageConfig = Resources.Load<StageConfig>(STAGE_CONFIG_RESOURCE_PATHS[stageIndex]);
+
+            if (fallbackStageConfig == null)
+            {
+                throw new InvalidOperationException(
+                    $"Stage config for wave {stageIndex + 1} is missing at '{STAGE_CONFIG_RESOURCE_PATHS[stageIndex]}'.");
+            }
+
+            return fallbackStageConfig;
         }
     }
 }

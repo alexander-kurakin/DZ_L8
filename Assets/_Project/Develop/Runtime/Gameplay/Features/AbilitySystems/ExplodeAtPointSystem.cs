@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
-using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -19,6 +18,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly ExplodeAtPointAbilityConfig _config;
+
+        private const float LMB_NEARBY_ENEMY_RADIUS = 14f;
 
         private readonly List<Entity> _enemiesInSector = new();
 
@@ -67,6 +68,13 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             SectorId sectorId = _sectorMembershipService.ResolveSectorAtClick(usePoint);
             _sectorEnemyQueryService.CollectEnemiesInSector(sectorId, _enemiesInSector);
 
+            SectorId clickPositionSector = _sectorMembershipService.ResolveFromWorldPosition(usePoint);
+
+            if (clickPositionSector != sectorId)
+                _sectorEnemyQueryService.AppendEnemiesInSector(clickPositionSector, _enemiesInSector);
+
+            _sectorEnemyQueryService.AppendEnemiesNearWorldPosition(usePoint, LMB_NEARBY_ENEMY_RADIUS, _enemiesInSector);
+
             bool showTankToast = false;
             bool showDragonToast = false;
 
@@ -75,7 +83,10 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                 Entity enemy = _enemiesInSector[index];
 
                 if (enemy.TryGetEnemyWavePreviewType(out WaveEnemyPreviewType previewType) == false)
+                {
+                    ApplyCatDamage(enemy);
                     continue;
+                }
 
                 switch (previewType)
                 {

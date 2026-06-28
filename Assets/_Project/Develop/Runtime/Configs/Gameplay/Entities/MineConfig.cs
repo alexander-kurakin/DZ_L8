@@ -7,5 +7,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     {
         [field: SerializeField, Min(0)] public float Damage { get; private set; } = 100;
         [field: SerializeField, Min(0)] public float ExplosionRadius { get; private set; } = 5;
+        [field: SerializeField, Min(0)] public float ProcDelaySeconds { get; private set; } = 0.25f;
     }
 }

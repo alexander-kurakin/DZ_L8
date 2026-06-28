@@ -1,12 +1,15 @@
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached
 {
     public class DealDoTDamageOnTargetReachedSystem : IInitializableSystem, IDisposableSystem, IUpdatableSystem
     {
+        private readonly DragonEnrageService _dragonEnrageService;
+
         private IDisposable _targetReachedRequest;
         private ReactiveVariable<Entity> _target;
         private Entity _source;
@@ -16,6 +19,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetRe
         private ReactiveVariable<float> _dotTimer;
         
         private bool _targetReached;
+
+        public DealDoTDamageOnTargetReachedSystem(DragonEnrageService dragonEnrageService)
+        {
+            _dragonEnrageService = dragonEnrageService;
+        }
         
         public void OnInit(Entity entity)
         {
@@ -44,17 +52,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetRe
 
         public void OnUpdate(float deltaTime)
         {
-            if (_targetReached)
-            {
-                _dotTimer.Value -= deltaTime;
+            if (_targetReached == false)
+                return;
 
-                if (_dotTimer.Value > 0f)
-                    return;
+            _dotTimer.Value -= deltaTime;
 
-                EntitiesHelper.TryTakeDamageFrom(_source, _target.Value, _damagePerTick.Value);
+            if (_dotTimer.Value > 0f)
+                return;
+
+            float outgoingDamageMultiplier = _dragonEnrageService.GetOutgoingDamageMultiplier(_source);
+            float damage = _damagePerTick.Value * outgoingDamageMultiplier;
+
+            EntitiesHelper.TryTakeDamageFrom(_source, _target.Value, damage);
             
-                _dotTimer.Value = _dotTickInterval.Value;
-            }
+            _dotTimer.Value = _dotTickInterval.Value;
         }
     }
 }

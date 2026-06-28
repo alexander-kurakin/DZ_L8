@@ -3,9 +3,11 @@ using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities;
@@ -64,7 +66,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
             _mainHeroHolderService.TowerBrother.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
 
-            _mainHero.AbilityUserActiveAbility.Value = _mainHero.AbilityUserPlantAbilityPreference.Value;
+            _mainHero.AbilityUserActiveAbility.Value = _spellcoreProgressionService.HasAnyPlantAbilityUnlocked()
+                ? _mainHero.AbilityUserPlantAbilityPreference.Value
+                : AbilityType.ExplodeAtPoint;
 
             _spellcoreProgressionService.OnPreparationEntered();
             
@@ -78,29 +82,38 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
                 return;
             
-            if (MouseClickedOnFloorLayer(out Vector3 hitPoint))
+            if (MouseClickedOnPlacementSurface(out Vector3 hitPoint))
                 _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
                     .AbilityUseRequest.Invoke(hitPoint);
         }
         
-        private bool MouseClickedOnFloorLayer(out Vector3 hitPoint)
+        private bool MouseClickedOnPlacementSurface(out Vector3 hitPoint)
         {
-            if (_mouseInputService.FireButtonPressed)
-                if (_mouseRaycastService.TryGetHit(
-                        _mouseInputService.PointerScreenPosition,
-                        out RaycastHit hit,
-                        _mouseRaycastConfig.MouseRaycastDistance,
-                        Layers.FloorAndTriggerMask))
-                {
-                    if (hit.collider.gameObject.layer != Layers.ContactTrigger)
-                    {
-                        hitPoint = hit.point;
-                        return true;
-                    }
-                }
-
             hitPoint = Vector3.zero;
-            return false;
+
+            if (_mouseInputService.FireButtonPressed == false)
+                return false;
+
+            if (_mouseRaycastService.TryGetHit(
+                    _mouseInputService.PointerScreenPosition,
+                    out RaycastHit hit,
+                    _mouseRaycastConfig.MouseRaycastDistance,
+                    Layers.FloorAndTriggerMask) == false)
+            {
+                return false;
+            }
+
+            if (hit.collider.gameObject.layer == Layers.ContactTrigger)
+            {
+                bool isSectorVolume = hit.collider.GetComponent<SectorVolumeRegistrator>() != null
+                                      || hit.collider.GetComponentInParent<SectorVolumeRegistrator>() != null;
+
+                if (isSectorVolume == false)
+                    return false;
+            }
+
+            hitPoint = hit.point;
+            return true;
         }
 
         public override void Exit()

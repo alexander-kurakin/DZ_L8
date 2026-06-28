@@ -23,6 +23,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public IStage Create(StageConfig stageConfig)
         {
+            if (stageConfig == null)
+                throw new ArgumentNullException(nameof(stageConfig));
+
             switch (stageConfig)
             {
                 case ClearAllEnemiesStageConfig clearAllEnemiesStageConfig:
@@ -35,10 +38,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                         _container.Resolve<IMouseInputService>(),
                         _container.Resolve<MouseRaycastService>(),
                         _container.Resolve<IBackgroundMusicService>(),
-                        _container.Resolve<SectorRegistryService>());
+                        _container.Resolve<SectorRegistryService>(),
+                        _container.Resolve<WaveSpawnPlanService>());
 
                 default:
-                    throw new ArgumentException($"Not supported {stageConfig.GetType()} type config");
+                    throw new ArgumentException($"Not supported {stageConfig.GetType().Name} type config");
             }
         }
     }

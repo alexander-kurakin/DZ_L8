@@ -26,6 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private readonly ClearAllEnemiesStageConfig _config;
         private readonly RaycastConfig _mouseRaycastConfig;
         private readonly SectorRegistryService _sectorRegistryService;
+        private readonly WaveSpawnPlanService _waveSpawnPlanService;
         
         private EntitiesLifeContext _entitiesLifeContext;
         private MainHeroHolderService _mainHeroHolderService;
@@ -44,6 +45,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
         private readonly int[] _spawnPathIndices = new int[SectorId.SectorsPerRing];
         private int _spawnPathCount;
+        private int _currentGroupPathIndex = -1;
+        private int _currentGroupIndex;
 
 
         private readonly Queue<SpawnGroupConfig> _spawnGroupsQueue = new();
@@ -62,7 +65,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             IMouseInputService mouseInputService,
             MouseRaycastService mouseRaycastService,
             IBackgroundMusicService  backgroundMusicService,
-            SectorRegistryService sectorRegistryService)
+            SectorRegistryService sectorRegistryService,
+            WaveSpawnPlanService waveSpawnPlanService)
         {
             _config = config;
             _enemiesFactory = enemiesFactory;
@@ -72,6 +76,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _mouseRaycastService = mouseRaycastService;
             _backgroundMusicService = backgroundMusicService;
             _sectorRegistryService = sectorRegistryService;
+            _waveSpawnPlanService = waveSpawnPlanService;
 
             _mouseRaycastConfig = configsProviderService.GetConfig<RaycastConfig>();
             
@@ -163,7 +168,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             _spawnGroupsQueue.Clear();
             _currentEnemyQueue.Clear();
-            
+            _currentGroupIndex = 0;
+
             foreach (SpawnGroupConfig spawnConfigGroup in _config.SpawnGroups)
                 _spawnGroupsQueue.Enqueue(spawnConfigGroup);
         }
@@ -179,7 +185,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             }
             
             _currentSpawnGroup = _spawnGroupsQueue.Dequeue();
-            
+
+            if (_waveSpawnPlanService.TryGetPlannedPathIndexForGroup(_currentGroupIndex, out int plannedPathIndex))
+                _currentGroupPathIndex = plannedPathIndex;
+            else
+                _currentGroupPathIndex = PickRandomUnlockedPathIndex();
+
+            _currentGroupIndex++;
+
             foreach (EnemyItemConfig enemyItem in _currentSpawnGroup.EnemyItems)
             {
                 for (int i = 0; i < enemyItem.EnemiesCount; i++)
@@ -209,6 +222,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             _currentSpawnGroup = null;
             _waitingGroupPause = false;
+            _currentGroupPathIndex = -1;
+            _currentGroupIndex = 0;
             _inProcess = false;
         }
 
@@ -223,6 +238,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             _currentSpawnGroup = null;
             _waitingGroupPause = false;
+            _currentGroupPathIndex = -1;
+            _currentGroupIndex = 0;
             _inProcess = false;
         }
         
@@ -255,7 +272,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             if (_spawnPathCount == 0)
                 throw new InvalidOperationException("No unlocked spawn paths configured.");
 
-            int pathIndex = _spawnPathIndices[Random.Range(0, _spawnPathCount)];
+            int pathIndex = _currentGroupPathIndex >= 0
+                ? _currentGroupPathIndex
+                : PickRandomUnlockedPathIndex();
 
             float sectorWidthRadians = (Mathf.PI * 2f) / SectorId.SectorsPerRing;
             float angleOffsetRadians = Random.Range(0f, sectorWidthRadians);
@@ -267,9 +286,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private void ResetSpawnPathOrderForWave()
         {
             _spawnPathCount = _sectorRegistryService.UnlockedPathCount;
+            _currentGroupPathIndex = -1;
 
             for (int index = 0; index < _spawnPathCount; index++)
                 _spawnPathIndices[index] = _sectorRegistryService.GetUnlockedPathIndexAt(index);
+        }
+
+        private int PickRandomUnlockedPathIndex()
+        {
+            if (_spawnPathCount == 0)
+                throw new InvalidOperationException("No unlocked spawn paths configured.");
+
+            return _spawnPathIndices[Random.Range(0, _spawnPathCount)];
         }
 
         private void SpawnSingleEnemyAtNextSectorPosition(EntityConfig enemyConfig)

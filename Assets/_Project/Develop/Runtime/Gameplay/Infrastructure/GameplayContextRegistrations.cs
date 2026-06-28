@@ -16,6 +16,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
@@ -50,7 +51,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSectorMembershipService);
             container.RegisterAsSingle(CreateSectorEnemyQueryService);
             container.RegisterAsSingle(CreateSectorGridFactory);
+            container.RegisterAsSingle(CreateSpawnPathPreviewService);
+            container.RegisterAsSingle(CreateWaveSpawnPlanService);
             container.RegisterAsSingle(CreatePlantPlacementService);
+            container.RegisterAsSingle(CreatePlantDamageCounterService);
+            container.RegisterAsSingle(CreateDragonEnrageService);
+            container.RegisterAsSingle(CreatePlantDamageApplicationService);
             container.RegisterAsSingle(CreateLmbFlavorToastService);
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
             container.RegisterAsSingle(CreateRunEssenceService);
@@ -229,7 +235,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static SectorEnemyQueryService CreateSectorEnemyQueryService(DIContainer c)
         {
-            return new SectorEnemyQueryService(c.Resolve<EntitiesLifeContext>());
+            return new SectorEnemyQueryService(
+                c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<SectorMembershipService>());
         }
 
         private static LmbFlavorToastService CreateLmbFlavorToastService(DIContainer c)
@@ -250,13 +258,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<EntitiesLifeContext>());
         }
 
+        private static PlantDamageCounterService CreatePlantDamageCounterService(DIContainer c)
+        {
+            return new PlantDamageCounterService();
+        }
+
+        private static DragonEnrageService CreateDragonEnrageService(DIContainer c)
+        {
+            return new DragonEnrageService();
+        }
+
+        private static PlantDamageApplicationService CreatePlantDamageApplicationService(DIContainer c)
+        {
+            return new PlantDamageApplicationService(
+                c.Resolve<PlantDamageCounterService>(),
+                c.Resolve<DragonEnrageService>());
+        }
+
+        private static SpawnPathPreviewService CreateSpawnPathPreviewService(DIContainer c)
+        {
+            return new SpawnPathPreviewService();
+        }
+
+        private static WaveSpawnPlanService CreateWaveSpawnPlanService(DIContainer c)
+        {
+            return new WaveSpawnPlanService();
+        }
+
         private static SpellcoreProgressionService CreateSpellcoreProgressionService(DIContainer c)
         {
             return new SpellcoreProgressionService(
                 c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreProgressionConfig>(),
                 c.Resolve<SectorRegistryService>(),
                 c.Resolve<StageProviderService>(),
-                c.Resolve<ConfigsProviderService>());
+                c.Resolve<ConfigsProviderService>(),
+                c.Resolve<SpawnPathPreviewService>(),
+                c.Resolve<WaveSpawnPlanService>());
         }
 
         private static RunEssenceService CreateRunEssenceService(DIContainer c)

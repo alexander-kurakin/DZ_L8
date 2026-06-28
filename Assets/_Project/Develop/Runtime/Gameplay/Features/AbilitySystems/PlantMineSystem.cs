@@ -70,7 +70,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
         private void PlantAtSector(Vector3 plantPosition, SectorId sectorId)
         {
-            Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig);
+            Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig, sectorId);
             _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
         }
 

@@ -3,6 +3,8 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -17,6 +19,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
         private readonly EntitiesFactory _entitiesFactory;
         private readonly BrainsFactory _brainsFactory;
         private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly SectorEnemyQueryService _sectorEnemyQueryService;
 
         public PlantableObjectsFactory(DIContainer container)
         {
@@ -24,9 +27,10 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
             _entitiesFactory = _container.Resolve<EntitiesFactory>();
             _brainsFactory = _container.Resolve<BrainsFactory>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
+            _sectorEnemyQueryService = _container.Resolve<SectorEnemyQueryService>();
         }
 
-        public Entity Create(Vector3 position, EntityConfig entityConfig)
+        public Entity Create(Vector3 position, EntityConfig entityConfig, SectorId plantSector)
         {
             Entity entity;
 
@@ -34,7 +38,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
             {
                 case TurretConfig turretConfig:
                     entity = _entitiesFactory.CreateTurret(position, turretConfig);
-                    _brainsFactory.CreateRotatingAutoAttackBrain(entity, new NearestDamageableTargetSelector(entity));
+                    _brainsFactory.CreateRotatingAutoAttackBrain(
+                        entity,
+                        new TurretSectorArcTargetSelector(entity, _sectorEnemyQueryService));
                     break;
 
                 case MineConfig mineConfig:
@@ -49,7 +55,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.PlantableObjects
                     throw new ArgumentException($"{entityConfig.GetType()} config type is not supported");
             }
 
-            entity.AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+            entity
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
+                .AddPlantSector(plantSector);
 
             _entitiesLifeContext.Add(entity);
 

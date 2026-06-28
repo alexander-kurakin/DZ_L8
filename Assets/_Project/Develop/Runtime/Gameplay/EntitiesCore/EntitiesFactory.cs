@@ -1,5 +1,4 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
-using _Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
@@ -14,6 +13,8 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
@@ -283,6 +284,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDamageInterval(new ReactiveVariable<float>(config.DamageInterval))
                 .AddDamagePerTick(new ReactiveVariable<float>(config.DamagePerTick))
                 .AddDamageTimer()
+                .AddDragonEnrageStackCount(0)
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess();
@@ -325,7 +327,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DeathProcessTimerSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext))
                 .AddSystem(new DistanceDetectorSystem())
-                .AddSystem(new DealDoTDamageOnTargetReachedSystem());
+                .AddSystem(new DealDoTDamageOnTargetReachedSystem(_container.Resolve<DragonEnrageService>()));
 
             return entity;
         }
@@ -452,23 +454,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, mineConfig.PrefabPath);
             
             entity
-                .AddContactsDetectingMask(Layers.CharactersMask)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.Damage))
-                .AddAreaImpactRadius(new ReactiveVariable<float>(mineConfig.ExplosionRadius))
-                .AddAreaImpactMask(Layers.CharactersMask)
-                .AddAreaImpactCollidersBuffer(new Buffer<Collider>(64))
-                .AddAreaImpactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddDealAreaImpactDamageRequest();
                 
             entity
-                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new MineDetonationSystem(_entitiesLifeContext))
-                .AddSystem(new AreaDamageContactDetectingSystem(_collidersRegistryService))
-                .AddSystem(new AreaDamageEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealAreaDamageSystem());
+                .AddSystem(new MineSectorDetonationSystem(
+                    _container.Resolve<SectorEnemyQueryService>(),
+                    _container.Resolve<PlantDamageApplicationService>(),
+                    mineConfig.ProcDelaySeconds));
 
             return entity;
         }
@@ -512,7 +505,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
-                .AddSystem(new InstantShootSystem(this))
+                .AddSystem(new PlantTurretInstantShootSystem(this, _container.Resolve<PlantDamageCounterService>()))
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem());
                 
@@ -526,17 +519,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, toxicAreaConfig.PrefabPath);
 
             entity
-                .AddContactsDetectingMask(Layers.CharactersMask)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddDamagePerTick(new ReactiveVariable<float>(toxicAreaConfig.DamagePerTick))
                 .AddDamageInterval(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
                 .AddDamageTimer(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval));
             
             entity
-                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DamageOverTimeInAreaSystem());
+                .AddSystem(new ToxicSectorCombatSystem(
+                    _container.Resolve<SectorEnemyQueryService>(),
+                    _container.Resolve<PlantDamageApplicationService>(),
+                    _container.Resolve<PlantDamageCounterService>(),
+                    toxicAreaConfig.SlowMoveSpeedFraction));
 
             return entity;
         }

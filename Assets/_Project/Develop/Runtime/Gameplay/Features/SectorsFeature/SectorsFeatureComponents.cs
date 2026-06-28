@@ -7,4 +7,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
     {
         public ReactiveVariable<SectorId> Value;
     }
+
+    public class PlantSector : IEntityComponent
+    {
+        public SectorId Value;
+    }
 }

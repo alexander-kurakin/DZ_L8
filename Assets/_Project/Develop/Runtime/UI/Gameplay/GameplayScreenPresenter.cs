@@ -94,12 +94,6 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             if (_abilityListPresenter == null)
                 return;
 
-            if (gameplayState == GameplayStates.StageProcess)
-            {
-                _abilityListPresenter.HideAll();
-                return;
-            }
-
             if (_spellcoreProgressionService.HasAnyPlantAbilityUnlocked())
                 _abilityListPresenter.ShowAll();
             else

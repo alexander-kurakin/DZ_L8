@@ -442,6 +442,44 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.CurrentSector() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantSector PlantSectorC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantSector>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.SectorId PlantSector => PlantSectorC.Value;
+
+		public bool TryGetPlantSector(out Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.SectorId value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantSector component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.SectorId);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlantSector(Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.SectorId value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantSector() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount DragonEnrageStackCountC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount>();
+
+		public System.Int32 DragonEnrageStackCount => DragonEnrageStackCountC.Value;
+
+		public bool TryGetDragonEnrageStackCount(out System.Int32 value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(System.Int32);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDragonEnrageStackCount(System.Int32 value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection MoveDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> MoveDirection => MoveDirectionC.Value;

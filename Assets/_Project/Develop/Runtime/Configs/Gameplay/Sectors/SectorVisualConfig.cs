@@ -12,6 +12,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors
         [SerializeField, Min(0.01f)] private float _outlineWidth = 0.35f;
         [SerializeField] private Color _spawnPreviewOutlineColor = new Color(1f, 0.92f, 0.35f, 1f);
         [SerializeField, Min(0.01f)] private float _spawnPreviewOutlineWidth = 0.55f;
+        [SerializeField] private Sprite _spawnPathArrowSprite;
 
         public SectorFillVisualData UnlockedFill => _unlockedFill;
 
@@ -24,6 +25,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors
         public Color SpawnPreviewOutlineColor => _spawnPreviewOutlineColor;
 
         public float SpawnPreviewOutlineWidth => _spawnPreviewOutlineWidth;
+
+        public Sprite SpawnPathArrowSprite => _spawnPathArrowSprite;
     }
 
     [Serializable]

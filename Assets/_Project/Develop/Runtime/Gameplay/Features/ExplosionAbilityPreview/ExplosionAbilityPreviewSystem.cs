@@ -2,7 +2,6 @@ using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
@@ -23,7 +22,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
         private readonly SectorRegistryService _sectorRegistryService;
 
         private ReactiveVariable<GameplayStates> _gameplayPhase;
-        private ReactiveVariable<AbilityType> _activeAbility;
         private ReactiveVariable<Vector3> _previewWorldPoint;
         private ReactiveVariable<bool> _previewVisible;
         private ReactiveVariable<float> _previewIndicatorDiameter;
@@ -43,7 +41,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
         public void OnInit(Entity entity)
         {
             _gameplayPhase = entity.GameplayPhase;
-            _activeAbility = entity.AbilityUserActiveAbility;
             _previewWorldPoint = entity.ExplosionPreviewWorldPoint;
             _previewVisible = entity.ExplosionPreviewVisible;
             _previewIndicatorDiameter = entity.ExplosionPreviewIndicatorDiameter;
@@ -52,8 +49,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 
         public void OnUpdate(float deltaTime)
         {
-            _previewVisible.Value = _gameplayPhase.Value == GameplayStates.StageProcess
-                                    && _activeAbility.Value == AbilityType.ExplodeAtPoint;
+            _previewVisible.Value = _gameplayPhase.Value == GameplayStates.Preparation
+                                    || _gameplayPhase.Value == GameplayStates.StageProcess;
 
             if (_previewVisible.Value == false)
                 return;
