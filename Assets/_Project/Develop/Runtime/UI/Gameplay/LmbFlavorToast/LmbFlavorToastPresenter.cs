@@ -27,6 +27,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast
 
         public void Initialize()
         {
+            _view.transform.SetAsLastSibling();
             _toastSubscription = _lmbFlavorToastService.ToastRequested.Subscribe(OnToastRequested);
         }
 

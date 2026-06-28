@@ -11,5 +11,10 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         
         public IconView IconView => _iconView;
         public IconTextView IconTextView => _iconTextView;
+
+        public void SetCostVisible(bool visible)
+        {
+            _iconTextView.gameObject.SetActive(visible);
+        }
     }
 }

@@ -1,4 +1,5 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
+using DG.Tweening;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -8,10 +9,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
     [RequireComponent(typeof(SectorVolumeRegistrator))]
     public class SectorView : MonoBehaviour
     {
+        private const float UNLOCK_REVEAL_DURATION_SECONDS = 0.34f;
+
         [SerializeField] private Renderer _fillRenderer;
         [SerializeField] private LineRenderer _outline;
 
         private SectorVolumeRegistrator _registrator;
+        private Material _fillMaterial;
+        private Tween _unlockRevealTween;
+        private SectorFillVisualData _currentFillVisual;
 
         private void OnValidate()
         {
@@ -21,7 +27,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
         public void Apply(SectorVisualConfig visualConfig, SectorRegistryService registry)
         {
-            Apply(visualConfig, registry, null, false);
+            Apply(visualConfig, registry, null, false, null);
         }
 
         public void Apply(
@@ -29,6 +35,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             SectorRegistryService registry,
             IReadOnlyCollection<int> spawnPathIndices,
             bool restrictFillToSpawnPaths)
+        {
+            Apply(visualConfig, registry, spawnPathIndices, restrictFillToSpawnPaths, null);
+        }
+
+        public void Apply(
+            SectorVisualConfig visualConfig,
+            SectorRegistryService registry,
+            IReadOnlyCollection<int> spawnPathIndices,
+            bool restrictFillToSpawnPaths,
+            IReadOnlyCollection<int> pendingUnlockRevealPathIndices)
         {
             if (visualConfig == null)
                 return;
@@ -40,26 +56,97 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 _fillRenderer = GetComponent<Renderer>();
 
             bool isPathUnlocked = registry != null && registry.IsPathUnlocked(_registrator.SectorId.Index);
+            bool isPendingUnlockReveal = pendingUnlockRevealPathIndices != null
+                                         && pendingUnlockRevealPathIndices.Contains(_registrator.SectorId.Index);
             bool isSpawnPath = spawnPathIndices != null
                                && spawnPathIndices.Contains(_registrator.SectorId.Index);
             bool useUnlockedFill = isPathUnlocked
+                                   && isPendingUnlockReveal == false
                                    && (restrictFillToSpawnPaths == false || isSpawnPath);
 
             SectorFillVisualData fillVisual = useUnlockedFill
                 ? visualConfig.UnlockedFill
                 : visualConfig.LockedFill;
 
-            ApplyFill(fillVisual);
+            _currentFillVisual = fillVisual;
+
+            if (IsUnlockRevealPlaying() == false)
+                ApplyFill(fillVisual);
+
             ApplyOutline(visualConfig);
         }
 
-        private void ApplyFill(SectorFillVisualData fillVisual)
+        public void PlayUnlockReveal(
+            SectorFillVisualData lockedFill,
+            SectorFillVisualData unlockedFill,
+            float delaySeconds)
         {
             if (_fillRenderer == null)
                 return;
 
-            Material material = _fillRenderer.material;
-            SectorVisualUtility.ApplyTransparentColor(material, fillVisual.Color, fillVisual.Alpha);
+            _unlockRevealTween?.Kill();
+
+            Material fillMaterial = GetFillMaterial();
+
+            if (fillMaterial == null)
+                return;
+
+            _currentFillVisual = unlockedFill;
+
+            SectorVisualUtility.ApplyTransparentColor(fillMaterial, lockedFill.Color, lockedFill.Alpha);
+
+            float revealProgress = 0f;
+            Sequence revealSequence = DOTween.Sequence();
+            revealSequence.AppendInterval(delaySeconds);
+            revealSequence.Append(DOTween
+                .To(
+                    () => revealProgress,
+                    progress =>
+                    {
+                        revealProgress = progress;
+                        Color color = Color.Lerp(lockedFill.Color, unlockedFill.Color, progress);
+                        float alpha = Mathf.Lerp(lockedFill.Alpha, unlockedFill.Alpha, progress);
+                        SectorVisualUtility.ApplyTransparentColor(fillMaterial, color, alpha);
+                    },
+                    1f,
+                    UNLOCK_REVEAL_DURATION_SECONDS)
+                .SetEase(Ease.OutQuad));
+            revealSequence.OnKill(() => ApplyFill(unlockedFill));
+            revealSequence.OnComplete(() => ApplyFill(unlockedFill));
+            revealSequence.SetUpdate(true);
+
+            _unlockRevealTween = revealSequence.Play();
+        }
+
+        private void OnDestroy()
+        {
+            _unlockRevealTween?.Kill();
+        }
+
+        private bool IsUnlockRevealPlaying()
+        {
+            return _unlockRevealTween != null && _unlockRevealTween.IsActive();
+        }
+
+        private void ApplyFill(SectorFillVisualData fillVisual)
+        {
+            Material fillMaterial = GetFillMaterial();
+
+            if (fillMaterial == null)
+                return;
+
+            SectorVisualUtility.ApplyTransparentColor(fillMaterial, fillVisual.Color, fillVisual.Alpha);
+        }
+
+        private Material GetFillMaterial()
+        {
+            if (_fillRenderer == null)
+                return null;
+
+            if (_fillMaterial == null)
+                _fillMaterial = _fillRenderer.material;
+
+            return _fillMaterial;
         }
 
         private void ApplyOutline(SectorVisualConfig visualConfig)

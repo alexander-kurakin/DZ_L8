@@ -31,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
         {
             Instantiate(_takeDamageEffectPrefab, _effectSpawnPoint.position, Quaternion.identity);
             _damageNumberPrefab.Spawn(_effectSpawnPoint.position, damage);
+            DamageSilhouetteFlashUtility.PlayOnTransform(transform, damage);
             GameSoundsService.PlayOneShot(_impactSoundToPlay, _localAudioSource);
         }
 

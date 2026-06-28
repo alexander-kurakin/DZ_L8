@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
 {
@@ -7,13 +8,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
     {
         private readonly PlantDamageCounterService _plantDamageCounterService;
         private readonly DragonEnrageService _dragonEnrageService;
+        private readonly GameplayJuiceService _gameplayJuiceService;
 
         public PlantDamageApplicationService(
             PlantDamageCounterService plantDamageCounterService,
-            DragonEnrageService dragonEnrageService)
+            DragonEnrageService dragonEnrageService,
+            GameplayJuiceService gameplayJuiceService)
         {
             _plantDamageCounterService = plantDamageCounterService;
             _dragonEnrageService = dragonEnrageService;
+            _gameplayJuiceService = gameplayJuiceService;
         }
 
         public bool TryApplyDamage(Entity source, Entity target, float baseDamage, PlantDamageSource damageSource)
@@ -38,6 +42,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
                 && previewType == WaveEnemyPreviewType.Dragon)
             {
                 _dragonEnrageService.RegisterMineHit(target);
+
+                if (target.TryGetDragonEnrageStackCount(out int stackCount))
+                    _gameplayJuiceService.PlayDragonEnragePulse(target, stackCount);
             }
 
             return damageApplied;

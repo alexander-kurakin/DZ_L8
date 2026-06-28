@@ -352,7 +352,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 7564945171308903351}
-  _spawnEffectPrefab: {fileID: 2164174841048073238, guid: 9ef717e9fbd7c44448bf2cd4dc8a8a09,
+  _spawnEffectPrefab: {fileID: 2164174841048073232, guid: 9ef717e9fbd7c44448bf2cd4dc8a8a09,
     type: 3}
   _spawnEffectPoint: {fileID: 5800966843338258160}
   _spawnSoundToPlay: 11

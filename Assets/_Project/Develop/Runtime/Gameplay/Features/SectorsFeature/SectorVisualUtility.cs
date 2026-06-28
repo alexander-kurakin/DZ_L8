@@ -26,6 +26,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         {
             Color color = rgb;
             color.a = alpha;
+
+            if (material.HasProperty("_BaseColor"))
+                material.SetColor("_BaseColor", color);
+
+            if (material.HasProperty("_Color"))
+                material.SetColor("_Color", color);
+
             material.color = color;
             ConfigureTransparentMaterial(material);
         }

@@ -17,7 +17,11 @@ namespace Assets._Project.Develop.Runtime.UI.CommonViews
         
         public void OnIconClicked() => IconClicked?.Invoke();
         
-        public void SetIcon(Sprite icon) => _icon.sprite = icon;
+        public void SetIcon(Sprite icon)
+        {
+            _icon.sprite = icon;
+            _icon.preserveAspect = true;
+        }
         
         public void SetHighlighted(bool active) => _highlightedImage.gameObject.SetActive(active);
     }

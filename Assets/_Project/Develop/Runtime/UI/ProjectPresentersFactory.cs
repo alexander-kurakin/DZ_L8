@@ -1,5 +1,6 @@
 ﻿using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
@@ -58,6 +59,16 @@ namespace Assets._Project.Develop.Runtime.UI
             return new SingleAbilityPresenter(
                 abilityType,
                 _container.Resolve<ConfigsProviderService>(),
+                view,
+                mainHero);
+        }
+
+        public LmbAbilitySlotPresenter CreateLmbAbilitySlotPresenter(
+            AbilitySlotView view,
+            Entity mainHero)
+        {
+            return new LmbAbilitySlotPresenter(
+                _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
                 view,
                 mainHero);
         }

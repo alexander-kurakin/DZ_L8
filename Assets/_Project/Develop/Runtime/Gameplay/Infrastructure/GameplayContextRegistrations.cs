@@ -19,6 +19,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -56,6 +57,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreatePlantPlacementService);
             container.RegisterAsSingle(CreatePlantDamageCounterService);
             container.RegisterAsSingle(CreateDragonEnrageService);
+            container.RegisterAsSingle(CreateGameplayJuiceService).NonLazy();
             container.RegisterAsSingle(CreatePlantDamageApplicationService);
             container.RegisterAsSingle(CreateLmbFlavorToastService);
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
@@ -268,11 +270,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new DragonEnrageService();
         }
 
+        private static GameplayJuiceService CreateGameplayJuiceService(DIContainer c)
+        {
+            return new GameplayJuiceService(c.Resolve<EntitiesLifeContext>());
+        }
+
         private static PlantDamageApplicationService CreatePlantDamageApplicationService(DIContainer c)
         {
             return new PlantDamageApplicationService(
                 c.Resolve<PlantDamageCounterService>(),
-                c.Resolve<DragonEnrageService>());
+                c.Resolve<DragonEnrageService>(),
+                c.Resolve<GameplayJuiceService>());
         }
 
         private static SpawnPathPreviewService CreateSpawnPathPreviewService(DIContainer c)
@@ -293,7 +301,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<StageProviderService>(),
                 c.Resolve<ConfigsProviderService>(),
                 c.Resolve<SpawnPathPreviewService>(),
-                c.Resolve<WaveSpawnPlanService>());
+                c.Resolve<WaveSpawnPlanService>(),
+                c.Resolve<GameplayJuiceService>());
         }
 
         private static RunEssenceService CreateRunEssenceService(DIContainer c)

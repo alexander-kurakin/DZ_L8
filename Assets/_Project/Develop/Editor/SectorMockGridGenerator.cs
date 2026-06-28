@@ -1,6 +1,8 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Utilities;
+using System.Collections.Generic;
 using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
@@ -17,7 +19,7 @@ namespace Assets._Project.Develop.Editor
         private const string SECTOR_GRID_CONFIG_PATH = "Configs/Gameplay/Sectors/SectorGridConfig";
         private const string SECTOR_VISUAL_CONFIG_PATH = "Configs/Gameplay/Sectors/SectorVisualConfig";
         private const float GRID_VISUAL_Y_OFFSET = 0.5f;
-        private const float WEDGE_MESH_THICKNESS = 0.04f;
+        private const float WEDGE_COLLIDER_HEIGHT = 2f;
         private const float OUTLINE_Y_OFFSET = 0.03f;
         private const float FULL_CIRCLE_RADIANS = Mathf.PI * 2f;
 
@@ -153,6 +155,7 @@ namespace Assets._Project.Develop.Editor
             wedgeObject.transform.localPosition = anchorLocalPosition;
             wedgeObject.transform.localRotation = Quaternion.identity;
             wedgeObject.transform.localScale = Vector3.one;
+            wedgeObject.layer = Layers.ContactTrigger;
 
             Vector3[] outlinePoints = BuildWedgeOutlinePoints(
                 innerRadius,
@@ -173,11 +176,13 @@ namespace Assets._Project.Develop.Editor
             MeshRenderer meshRenderer = wedgeObject.AddComponent<MeshRenderer>();
             meshRenderer.sharedMaterial = wedgeMaterial;
 
-            BoxCollider boxCollider = wedgeObject.AddComponent<BoxCollider>();
-            Bounds meshBounds = wedgeMesh.bounds;
-            boxCollider.center = meshBounds.center;
-            boxCollider.size = new Vector3(meshBounds.size.x, WEDGE_MESH_THICKNESS, meshBounds.size.z);
-            boxCollider.isTrigger = true;
+            Mesh colliderMesh = BuildWedgeColliderMesh(outlinePoints, WEDGE_COLLIDER_HEIGHT);
+            colliderMesh.name = $"{belt}_{sectorIndex}_ColliderMesh";
+
+            MeshCollider meshCollider = wedgeObject.AddComponent<MeshCollider>();
+            meshCollider.sharedMesh = colliderMesh;
+            meshCollider.convex = true;
+            meshCollider.isTrigger = true;
 
             LineRenderer outline = CreateOutline(wedgeObject.transform, outlinePoints, visualConfig);
 
@@ -187,7 +192,7 @@ namespace Assets._Project.Develop.Editor
             SerializedObject registratorSerializedObject = new SerializedObject(registrator);
             registratorSerializedObject.FindProperty("_belt").enumValueIndex = (int)belt;
             registratorSerializedObject.FindProperty("_index").intValue = sectorIndex;
-            registratorSerializedObject.FindProperty("_triggerCollider").objectReferenceValue = boxCollider;
+            registratorSerializedObject.FindProperty("_triggerCollider").objectReferenceValue = meshCollider;
             registratorSerializedObject.ApplyModifiedPropertiesWithoutUndo();
 
             SerializedObject viewSerializedObject = new SerializedObject(sectorView);
@@ -273,6 +278,76 @@ namespace Assets._Project.Develop.Editor
             mesh.RecalculateBounds();
 
             return mesh;
+        }
+
+        private static Mesh BuildWedgeColliderMesh(Vector3[] outlinePoints, float height)
+        {
+            int pointCount = outlinePoints.Length;
+            Vector3[] vertices = new Vector3[pointCount * 2];
+
+            for (int pointIndex = 0; pointIndex < pointCount; pointIndex++)
+            {
+                vertices[pointIndex] = outlinePoints[pointIndex];
+                vertices[pointIndex + pointCount] = outlinePoints[pointIndex] + Vector3.up * height;
+            }
+
+            List<int> triangles = new List<int>();
+
+            if (pointCount == 3)
+            {
+                AddTriangle(triangles, 0, 2, 1);
+                AddTriangle(triangles, 3, 4, 5);
+
+                for (int pointIndex = 0; pointIndex < 3; pointIndex++)
+                {
+                    int nextPointIndex = (pointIndex + 1) % 3;
+                    AddQuad(
+                        triangles,
+                        pointIndex,
+                        nextPointIndex,
+                        nextPointIndex + pointCount,
+                        pointIndex + pointCount);
+                }
+            }
+            else if (pointCount == 4)
+            {
+                AddTriangle(triangles, 0, 3, 2);
+                AddTriangle(triangles, 0, 2, 1);
+                AddTriangle(triangles, 4, 5, 6);
+                AddTriangle(triangles, 4, 6, 7);
+
+                for (int pointIndex = 0; pointIndex < 4; pointIndex++)
+                {
+                    int nextPointIndex = (pointIndex + 1) % 4;
+                    AddQuad(
+                        triangles,
+                        pointIndex,
+                        nextPointIndex,
+                        nextPointIndex + pointCount,
+                        pointIndex + pointCount);
+                }
+            }
+
+            Mesh mesh = new Mesh();
+            mesh.vertices = vertices;
+            mesh.triangles = triangles.ToArray();
+            mesh.RecalculateNormals();
+            mesh.RecalculateBounds();
+
+            return mesh;
+        }
+
+        private static void AddTriangle(List<int> triangles, int a, int b, int c)
+        {
+            triangles.Add(a);
+            triangles.Add(b);
+            triangles.Add(c);
+        }
+
+        private static void AddQuad(List<int> triangles, int a, int b, int c, int d)
+        {
+            AddTriangle(triangles, a, b, c);
+            AddTriangle(triangles, a, c, d);
         }
 
         private static void GetBeltRadii(SectorBelt belt, SectorGridConfig gridConfig, out float innerRadius, out float outerRadius)
