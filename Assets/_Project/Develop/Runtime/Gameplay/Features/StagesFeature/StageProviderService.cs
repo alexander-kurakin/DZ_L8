@@ -55,31 +55,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
 
-        public IReadOnlyList<WaveEnemyPreviewType> GetUpcomingWaveEnemyPreviewTypes()
+        public IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypes()
         {
-            int upcomingStageIndex = _currentStageNumber.Value;
+            int stageConfigIndex = _currentStageNumber.Value;
 
-            if (upcomingStageIndex < 0 || upcomingStageIndex >= _levelConfig.StageConfigs.Count)
-                return Array.Empty<WaveEnemyPreviewType>();
+            if (_currentStageResult.Value == StageResults.Uncompleted)
+                stageConfigIndex--;
 
-            if (_levelConfig.StageConfigs[upcomingStageIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig == false)
-                return Array.Empty<WaveEnemyPreviewType>();
-
-            List<WaveEnemyPreviewType> previewTypes = new();
-            HashSet<WaveEnemyPreviewType> seenPreviewTypes = new();
-
-            foreach (SpawnGroupConfig spawnGroup in clearAllEnemiesStageConfig.SpawnGroups)
-            {
-                foreach (EnemyItemConfig enemyItem in spawnGroup.EnemyItems)
-                {
-                    WaveEnemyPreviewType previewType = WaveEnemyPreviewResolver.Resolve(enemyItem.EnemyConfig);
-
-                    if (seenPreviewTypes.Add(previewType))
-                        previewTypes.Add(previewType);
-                }
-            }
-
-            return previewTypes;
+            return GetWaveEnemyPreviewTypesAtIndex(stageConfigIndex);
         }
 
         public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
@@ -133,6 +116,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             _currentStage?.Dispose();
             _stageEndedDisposable?.Dispose();
+        }
+
+        private IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypesAtIndex(int stageConfigIndex)
+        {
+            if (stageConfigIndex < 0 || stageConfigIndex >= _levelConfig.StageConfigs.Count)
+                return Array.Empty<WaveEnemyPreviewType>();
+
+            if (_levelConfig.StageConfigs[stageConfigIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig == false)
+                return Array.Empty<WaveEnemyPreviewType>();
+
+            List<WaveEnemyPreviewType> previewTypes = new();
+            HashSet<WaveEnemyPreviewType> seenPreviewTypes = new();
+
+            foreach (SpawnGroupConfig spawnGroup in clearAllEnemiesStageConfig.SpawnGroups)
+            {
+                foreach (EnemyItemConfig enemyItem in spawnGroup.EnemyItems)
+                {
+                    WaveEnemyPreviewType previewType = WaveEnemyPreviewResolver.Resolve(enemyItem.EnemyConfig);
+
+                    if (seenPreviewTypes.Add(previewType))
+                        previewTypes.Add(previewType);
+                }
+            }
+
+            return previewTypes;
         }
     }
 }

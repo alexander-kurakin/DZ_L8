@@ -87,8 +87,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<WaveEnemyPreviewIconsConfig>(),
-                _container.Resolve<SpellcoreProgressionService>(),
-                _container.Resolve<MainHeroHolderService>());
+                _container.Resolve<SpellcoreProgressionService>());
         }
         
         public EntityHealthPresenter CreateEntityHealthPresenter(Entity entity, BarWithText view)
