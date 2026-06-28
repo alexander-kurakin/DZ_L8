@@ -71,7 +71,6 @@ MonoBehaviour:
   _animationType: 2
   _title: {fileID: 6301684131584058422}
   _goldReward: {fileID: 3016465037657949335}
-  _diamondReward: {fileID: 3489491820622463936}
   _stars:
   - {fileID: 7791941387819200253}
   - {fileID: 3713340945940157962}
@@ -1068,6 +1067,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: DiamondIconTextView
       objectReference: {fileID: 0}
+    - target: {fileID: 751408399709684295, guid: 955096c15286e3b46b19b243ba3667f4,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 927372948090849455, guid: 955096c15286e3b46b19b243ba3667f4,
         type: 3}
       propertyPath: m_Pivot.x
@@ -1166,11 +1170,6 @@ PrefabInstance:
     - target: {fileID: 927372948090849455, guid: 955096c15286e3b46b19b243ba3667f4,
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 2998180404402118365, guid: 955096c15286e3b46b19b243ba3667f4,
-        type: 3}
-      propertyPath: m_IsActive
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []

@@ -41,7 +41,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
 
             _view.SetTitle(TitleName);
             _view.SetGoldReward(_rewardsData.RewardGold);
-            _view.HideDiamondReward();
 
             _view.ContinueClicked += OnContinueClicked;
             
