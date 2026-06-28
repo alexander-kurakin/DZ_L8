@@ -3,6 +3,8 @@ using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
@@ -15,6 +17,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
         private readonly StageProviderService _stageProviderService;
+        private readonly SpellcoreProgressionService _spellcoreProgressionService;
         
         private Entity _parent;
         private Entity _child;
@@ -24,12 +27,14 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             WalletService walletService,
             PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
-            StageProviderService stageProviderService)
+            StageProviderService stageProviderService,
+            SpellcoreProgressionService spellcoreProgressionService)
         {
             _walletService = walletService;
             _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
             _stageProviderService = stageProviderService;
+            _spellcoreProgressionService = spellcoreProgressionService;
         }
 
         public void OnInit(Entity entity)
@@ -40,6 +45,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
         private void OnAbilityUse(Vector3 usePoint)
         {
+            if (_spellcoreProgressionService.IsAbilityUnlocked(AbilityType.PlantToxicArea) == false)
+                return;
+
             if (_walletService.Enough(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds)) 
             {
                 _walletService.Spend(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds);

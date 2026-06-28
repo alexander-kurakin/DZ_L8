@@ -5,6 +5,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -36,14 +37,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<MouseRaycastService>(),
                 _container.Resolve<IMouseInputService>(),
                 _container.Resolve<IBackgroundMusicService>(),
-                _container.Resolve<MouseOverUIService>());
+                _container.Resolve<MouseOverUIService>(),
+                _container.Resolve<SpellcoreProgressionService>());
         }
 
         public StageProcessState CreateStageProcessState()
         {
             return new StageProcessState(
                 _container.Resolve<StageProviderService>(),
-                _container.Resolve<MainHeroHolderService>());
+                _container.Resolve<MainHeroHolderService>(),
+                _container.Resolve<SpellcoreProgressionService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
@@ -21,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly ContactTriggerConfig _contactTriggerConfig;
         private readonly MainHeroHolderService _mainHeroHolderService;
         private readonly RaycastConfig _mouseRaycastConfig;
+        private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
         private MouseOverUIService _mouseOverUIService;
@@ -36,7 +38,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             MouseRaycastService mouseRaycastService,
             IMouseInputService mouseInputService,
             IBackgroundMusicService backgroundMusicService,
-            MouseOverUIService mouseOverUIService)
+            MouseOverUIService mouseOverUIService,
+            SpellcoreProgressionService spellcoreProgressionService)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -46,6 +49,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _mouseRaycastService = mouseRaycastService;
             _backgroundMusicService = backgroundMusicService;
             _mouseOverUIService = mouseOverUIService;
+            _spellcoreProgressionService = spellcoreProgressionService;
         }
 
         public override void Enter()
@@ -61,6 +65,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _mainHeroHolderService.TowerBrother.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
 
             _mainHero.AbilityUserActiveAbility.Value = _mainHero.AbilityUserPlantAbilityPreference.Value;
+
+            _spellcoreProgressionService.OnPreparationEntered();
             
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
         }

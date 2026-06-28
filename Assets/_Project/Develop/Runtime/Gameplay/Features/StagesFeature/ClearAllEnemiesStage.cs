@@ -42,9 +42,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private bool _inProcess;
 
         private Dictionary<Entity, IDisposable> _spawnedEnemiesToRemoveReason = new();
-        private readonly int[] _spawnPathOrder = new int[SectorId.SectorsPerRing];
+        private readonly int[] _spawnPathIndices = new int[SectorId.SectorsPerRing];
         private int _spawnPathCount;
-        private int _spawnPathCursor;
 
 
         private readonly Queue<SpawnGroupConfig> _spawnGroupsQueue = new();
@@ -256,8 +255,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             if (_spawnPathCount == 0)
                 throw new InvalidOperationException("No unlocked spawn paths configured.");
 
-            int pathIndex = _spawnPathOrder[_spawnPathCursor % _spawnPathCount];
-            _spawnPathCursor++;
+            int pathIndex = _spawnPathIndices[Random.Range(0, _spawnPathCount)];
 
             float sectorWidthRadians = (Mathf.PI * 2f) / SectorId.SectorsPerRing;
             float angleOffsetRadians = Random.Range(0f, sectorWidthRadians);
@@ -271,16 +269,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _spawnPathCount = _sectorRegistryService.UnlockedPathCount;
 
             for (int index = 0; index < _spawnPathCount; index++)
-                _spawnPathOrder[index] = _sectorRegistryService.GetUnlockedPathIndexAt(index);
-
-            for (int lastIndex = _spawnPathCount - 1; lastIndex > 0; lastIndex--)
-            {
-                int randomIndex = Random.Range(0, lastIndex + 1);
-                (_spawnPathOrder[lastIndex], _spawnPathOrder[randomIndex]) =
-                    (_spawnPathOrder[randomIndex], _spawnPathOrder[lastIndex]);
-            }
-
-            _spawnPathCursor = 0;
+                _spawnPathIndices[index] = _sectorRegistryService.GetUnlockedPathIndexAt(index);
         }
 
         private void SpawnSingleEnemyAtNextSectorPosition(EntityConfig enemyConfig)

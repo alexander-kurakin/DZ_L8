@@ -10,6 +10,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors
         [SerializeField] private SectorFillVisualData _lockedFill = new SectorFillVisualData(new Color(0.55f, 0.55f, 0.55f, 1f), 0.35f);
         [SerializeField] private Color _outlineColor = new Color(0.95f, 1f, 1f, 1f);
         [SerializeField, Min(0.01f)] private float _outlineWidth = 0.35f;
+        [SerializeField] private Color _spawnPreviewOutlineColor = new Color(1f, 0.92f, 0.35f, 1f);
+        [SerializeField, Min(0.01f)] private float _spawnPreviewOutlineWidth = 0.55f;
 
         public SectorFillVisualData UnlockedFill => _unlockedFill;
 
@@ -18,6 +20,10 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors
         public Color OutlineColor => _outlineColor;
 
         public float OutlineWidth => _outlineWidth;
+
+        public Color SpawnPreviewOutlineColor => _spawnPreviewOutlineColor;
+
+        public float SpawnPreviewOutlineWidth => _spawnPreviewOutlineWidth;
     }
 
     [Serializable]

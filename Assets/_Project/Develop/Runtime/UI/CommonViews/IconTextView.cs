@@ -10,7 +10,17 @@ namespace Assets._Project.Develop.Runtime.UI.CommonViews
         [SerializeField] private TMP_Text _text;
         [SerializeField] private Image _icon;
         [SerializeField] private RectTransform _rectTransform;
-        public RectTransform RectTransform => _rectTransform;
+
+        public RectTransform RectTransform
+        {
+            get
+            {
+                if (_rectTransform == null)
+                    _rectTransform = transform as RectTransform;
+
+                return _rectTransform;
+            }
+        }
 
         public void SetText(string text) => _text.text = text;
 

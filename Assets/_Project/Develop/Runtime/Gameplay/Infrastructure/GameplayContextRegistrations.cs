@@ -5,6 +5,8 @@ using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
@@ -13,6 +15,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -43,6 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSectorRegistryService);
             container.RegisterAsSingle(CreateSectorMembershipService);
             container.RegisterAsSingle(CreateSectorGridFactory);
+            container.RegisterAsSingle(CreateSpellcoreProgressionService);
 
             container.RegisterAsSingle(CreateBrainsFactory);
             
@@ -218,6 +222,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static SectorGridFactory CreateSectorGridFactory(DIContainer c)
         {
             return new SectorGridFactory(c);
+        }
+
+        private static SpellcoreProgressionService CreateSpellcoreProgressionService(DIContainer c)
+        {
+            return new SpellcoreProgressionService(
+                c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreProgressionConfig>(),
+                c.Resolve<SectorRegistryService>(),
+                c.Resolve<StageProviderService>(),
+                c.Resolve<ConfigsProviderService>());
         }
 
         private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer c)

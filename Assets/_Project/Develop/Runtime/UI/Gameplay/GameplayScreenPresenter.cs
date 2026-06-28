@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
@@ -30,6 +31,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
 
         private MainHeroHolderService _mainHeroHolderService;
+        private SpellcoreProgressionService _spellcoreProgressionService;
         private AbilityListPresenter _abilityListPresenter;
 
         private IDisposable _mainHeroRegisteredDisposable;
@@ -39,12 +41,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             ProjectPresentersFactory projectPresentersFactory,
             GameplayScreenView screen,
             GameplayPresentersFactory gameplayPresentersFactory,
-            MainHeroHolderService mainHeroHolderService)
+            MainHeroHolderService mainHeroHolderService,
+            SpellcoreProgressionService spellcoreProgressionService)
         {
             _projectPresentersFactory = projectPresentersFactory;
             _screen = screen;
             _gameplayPresentersFactory = gameplayPresentersFactory;
             _mainHeroHolderService = mainHeroHolderService;
+            _spellcoreProgressionService = spellcoreProgressionService;
         }
 
         public void Initialize()
@@ -52,6 +56,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateWallet();
             CreateStats();
             CreateStageNumber();
+            CreateWavePreview();
             CreateEntitiesHealthDisplay();
             
             _mainHeroRegisteredDisposable = _mainHeroHolderService.HeroRegistred.Subscribe(OnMainHeroRegistered);
@@ -67,14 +72,38 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateAbitities(mainHero);
             
             _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
+            _spellcoreProgressionService.Changed += OnProgressionChanged;
+            UpdateAbilityBarVisibility(mainHero.GameplayPhase.Value);
+        }
+
+        private void OnProgressionChanged()
+        {
+            if (_mainHeroHolderService.MainHero == null)
+                return;
+
+            UpdateAbilityBarVisibility(_mainHeroHolderService.MainHero.GameplayPhase.Value);
         }
 
         private void OnGameplayStateChanged(GameplayStates oldState, GameplayStates newState)
         {
-            if (newState == GameplayStates.StageProcess)
+            UpdateAbilityBarVisibility(newState);
+        }
+
+        private void UpdateAbilityBarVisibility(GameplayStates gameplayState)
+        {
+            if (_abilityListPresenter == null)
+                return;
+
+            if (gameplayState == GameplayStates.StageProcess)
+            {
                 _abilityListPresenter.HideAll();
-            else
+                return;
+            }
+
+            if (_spellcoreProgressionService.HasAnyPlantAbilityUnlocked())
                 _abilityListPresenter.ShowAll();
+            else
+                _abilityListPresenter.HideAll();
         }
 
         public void Dispose()
@@ -86,6 +115,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             
             _mainHeroRegisteredDisposable?.Dispose();
             _gameplayStateChangedDisposable?.Dispose();
+            _spellcoreProgressionService.Changed -= OnProgressionChanged;
         }
         
         public void LateUpdate()
@@ -109,6 +139,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_screen.StageNumberView);
             _childPresenters.Add(stagePresenter);
+        }
+
+        private void CreateWavePreview()
+        {
+            WavePreviewPresenter wavePreviewPresenter =
+                _gameplayPresentersFactory.CreateWavePreviewPresenter(_screen.WavePreviewView);
+
+            _childPresenters.Add(wavePreviewPresenter);
         }
 
         private void CreateAbitities(Entity mainHero)

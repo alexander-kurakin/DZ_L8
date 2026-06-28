@@ -17,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             _outline ??= GetComponentInChildren<LineRenderer>();
         }
 
-        public void Apply(SectorVisualConfig visualConfig, SectorRegistryService registry)
+        public void Apply(SectorVisualConfig visualConfig, SectorRegistryService registry, bool showSpawnPathPreview)
         {
             if (visualConfig == null)
                 return;
@@ -34,7 +34,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 : visualConfig.LockedFill;
 
             ApplyFill(fillVisual);
-            ApplyOutline(visualConfig);
+
+            bool highlightSpawnPath = showSpawnPathPreview
+                                      && _registrator.SectorId.Belt == SectorBelt.Spawn
+                                      && isPathUnlocked;
+
+            ApplyOutline(visualConfig, highlightSpawnPath);
         }
 
         private void ApplyFill(SectorFillVisualData fillVisual)
@@ -46,7 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             SectorVisualUtility.ApplyTransparentColor(material, fillVisual.Color, fillVisual.Alpha);
         }
 
-        private void ApplyOutline(SectorVisualConfig visualConfig)
+        private void ApplyOutline(SectorVisualConfig visualConfig, bool highlightSpawnPath)
         {
             if (_outline == null)
                 _outline = GetComponentInChildren<LineRenderer>();
@@ -54,7 +59,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             if (_outline == null)
                 return;
 
-            SectorVisualUtility.ConfigureOutline(_outline, visualConfig);
+            if (highlightSpawnPath)
+                SectorVisualUtility.ConfigureOutline(
+                    _outline,
+                    visualConfig.SpawnPreviewOutlineColor,
+                    visualConfig.SpawnPreviewOutlineWidth);
+            else
+                SectorVisualUtility.ConfigureOutline(_outline, visualConfig);
         }
     }
 }

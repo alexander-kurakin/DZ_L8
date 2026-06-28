@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
@@ -34,6 +36,8 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(RaycastConfig), "Configs/Gameplay/MouseConfig/RaycastConfig" },
             {typeof(SectorGridConfig), "Configs/Gameplay/Sectors/SectorGridConfig" },
             {typeof(SectorVisualConfig), "Configs/Gameplay/Sectors/SectorVisualConfig" },
+            {typeof(SpellcoreProgressionConfig), "Configs/Gameplay/Spellcore/SpellcoreProgressionConfig" },
+            {typeof(WaveEnemyPreviewIconsConfig), "Configs/Gameplay/Stages/WaveEnemyPreviewIconsConfig" },
             {typeof(ExplodeAtPointAbilityConfig), "Configs/Gameplay/Entities/Abilities/ExplodeAtPointAbilityConfig" },
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
@@ -53,12 +57,31 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
 
             foreach (KeyValuePair<Type, string> configResourcesPath in _configsResourcesPaths)
             {
-                ScriptableObject config = _resources.Load<ScriptableObject>(configResourcesPath.Value);
+                object config = LoadConfig(configResourcesPath.Key, configResourcesPath.Value);
                 loadedConfigs.Add(configResourcesPath.Key, config);
                 yield return null;
             }
 
             onConfigsLoaded?.Invoke(loadedConfigs);
+        }
+
+        private object LoadConfig(Type configType, string resourcePath)
+        {
+            ScriptableObject config = _resources.Load<ScriptableObject>(resourcePath);
+
+            if (config == null)
+            {
+                throw new InvalidOperationException(
+                    $"Resources config not found at '{resourcePath}' for type {configType.Name}.");
+            }
+
+            if (configType.IsInstanceOfType(config) == false)
+            {
+                throw new InvalidOperationException(
+                    $"Resources config type mismatch at '{resourcePath}': expected {configType.Name}, got {config.GetType().Name}.");
+            }
+
+            return config;
         }
     }
 }

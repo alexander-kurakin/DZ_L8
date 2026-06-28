@@ -2,6 +2,7 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 
@@ -11,14 +12,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     {
         private readonly StageProviderService _stageProviderService;
         private readonly MainHeroHolderService _mainHeroHolderService;
+        private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private Entity _mainHero;
 
         public StageProcessState(
             StageProviderService stageProviderService,
-            MainHeroHolderService mainHeroHolderService)
+            MainHeroHolderService mainHeroHolderService,
+            SpellcoreProgressionService spellcoreProgressionService)
         {
             _stageProviderService = stageProviderService;
             _mainHeroHolderService = mainHeroHolderService;
+            _spellcoreProgressionService = spellcoreProgressionService;
         }
 
         public override void Enter()
@@ -27,6 +31,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             
             _stageProviderService.SwitchToNext();
             _stageProviderService.StartCurrent();
+
+            _spellcoreProgressionService.OnCombatWaveEntered(_stageProviderService.CurrentStageNumber.Value);
             
             _mainHero = _mainHeroHolderService.MainHero;
          

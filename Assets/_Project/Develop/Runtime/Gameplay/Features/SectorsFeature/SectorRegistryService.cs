@@ -43,7 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 }
             }
 
-            SetUnlockedPathIndices(CreateAllPathIndices());
+            _unlockedPathIndices.Clear();
             _isInitialized = true;
         }
 
@@ -135,16 +135,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         public int UnlockedPathCount => _unlockedPathIndices.Count;
 
         public int GetUnlockedPathIndexAt(int listIndex) => _unlockedPathIndices[listIndex];
-
-        private static List<int> CreateAllPathIndices()
-        {
-            List<int> pathIndices = new List<int>(SectorId.SectorsPerRing);
-
-            for (int index = 0; index < SectorId.SectorsPerRing; index++)
-                pathIndices.Add(index);
-
-            return pathIndices;
-        }
 
         private static bool IsValidPathIndex(int pathIndex) =>
             pathIndex >= 0 && pathIndex < SectorId.SectorsPerRing;

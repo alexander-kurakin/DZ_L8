@@ -4,6 +4,7 @@ using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -23,6 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly StageProviderService _stageProviderService;
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
+        private readonly SpellcoreProgressionService _spellcoreProgressionService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         private float _modifiedDamage;
@@ -35,6 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _stageProviderService = container.Resolve<StageProviderService>();
             _plantableObjectsFactory = container.Resolve<PlantableObjectsFactory>();
+            _spellcoreProgressionService = container.Resolve<SpellcoreProgressionService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -86,7 +89,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                 .AddSystem(new PlantMineSystem(
                     _walletService, 
                     _plantableObjectsFactory,
-                    purchasableEntityConfig));
+                    purchasableEntityConfig,
+                    _spellcoreProgressionService));
 
             return entity;
         }
@@ -109,7 +113,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                 .AddSystem(new PlantTurretSystem(
                     _walletService, 
                     _plantableObjectsFactory,
-                    purchasableEntityConfig));
+                    purchasableEntityConfig,
+                    _spellcoreProgressionService));
 
             return entity;
         }
@@ -133,7 +138,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _walletService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
-                    _stageProviderService));
+                    _stageProviderService,
+                    _spellcoreProgressionService));
 
             return entity;
         }

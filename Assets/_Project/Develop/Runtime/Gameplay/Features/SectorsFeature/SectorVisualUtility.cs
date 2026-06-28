@@ -35,16 +35,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             if (lineRenderer == null || visualConfig == null)
                 return;
 
+            ConfigureOutline(lineRenderer, visualConfig.OutlineColor, visualConfig.OutlineWidth);
+        }
+
+        public static void ConfigureOutline(LineRenderer lineRenderer, Color color, float width)
+        {
+            if (lineRenderer == null)
+                return;
+
             lineRenderer.useWorldSpace = false;
             lineRenderer.loop = true;
             lineRenderer.shadowCastingMode = ShadowCastingMode.Off;
             lineRenderer.receiveShadows = false;
             lineRenderer.alignment = LineAlignment.View;
-            lineRenderer.startColor = visualConfig.OutlineColor;
-            lineRenderer.endColor = visualConfig.OutlineColor;
-            lineRenderer.startWidth = visualConfig.OutlineWidth;
-            lineRenderer.endWidth = visualConfig.OutlineWidth;
-            lineRenderer.material = CreateOutlineMaterial(visualConfig.OutlineColor);
+            lineRenderer.startColor = color;
+            lineRenderer.endColor = color;
+            lineRenderer.startWidth = width;
+            lineRenderer.endWidth = width;
+            lineRenderer.material = CreateOutlineMaterial(color);
         }
 
         private static Material CreateOutlineMaterial(Color color)

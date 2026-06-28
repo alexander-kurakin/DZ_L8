@@ -9,6 +9,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class StageProviderService : IDisposable
     {
+        private readonly ReactiveEvent _stageCompleted = new();
         private ReactiveVariable<int> _currentStageNumber = new();
         private ReactiveVariable<StageResults> _currentStageResult = new();
 
@@ -34,6 +35,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
         public IReadOnlyVariable<StageResults> CurrentStageResult => _currentStageResult;
+        public IReadOnlyEvent StageCompleted => _stageCompleted;
         
         public int CurrentStageEnemiesCount
         {
@@ -52,6 +54,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         }
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
+
+        public IReadOnlyList<WaveEnemyPreviewType> GetUpcomingWaveEnemyPreviewTypes()
+        {
+            int upcomingStageIndex = _currentStageNumber.Value;
+
+            if (upcomingStageIndex < 0 || upcomingStageIndex >= _levelConfig.StageConfigs.Count)
+                return Array.Empty<WaveEnemyPreviewType>();
+
+            if (_levelConfig.StageConfigs[upcomingStageIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig == false)
+                return Array.Empty<WaveEnemyPreviewType>();
+
+            List<WaveEnemyPreviewType> previewTypes = new();
+            HashSet<WaveEnemyPreviewType> seenPreviewTypes = new();
+
+            foreach (SpawnGroupConfig spawnGroup in clearAllEnemiesStageConfig.SpawnGroups)
+            {
+                foreach (EnemyItemConfig enemyItem in spawnGroup.EnemyItems)
+                {
+                    WaveEnemyPreviewType previewType = WaveEnemyPreviewResolver.Resolve(enemyItem.EnemyConfig);
+
+                    if (seenPreviewTypes.Add(previewType))
+                        previewTypes.Add(previewType);
+                }
+            }
+
+            return previewTypes;
+        }
 
         public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
 
@@ -93,6 +122,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             _currentStageResult.Value = StageResults.Completed;
             ClearTemporaryEntities();
+            _stageCompleted.Invoke();
         }
 
         public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);
