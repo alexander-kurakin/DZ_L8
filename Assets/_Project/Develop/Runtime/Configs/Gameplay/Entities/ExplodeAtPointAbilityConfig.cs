@@ -6,7 +6,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         fileName = "ExplodeAtPointAbilityConfig")]
     public class ExplodeAtPointAbilityConfig : EntityConfig
     {
-        [field: SerializeField, Min(0)] public float ExplosionDamage { get; private set; } = 100;
-        [field: SerializeField, Min(0)] public float ExplosionRadius { get; private set; } = 5;
+        [field: SerializeField, Min(0)] public float CooldownSeconds { get; private set; } = 5f;
+        [field: SerializeField, Range(0f, 1f)] public float CatMaxHealthDamageFraction { get; private set; } = 0.5f;
     }
 }

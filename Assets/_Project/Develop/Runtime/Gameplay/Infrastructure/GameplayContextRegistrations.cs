@@ -4,6 +4,7 @@ using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
+using _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
@@ -47,8 +48,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateSectorRegistryService);
             container.RegisterAsSingle(CreateSectorMembershipService);
+            container.RegisterAsSingle(CreateSectorEnemyQueryService);
             container.RegisterAsSingle(CreateSectorGridFactory);
             container.RegisterAsSingle(CreatePlantPlacementService);
+            container.RegisterAsSingle(CreateLmbFlavorToastService);
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
             container.RegisterAsSingle(CreateRunEssenceService);
             container.RegisterAsSingle(CreateEssenceFeatureService).NonLazy();
@@ -224,6 +227,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new SectorMembershipService(c.Resolve<SectorRegistryService>());
         }
 
+        private static SectorEnemyQueryService CreateSectorEnemyQueryService(DIContainer c)
+        {
+            return new SectorEnemyQueryService(c.Resolve<EntitiesLifeContext>());
+        }
+
+        private static LmbFlavorToastService CreateLmbFlavorToastService(DIContainer c)
+        {
+            return new LmbFlavorToastService();
+        }
+
         private static SectorGridFactory CreateSectorGridFactory(DIContainer c)
         {
             return new SectorGridFactory(c);
@@ -305,6 +318,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             GameplayScreenPresenter presenter = c
                 .Resolve<GameplayPresentersFactory>()
                 .CreateGameplayScreen(view);
+
+            LmbFlavorToastPresenter toastPresenter = c
+                .Resolve<GameplayPresentersFactory>()
+                .CreateLmbFlavorToastPresenter(gameplayUIRoot.HUDLayer);
+
+            toastPresenter.Initialize();
 
             return presenter;
         }

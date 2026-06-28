@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplodeyCatC
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/WalkingExplodingEnemy
-  <MoveSpeed>k__BackingField: 15
+  <MoveSpeed>k__BackingField: 4
   <RotationSpeed>k__BackingField: 900
   <MaxHealth>k__BackingField: 300
   <DeathProcessTime>k__BackingField: 1

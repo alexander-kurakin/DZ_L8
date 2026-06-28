@@ -9,10 +9,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
 {
     public class PlantPlacementService
     {
-        private const float PLACEMENT_OVERLAP_RADIUS = 2f;
-
-        private static readonly Collider[] OVERLAP_BUFFER = new Collider[8];
-
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly SectorMembershipService _sectorMembershipService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
@@ -43,7 +39,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             if (_sectorRegistryService.IsInitialized == false)
                 return false;
 
-            sectorId = ResolveSectorAtClick(clickWorldPosition);
+            sectorId = _sectorMembershipService.ResolveSectorAtClick(clickWorldPosition);
 
             if (IsPlantableBelt(sectorId.Belt) == false)
                 return false;
@@ -61,22 +57,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             return true;
         }
 
-        private SectorId ResolveSectorAtClick(Vector3 clickWorldPosition)
-        {
-            int overlapCount = Physics.OverlapSphereNonAlloc(
-                clickWorldPosition,
-                PLACEMENT_OVERLAP_RADIUS,
-                OVERLAP_BUFFER,
-                Layers.ContactTriggerLayerMask);
-
-            if (overlapCount > 0)
-                return _sectorMembershipService.Resolve(clickWorldPosition, OVERLAP_BUFFER, overlapCount);
-
-            return WorldToSector.Resolve(
-                clickWorldPosition,
-                _sectorRegistryService.Center,
-                _sectorRegistryService.GridConfig);
-        }
         public void RegisterPlantedEntity(Entity plantEntity, SectorId sectorId)
         {
             _occupiedSectors.Add(sectorId);

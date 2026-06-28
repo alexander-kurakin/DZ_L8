@@ -45,4 +45,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     {
         public ReactiveVariable<bool> Value;
     }
+
+    public class ExplosionPreviewIndicatorDiameter : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
+
+    public class ExplosionPreviewCooldownFill : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
 }

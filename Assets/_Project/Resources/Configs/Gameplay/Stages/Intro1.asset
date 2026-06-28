@@ -17,18 +17,11 @@ MonoBehaviour:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
         type: 2}
       <EnemiesCount>k__BackingField: 2
-    MinTimeBetweenSpawns: 1
-    MaxTimeBetweenSpawns: 2
-    PauseAfterGroup: 3
+    MinTimeBetweenSpawns: 4
+    MaxTimeBetweenSpawns: 5
+    PauseAfterGroup: 6
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: be45bc0a87264fe499237a3b5d10a368,
-        type: 2}
-      <EnemiesCount>k__BackingField: 2
-    MinTimeBetweenSpawns: 0
-    MaxTimeBetweenSpawns: 0
-    PauseAfterGroup: 2
-  - EnemyItems:
-    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
         type: 2}
       <EnemiesCount>k__BackingField: 1
     MinTimeBetweenSpawns: 0

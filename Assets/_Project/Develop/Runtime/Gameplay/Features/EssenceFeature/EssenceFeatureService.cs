@@ -157,6 +157,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             GameObject pickupObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             pickupObject.name = "EssencePickup";
 
+            MeshCollider meshCollider = pickupObject.GetComponent<MeshCollider>();
+
+            if (meshCollider != null)
+                Object.Destroy(meshCollider);
+
             Renderer pickupRenderer = pickupObject.GetComponent<Renderer>();
             pickupRenderer.material.color = new Color(PICKUP_COLOR_RED, PICKUP_COLOR_GREEN, PICKUP_COLOR_BLUE);
 
@@ -169,7 +174,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
         {
             Vector2 pointerScreenPosition = _mouseInputService.PointerScreenPosition;
             Ray ray = Camera.main.ScreenPointToRay(pointerScreenPosition);
-            RaycastHit[] hits = Physics.RaycastAll(ray, _raycastConfig.MouseRaycastDistance);
+            RaycastHit[] hits = Physics.RaycastAll(
+                ray,
+                _raycastConfig.MouseRaycastDistance,
+                Physics.DefaultRaycastLayers,
+                QueryTriggerInteraction.Collide);
 
             EssencePickupView closestPickup = null;
             float closestHitDistance = float.MaxValue;

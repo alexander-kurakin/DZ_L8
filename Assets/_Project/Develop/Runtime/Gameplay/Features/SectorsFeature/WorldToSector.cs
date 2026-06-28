@@ -80,6 +80,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return new Vector3(center.x + offsetX, center.y, center.z + offsetZ);
         }
 
+        public static float GetSectorArcWidth(SectorBelt belt, SectorGridConfig gridConfig)
+        {
+            float radius = GetAnchorRadius(belt, gridConfig);
+            return FULL_CIRCLE_RADIANS * radius / SectorId.SectorsPerRing;
+        }
+
         private static float GetAnchorRadius(SectorBelt belt, SectorGridConfig gridConfig)
         {
             switch (belt)

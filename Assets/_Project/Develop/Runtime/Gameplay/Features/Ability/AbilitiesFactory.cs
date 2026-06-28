@@ -4,16 +4,16 @@ using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
-using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 {
@@ -22,25 +22,30 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly RunEssenceService _runEssenceService;
         private readonly ConfigsProviderService _configsProviderService;
-        private readonly CollidersRegistryService _collidersRegistryService;
         private readonly StageProviderService _stageProviderService;
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private readonly PlantPlacementService _plantPlacementService;
+        private readonly SectorMembershipService _sectorMembershipService;
+        private readonly SectorEnemyQueryService _sectorEnemyQueryService;
+        private readonly SectorRegistryService _sectorRegistryService;
+        private readonly LmbFlavorToastService _lmbFlavorToastService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
-        private float _modifiedDamage;
         
         public AbilitiesFactory(DIContainer container)
         {
             _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
             _runEssenceService = container.Resolve<RunEssenceService>();
             _configsProviderService = container.Resolve<ConfigsProviderService>();
-            _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _stageProviderService = container.Resolve<StageProviderService>();
             _plantableObjectsFactory = container.Resolve<PlantableObjectsFactory>();
             _spellcoreProgressionService = container.Resolve<SpellcoreProgressionService>();
             _plantPlacementService = container.Resolve<PlantPlacementService>();
+            _sectorMembershipService = container.Resolve<SectorMembershipService>();
+            _sectorEnemyQueryService = container.Resolve<SectorEnemyQueryService>();
+            _sectorRegistryService = container.Resolve<SectorRegistryService>();
+            _lmbFlavorToastService = container.Resolve<LmbFlavorToastService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -161,18 +166,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                 .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.ExplodeAtPoint))
                 .AddAbilityUseRequest()
                 .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
-                .AddAreaImpactDamage(new ReactiveVariable<float>(_explodeAtPointAbilityConfig.ExplosionDamage))
-                .AddAreaImpactRadius(new ReactiveVariable<float>(_explodeAtPointAbilityConfig.ExplosionRadius))
-                .AddAreaImpactMask(Layers.CharactersMask)
-                .AddAreaImpactCollidersBuffer(new Buffer<Collider>(64))
-                .AddAreaImpactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddDealAreaImpactDamageRequest();
 
             entity
-                .AddSystem(new ExplodeAtPointSystem())
-                .AddSystem(new AreaDamageContactDetectingSystem(_collidersRegistryService))
-                .AddSystem(new AreaDamageEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealAreaDamageSystem());
+                .AddSystem(new ExplodeAtPointSystem(
+                    _sectorMembershipService,
+                    _sectorEnemyQueryService,
+                    _sectorRegistryService,
+                    _lmbFlavorToastService,
+                    _explodeAtPointAbilityConfig));
             
             return entity;
         }

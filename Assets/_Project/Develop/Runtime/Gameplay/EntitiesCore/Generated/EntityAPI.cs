@@ -2131,6 +2131,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter ExplosionPreviewIndicatorDiameterC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionPreviewIndicatorDiameter => ExplosionPreviewIndicatorDiameterC.Value;
+
+		public bool TryGetExplosionPreviewIndicatorDiameter(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewIndicatorDiameter()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewIndicatorDiameter(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill ExplosionPreviewCooldownFillC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionPreviewCooldownFill => ExplosionPreviewCooldownFillC.Value;
+
+		public bool TryGetExplosionPreviewCooldownFill(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewCooldownFill()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewCooldownFill(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent RigidbodyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent>();
 
 		public UnityEngine.Rigidbody Rigidbody => RigidbodyC.Value;

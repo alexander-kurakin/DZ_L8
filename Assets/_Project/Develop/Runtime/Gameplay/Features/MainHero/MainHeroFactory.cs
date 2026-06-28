@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
@@ -68,7 +69,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddAbilityUserAllAbilities()
                 .AddAbilityUserPlantAbilityPreference()
                 .AddExplosionPreviewWorldPoint()
-                .AddExplosionPreviewVisible();
+                .AddExplosionPreviewVisible()
+                .AddExplosionPreviewIndicatorDiameter()
+                .AddExplosionPreviewCooldownFill();
 
             entity
                 .AddPowerup()
@@ -76,7 +79,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new ExplosionAbilityPreviewSystem(
                     _mouseInput,
                     _container.Resolve<MouseRaycastService>(),
-                    _configsProviderService.GetConfig<RaycastConfig>()
+                    _configsProviderService.GetConfig<RaycastConfig>(),
+                    _container.Resolve<SectorRegistryService>()
                     ));
             
             ApplyPermanentPowerups(entity);

@@ -20,8 +20,8 @@ MonoBehaviour:
   <PlantSellRefundFraction>k__BackingField: 0.35
   _enemyDrops:
   - <PreviewType>k__BackingField: 0
-    <DropAmount>k__BackingField: 5
-  - <PreviewType>k__BackingField: 1
-    <DropAmount>k__BackingField: 12
-  - <PreviewType>k__BackingField: 2
     <DropAmount>k__BackingField: 25
+  - <PreviewType>k__BackingField: 1
+    <DropAmount>k__BackingField: 60
+  - <PreviewType>k__BackingField: 2
+    <DropAmount>k__BackingField: 125

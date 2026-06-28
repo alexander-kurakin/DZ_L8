@@ -61,7 +61,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (_sphereCollider == null)
                 _sphereCollider = gameObject.AddComponent<SphereCollider>();
 
-            _sphereCollider.isTrigger = false;
+            _sphereCollider.isTrigger = true;
             _sphereCollider.radius = PICKUP_COLLIDER_RADIUS;
             _sphereCollider.enabled = false;
         }
