@@ -19,7 +19,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
         private Entity _mainHero;
         private AbilityType _abilityType;
-        private int _costInGold;
+        private int _costInEssence;
 
         private IDisposable _plantAbilityPreferenceDisposable;
         
@@ -36,21 +36,21 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             _abilityIconsConfig = configsProviderService.GetConfig<AbilityIconsConfig>();
             _currencyIconsConfig =  configsProviderService.GetConfig<CurrencyIconsConfig>();
             
-            _costInGold = GetCostInGold(abilityType, configsProviderService);
+            _costInEssence = GetCostInEssence(abilityType, configsProviderService);
         }
         
         public AbilitySlotView View => _view;
         
-        private int GetCostInGold(AbilityType type, ConfigsProviderService configsProviderService)
+        private int GetCostInEssence(AbilityType type, ConfigsProviderService configsProviderService)
         {
             switch (type)
             {
                 case AbilityType.PlantMine:
-                    return configsProviderService.GetConfig<MineConfig>().CostInDiamonds;
+                    return configsProviderService.GetConfig<MineConfig>().CostInEssence;
                 case AbilityType.PlantTurret:
-                    return configsProviderService.GetConfig<TurretConfig>().CostInDiamonds;
+                    return configsProviderService.GetConfig<TurretConfig>().CostInEssence;
                 case AbilityType.PlantToxicArea:
-                    return configsProviderService.GetConfig<ToxicAreaConfig>().CostInDiamonds;
+                    return configsProviderService.GetConfig<ToxicAreaConfig>().CostInEssence;
                 default:
                     return 1;
             }
@@ -60,8 +60,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         {
             _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(_abilityType));
 
-            _view.IconTextView.SetText(_costInGold.ToString());
-            _view.IconTextView.SetIcon(_currencyIconsConfig.GetSpriteFor(CurrencyTypes.Diamond));
+            _view.IconTextView.SetText(_costInEssence.ToString());
+            _view.IconTextView.SetIcon(_currencyIconsConfig.GetSpriteFor(CurrencyTypes.Essence));
             
             _view.IconView.IconClicked += OnIconClicked;
             

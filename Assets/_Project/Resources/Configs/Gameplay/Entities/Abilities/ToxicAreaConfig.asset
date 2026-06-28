@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: ToxicAreaConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/ToxicArea
-  <CostInDiamonds>k__BackingField: 25
+  <CostInEssence>k__BackingField: 25
   <DamagePerTick>k__BackingField: 35
   <DamageInterval>k__BackingField: 1

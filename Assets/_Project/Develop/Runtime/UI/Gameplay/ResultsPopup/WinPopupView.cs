@@ -18,7 +18,12 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
 
         public void SetTitle(string title) => _title.text = title;
         public void SetGoldReward(int goldReward) => _goldReward.text = goldReward.ToString();
-        public void SetDiamondReward(int diamondReward) => _diamondReward.text = diamondReward.ToString();
+
+        public void HideDiamondReward()
+        {
+            if (_diamondReward != null)
+                _diamondReward.gameObject.SetActive(false);
+        }
 
         public void OnContinueClick() => ContinueClicked?.Invoke();
 

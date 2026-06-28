@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: MineConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Mine
-  <CostInDiamonds>k__BackingField: 10
+  <CostInEssence>k__BackingField: 10
   <Damage>k__BackingField: 250
   <ExplosionRadius>k__BackingField: 15

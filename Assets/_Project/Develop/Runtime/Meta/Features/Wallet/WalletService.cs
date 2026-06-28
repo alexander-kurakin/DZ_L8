@@ -55,10 +55,13 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
         {
             foreach (KeyValuePair<CurrencyTypes, int> currency in data.WalletData)
             {
-                if (_currencies.ContainsKey(currency.Key))
-                    _currencies[currency.Key].Value = currency.Value;
-                else
-                    _currencies.Add(currency.Key, new ReactiveVariable<int>(currency.Value));
+                if (currency.Key == CurrencyTypes.Essence)
+                    continue;
+
+                if (_currencies.ContainsKey(currency.Key) == false)
+                    continue;
+
+                _currencies[currency.Key].Value = currency.Value;
             }
         }
 
@@ -66,6 +69,9 @@ namespace Assets._Project.Develop.Runtime.Meta.Features.Wallet
         {
             foreach (KeyValuePair<CurrencyTypes, ReactiveVariable<int>> currency in _currencies)
             {
+                if (currency.Key == CurrencyTypes.Essence)
+                    continue;
+
                 if (data.WalletData.ContainsKey(currency.Key))
                     data.WalletData[currency.Key] = currency.Value.Value;
                 else

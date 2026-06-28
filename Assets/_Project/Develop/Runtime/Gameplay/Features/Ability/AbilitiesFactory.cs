@@ -9,7 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeat
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -20,7 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     public class AbilitiesFactory
     {
         private readonly EntitiesLifeContext _entitiesLifeContext;
-        private readonly WalletService _walletService;
+        private readonly RunEssenceService _runEssenceService;
         private readonly ConfigsProviderService _configsProviderService;
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly StageProviderService _stageProviderService;
@@ -34,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         public AbilitiesFactory(DIContainer container)
         {
             _entitiesLifeContext = container.Resolve<EntitiesLifeContext>();
-            _walletService = container.Resolve<WalletService>();
+            _runEssenceService = container.Resolve<RunEssenceService>();
             _configsProviderService = container.Resolve<ConfigsProviderService>();
             _collidersRegistryService = container.Resolve<CollidersRegistryService>();
             _stageProviderService = container.Resolve<StageProviderService>();
@@ -90,7 +90,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 
             entity
                 .AddSystem(new PlantMineSystem(
-                    _walletService, 
+                    _runEssenceService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _spellcoreProgressionService,
@@ -115,7 +115,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 
             entity
                 .AddSystem(new PlantTurretSystem(
-                    _walletService, 
+                    _runEssenceService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _spellcoreProgressionService,
@@ -140,7 +140,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 
             entity
                 .AddSystem(new PlantToxicAreaSystem(
-                    _walletService, 
+                    _runEssenceService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _stageProviderService,

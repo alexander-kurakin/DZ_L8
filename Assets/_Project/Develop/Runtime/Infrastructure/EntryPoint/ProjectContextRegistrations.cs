@@ -132,7 +132,12 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             Dictionary<CurrencyTypes, ReactiveVariable<int>> currencies = new();
 
             foreach (CurrencyTypes currencyType in Enum.GetValues(typeof(CurrencyTypes)))
+            {
+                if (currencyType == CurrencyTypes.Essence)
+                    continue;
+
                 currencies[currencyType] = new ReactiveVariable<int>();
+            }
 
             return new WalletService(currencies, c.Resolve<PlayerDataProvider>());
         }

@@ -1,8 +1,11 @@
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
+using _Project.Develop.Runtime.UI.Gameplay.Essence;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
@@ -64,6 +67,16 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<SpellcoreProgressionService>()
                 );
+        }
+
+        public GameplayCurrencyHudPresenter CreateGameplayCurrencyHudPresenter(IconTextListView view)
+        {
+            return new GameplayCurrencyHudPresenter(
+                _container.Resolve<WalletService>(),
+                _container.Resolve<RunEssenceService>(),
+                _container.Resolve<ProjectPresentersFactory>(),
+                _container.Resolve<ViewsFactory>(),
+                view);
         }
 
         public AbilityListPresenter CreateAbilityListPresenter(AbilitySlotListView view, Entity mainHero)

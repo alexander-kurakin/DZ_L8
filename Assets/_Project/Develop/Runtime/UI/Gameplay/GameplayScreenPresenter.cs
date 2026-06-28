@@ -12,7 +12,7 @@ using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Stats;
-using Assets._Project.Develop.Runtime.UI.Wallet;
+using _Project.Develop.Runtime.UI.Gameplay.Essence;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.UI.Gameplay
@@ -53,7 +53,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         public void Initialize()
         {
-            CreateWallet();
+            CreateCurrencyHud();
             CreateStats();
             CreateStageNumber();
             CreateWavePreview();
@@ -123,10 +123,12 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _entitiesHealthDisplayPresenter.LateUpdate();
         }
         
-        private void CreateWallet()
+        private void CreateCurrencyHud()
         {
-            WalletPresenter walletPresenter = _projectPresentersFactory.CreateWalletPresenter(_screen.WalletIconTextListView);
-            _childPresenters.Add(walletPresenter);
+            GameplayCurrencyHudPresenter currencyHudPresenter =
+                _gameplayPresentersFactory.CreateGameplayCurrencyHudPresenter(_screen.WalletIconTextListView);
+
+            _childPresenters.Add(currencyHudPresenter);
         }
         
         private void CreateStats()

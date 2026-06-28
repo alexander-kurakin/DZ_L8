@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TurretConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Turret
-  <CostInDiamonds>k__BackingField: 100
+  <CostInEssence>k__BackingField: 100
   <Damage>k__BackingField: 100
   <RotationSpeed>k__BackingField: 900
   <AttackProcessTime>k__BackingField: 0.5

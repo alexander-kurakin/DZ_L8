@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.Infrastructure;
@@ -25,6 +26,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private AIBrainsContext _brainsContext;
         
         private GameplayScreenPresenter _screenPresenter;
+        private EssenceFeatureService _essenceFeatureService;
 
         public override void ProcessRegistrations(DIContainer container, IInputSceneArgs sceneArgs = null)
         {
@@ -51,6 +53,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _container.Resolve<PlantPlacementService>().ClearForNewRun();
             _container.Resolve<SpellcoreProgressionService>().InitializeForRun();
 
+            _essenceFeatureService = _container.Resolve<EssenceFeatureService>();
+            _essenceFeatureService.InitializeForRun();
+
             _container.Resolve<MainHeroFactory>().Create();
 			_container.Resolve<MainHeroFactory>().CreateTowerWalker();
             _container.Resolve<MainHeroFactory>().CreateTowerBrother();
@@ -71,6 +76,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _brainsContext?.Update(Time.deltaTime);
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
+            _essenceFeatureService?.Update(Time.deltaTime);
         }
         
         private void LateUpdate()

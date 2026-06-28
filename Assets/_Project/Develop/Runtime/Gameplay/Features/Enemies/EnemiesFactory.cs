@@ -1,6 +1,8 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -58,6 +60,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Enemies
             }
 
             entity.AddTeam(new ReactiveVariable<Teams>(Teams.Enemies));
+
+            entity.AddComponent(new EnemyWavePreviewType
+            {
+                Value = WaveEnemyPreviewResolver.Resolve(config),
+            });
 
             SetupSectorTracking(entity, position);
 

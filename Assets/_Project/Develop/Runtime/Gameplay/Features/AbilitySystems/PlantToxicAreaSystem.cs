@@ -8,14 +8,14 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 {
     public class PlantToxicAreaSystem : IInitializableSystem, IDisposableSystem
     {
-        private readonly WalletService _walletService;
+        private readonly RunEssenceService _runEssenceService;
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
         private readonly StageProviderService _stageProviderService;
@@ -26,14 +26,14 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private IDisposable _requestDisposable;
 
         public PlantToxicAreaSystem(
-            WalletService walletService,
+            RunEssenceService runEssenceService,
             PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
             StageProviderService stageProviderService,
             SpellcoreProgressionService spellcoreProgressionService,
             PlantPlacementService plantPlacementService)
         {
-            _walletService = walletService;
+            _runEssenceService = runEssenceService;
             _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
             _stageProviderService = stageProviderService;
@@ -59,9 +59,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                     out SectorId sectorId) == false)
                 return;
 
-            if (_walletService.Enough(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds)) 
+            if (_runEssenceService.Enough(_purchasableEntityConfig.CostInEssence)) 
             {
-                _walletService.Spend(CurrencyTypes.Diamond, _purchasableEntityConfig.CostInDiamonds);
+                _runEssenceService.Spend(_purchasableEntityConfig.CostInEssence);
                 Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig);
                 _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
                 _stageProviderService.AddTemporaryEntity(plantEntity);

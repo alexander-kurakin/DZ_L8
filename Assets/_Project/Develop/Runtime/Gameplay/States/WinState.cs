@@ -15,8 +15,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly GameplayPopupService _popupService;
         
         private readonly int _rewardGold;
-        private readonly int _rewardDiamondMin;
-        private readonly int _rewardDiamondMax;
         
         public WinState(
             IInputService inputService,
@@ -27,15 +25,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             WalletService walletService,
             GameplayPopupService  popupService,
             IMouseInputService mouseInputService,
-            int rewardGold,
-            int rewardDiamondMin,
-            int rewardDiamondMax) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService, mouseInputService)
+            int rewardGold) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService, mouseInputService)
         {
             _walletService = walletService;
             _rewardGold = rewardGold;
             _popupService = popupService;
-            _rewardDiamondMin = rewardDiamondMin;
-            _rewardDiamondMax = rewardDiamondMax;
         }
 
         protected override void RecordResults()
@@ -49,10 +43,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _walletService.Add(CurrencyTypes.Gold, _rewardGold);
                 rewardsData.RewardGold = _rewardGold;
             }
-
-            int randomDiamondReward = Random.Range(_rewardDiamondMin, _rewardDiamondMax);
-            _walletService.Add(CurrencyTypes.Diamond, randomDiamondReward);
-            rewardsData.RewardDiamond = randomDiamondReward;
             
             _popupService.OpenWinPopup(rewardsData);
         }
@@ -61,6 +51,5 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
     public class RewardsData
     {
         public int RewardGold;
-        public int RewardDiamond;
     }
 }

@@ -1,9 +1,7 @@
-﻿using Assets._Project.Develop.Runtime.UI.Core;
+﻿using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
-using System;
-using Assets._Project.Develop.Runtime.Gameplay.States;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 
 namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
@@ -43,7 +41,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
 
             _view.SetTitle(TitleName);
             _view.SetGoldReward(_rewardsData.RewardGold);
-            _view.SetDiamondReward(_rewardsData.RewardDiamond);
+            _view.HideDiamondReward();
 
             _view.ContinueClicked += OnContinueClicked;
             

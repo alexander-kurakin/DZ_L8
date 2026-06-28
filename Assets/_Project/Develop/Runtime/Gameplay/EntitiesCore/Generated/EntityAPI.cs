@@ -875,6 +875,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge.GameplayPhase() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EnemyWavePreviewType EnemyWavePreviewTypeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EnemyWavePreviewType>();
+
+		public Assets._Project.Develop.Runtime.Configs.Gameplay.Stages.WaveEnemyPreviewType EnemyWavePreviewType => EnemyWavePreviewTypeC.Value;
+
+		public bool TryGetEnemyWavePreviewType(out Assets._Project.Develop.Runtime.Configs.Gameplay.Stages.WaveEnemyPreviewType value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EnemyWavePreviewType component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Configs.Gameplay.Stages.WaveEnemyPreviewType);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEnemyWavePreviewType(Assets._Project.Develop.Runtime.Configs.Gameplay.Stages.WaveEnemyPreviewType value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EnemyWavePreviewType() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick DamagePerTickC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamagePerTick => DamagePerTickC.Value;

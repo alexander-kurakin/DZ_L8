@@ -16,6 +16,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -49,6 +50,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSectorGridFactory);
             container.RegisterAsSingle(CreatePlantPlacementService);
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
+            container.RegisterAsSingle(CreateRunEssenceService);
+            container.RegisterAsSingle(CreateEssenceFeatureService).NonLazy();
 
             container.RegisterAsSingle(CreateBrainsFactory);
             
@@ -241,6 +244,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<SectorRegistryService>(),
                 c.Resolve<StageProviderService>(),
                 c.Resolve<ConfigsProviderService>());
+        }
+
+        private static RunEssenceService CreateRunEssenceService(DIContainer c)
+        {
+            return new RunEssenceService();
+        }
+
+        private static EssenceFeatureService CreateEssenceFeatureService(DIContainer c)
+        {
+            return new EssenceFeatureService(
+                c.Resolve<ConfigsProviderService>(),
+                c.Resolve<RunEssenceService>(),
+                c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<MainHeroHolderService>(),
+                c.Resolve<IMouseInputService>(),
+                c.Resolve<MouseRaycastService>());
         }
 
         private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer c)

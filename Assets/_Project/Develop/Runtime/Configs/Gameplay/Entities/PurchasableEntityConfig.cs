@@ -4,6 +4,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
 {
     public class PurchasableEntityConfig : EntityConfig
     {
-        [field: SerializeField, Min(0)] public int CostInDiamonds { get; private set; }
+        [field: SerializeField, Min(0)] public int CostInEssence { get; private set; }
     }
 }

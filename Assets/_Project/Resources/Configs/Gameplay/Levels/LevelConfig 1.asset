@@ -20,5 +20,3 @@ MonoBehaviour:
   - {fileID: 11400000, guid: f3b71036157c5fe4093321eb271dcd0a, type: 2}
   _towerMaxHealth: 2500
   _goldReward: 20000
-  _diamondRewardMin: 150
-  _diamondRewardMax: 300
