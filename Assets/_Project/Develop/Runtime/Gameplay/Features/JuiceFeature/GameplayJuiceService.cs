@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
@@ -9,13 +10,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
 {
     public class GameplayJuiceService
     {
-        private const float DRAGON_ENRAGE_PUNCH_SCALE = 1.15f;
-        private const float DRAGON_ENRAGE_PUNCH_DURATION_SECONDS = 0.2f;
-
+        private readonly DragonEnrageConfig _dragonEnrageConfig;
         private readonly Dictionary<Transform, Vector3> _baseScaleByTransform = new();
 
-        public GameplayJuiceService(EntitiesLifeContext entitiesLifeContext)
+        public GameplayJuiceService(EntitiesLifeContext entitiesLifeContext, DragonEnrageConfig dragonEnrageConfig)
         {
+            _dragonEnrageConfig = dragonEnrageConfig;
             entitiesLifeContext.Released += OnEntityReleased;
         }
 
@@ -43,17 +43,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
                 _baseScaleByTransform[dragonTransform] = dragonTransform.localScale;
 
             Vector3 baseScale = _baseScaleByTransform[dragonTransform];
-            float punchScale = 1f + Mathf.Min(stackCount, 4) * 0.04f;
+            int cappedStacks = Mathf.Min(stackCount, _dragonEnrageConfig.EnragePunchMaxStacksForScale);
+            float punchScale = 1f + cappedStacks * _dragonEnrageConfig.EnragePunchScalePerStack;
+            float punchDurationSeconds = _dragonEnrageConfig.EnragePunchDurationSeconds;
 
             dragonTransform.DOKill();
             dragonTransform.localScale = baseScale;
             dragonTransform
-                .DOScale(baseScale * DRAGON_ENRAGE_PUNCH_SCALE * punchScale, DRAGON_ENRAGE_PUNCH_DURATION_SECONDS)
+                .DOScale(baseScale * _dragonEnrageConfig.EnragePunchScale * punchScale, punchDurationSeconds)
                 .SetEase(Ease.OutQuad)
                 .SetUpdate(true)
                 .OnComplete(() =>
                     dragonTransform
-                        .DOScale(baseScale, DRAGON_ENRAGE_PUNCH_DURATION_SECONDS)
+                        .DOScale(baseScale, punchDurationSeconds)
                         .SetEase(Ease.InQuad)
                         .SetUpdate(true)
                         .Play())

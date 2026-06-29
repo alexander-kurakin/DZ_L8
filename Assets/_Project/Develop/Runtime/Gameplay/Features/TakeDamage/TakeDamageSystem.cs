@@ -9,8 +9,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
 {
     public class TakeDamageSystem : IInitializableSystem, IDisposableSystem
     {
-        private ReactiveEvent<float> _damageRequest;
-        private ReactiveEvent<float> _damageEvent;
+        private ReactiveEvent<TakeDamageInfo> _damageRequest;
+        private ReactiveEvent<TakeDamageInfo> _damageEvent;
 
         private ReactiveVariable<float> _health;
 
@@ -35,16 +35,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
             _requestDisposable.Dispose();
         }
 
-        private void OnDamageRequest(float damage)
+        private void OnDamageRequest(TakeDamageInfo damageInfo)
         {
-            if (damage < 0)
-                throw new ArgumentOutOfRangeException(nameof(damage));
+            if (damageInfo.Damage < 0)
+                throw new ArgumentOutOfRangeException(nameof(damageInfo));
 
             if (_canTakeDamage.Evaluate() == false)
                 return;
 
-            _health.Value = MathF.Max(_health.Value - damage, 0);
-            _damageEvent.Invoke(damage);
+            _health.Value = MathF.Max(_health.Value - damageInfo.Damage, 0);
+            _damageEvent.Invoke(damageInfo);
         }
     }
 }

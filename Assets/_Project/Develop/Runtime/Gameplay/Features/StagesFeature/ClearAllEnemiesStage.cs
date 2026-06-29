@@ -6,6 +6,8 @@ using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -20,9 +22,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class ClearAllEnemiesStage : IStage
     {
-        private const float SPAWN_RADIUS_SCALE_MIN = 0.9f;
-        private const float SPAWN_RADIUS_SCALE_MAX = 1f;
-
         private readonly ClearAllEnemiesStageConfig _config;
         private readonly RaycastConfig _mouseRaycastConfig;
         private readonly SectorRegistryService _sectorRegistryService;
@@ -115,13 +114,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 return;
             }
             
-            if (MouseClickedOnGenericLayer(out Vector3 hitPoint))
+            if (MouseClickedOnPlacementSurface(out Vector3 hitPoint))
             {
-                if (_towerWalker != null)
+                AbilityType activeAbility = _mainHero.AbilityUserActiveAbility.Value;
+                _mainHero.AbilityUserAllAbilities[activeAbility].AbilityUseRequest.Invoke(hitPoint);
+
+                if (activeAbility == AbilityType.ExplodeAtPoint
+                    && _towerWalker != null
+                    && LmbFrostProjectileService.Instance.HasQueuedProjectileLaunch())
+                {
                     _towerWalker.MagicCastRequestedEvent.Invoke(hitPoint);
-                
-                _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
-                    .AbilityUseRequest.Invoke(hitPoint);
+                }
             }
         }
 
@@ -243,21 +246,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _inProcess = false;
         }
         
-        private bool MouseClickedOnGenericLayer(out Vector3 hitPoint)
+        private bool MouseClickedOnPlacementSurface(out Vector3 hitPoint)
         {
-            if (_mouseInputService.FireButtonPressed)
-                if (_mouseRaycastService.TryGetHit(
-                        _mouseInputService.PointerScreenPosition,
-                        out RaycastHit hit,
-                        _mouseRaycastConfig.MouseRaycastDistance,
-                        Layers.GenericLayerMask))
-                {
-                    hitPoint = hit.point;
-                    return true;
-                }
-
             hitPoint = Vector3.zero;
-            return false;
+
+            if (_mouseInputService.FireButtonPressed == false)
+                return false;
+
+            return SectorSurfaceClickUtility.TryGetArenaPlanePoint(
+                _mouseRaycastService,
+                _mouseInputService.PointerScreenPosition,
+                _sectorRegistryService,
+                out hitPoint);
         }
 
         private void ProcessEnd()
@@ -276,11 +276,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 ? _currentGroupPathIndex
                 : PickRandomUnlockedPathIndex();
 
-            float sectorWidthRadians = (Mathf.PI * 2f) / SectorId.SectorsPerRing;
-            float angleOffsetRadians = Random.Range(0f, sectorWidthRadians);
-            float radiusScale = Random.Range(SPAWN_RADIUS_SCALE_MIN, SPAWN_RADIUS_SCALE_MAX);
-
-            return _sectorRegistryService.GetSpawnPositionInWedge(pathIndex, angleOffsetRadians, radiusScale);
+            return _sectorRegistryService.GetRandomSpawnPositionInWedge(pathIndex);
         }
 
         private void ResetSpawnPathOrderForWave()

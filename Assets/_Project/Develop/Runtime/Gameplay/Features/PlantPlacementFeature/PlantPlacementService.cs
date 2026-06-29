@@ -2,6 +2,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -57,10 +58,45 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             return true;
         }
 
+        public bool CanPlaceOnSector(SectorId sectorId, AbilityType abilityType)
+        {
+            return GetSectorPreviewState(sectorId, abilityType) == PlantPlacementPreviewState.Allowed;
+        }
+
+        public PlantPlacementPreviewState GetSectorPreviewState(SectorId sectorId, AbilityType abilityType)
+        {
+            if (_sectorRegistryService.IsInitialized == false)
+                return PlantPlacementPreviewState.BlockedInPrinciple;
+
+            if (IsPlantableBelt(sectorId.Belt) == false)
+                return PlantPlacementPreviewState.BlockedInPrinciple;
+
+            if (_sectorRegistryService.IsPathUnlocked(sectorId.Index) == false)
+                return PlantPlacementPreviewState.BlockedInPrinciple;
+
+            if (IsBeltAllowedForAbility(abilityType, sectorId.Belt) == false)
+                return PlantPlacementPreviewState.BlockedInPrinciple;
+
+            if (_occupiedSectors.Contains(sectorId))
+                return PlantPlacementPreviewState.BlockedOccupied;
+
+            return PlantPlacementPreviewState.Allowed;
+        }
+
+        public static bool IsPlantAbility(AbilityType abilityType)
+        {
+            return abilityType == AbilityType.PlantMine
+                   || abilityType == AbilityType.PlantTurret
+                   || abilityType == AbilityType.PlantToxicArea;
+        }
+
+        public event Action PlacementChanged;
+
         public void RegisterPlantedEntity(Entity plantEntity, SectorId sectorId)
         {
             _occupiedSectors.Add(sectorId);
             _sectorByPlantEntity[plantEntity] = sectorId;
+            PlacementChanged?.Invoke();
         }
 
         public void ClearForNewRun()
@@ -96,6 +132,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
 
             _sectorByPlantEntity.Remove(plantEntity);
             _occupiedSectors.Remove(sectorId);
+            PlacementChanged?.Invoke();
         }
     }
 }

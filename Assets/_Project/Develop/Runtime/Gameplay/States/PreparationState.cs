@@ -1,4 +1,5 @@
-﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+﻿using System;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
@@ -10,9 +11,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
+using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
 
@@ -25,23 +28,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly MainHeroHolderService _mainHeroHolderService;
         private readonly RaycastConfig _mouseRaycastConfig;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
+        private readonly SectorRegistryService _sectorRegistryService;
+        private readonly LmbFrostProjectileService _lmbFrostProjectileService;
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
         private MouseOverUIService _mouseOverUIService;
         private IBackgroundMusicService _backgroundMusicService;
-        
+
         private Entity _mainHero;
-        private Entity _towerWalker;
 
         public PreparationState(
-            PreparationTriggerService preparationTriggerService, 
-            ConfigsProviderService  configsProviderService,
+            PreparationTriggerService preparationTriggerService,
+            ConfigsProviderService configsProviderService,
             MainHeroHolderService mainHeroHolderService,
             MouseRaycastService mouseRaycastService,
             IMouseInputService mouseInputService,
             IBackgroundMusicService backgroundMusicService,
             MouseOverUIService mouseOverUIService,
-            SpellcoreProgressionService spellcoreProgressionService)
+            SpellcoreProgressionService spellcoreProgressionService,
+            SectorRegistryService sectorRegistryService,
+            LmbFrostProjectileService lmbFrostProjectileService)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -52,16 +58,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _backgroundMusicService = backgroundMusicService;
             _mouseOverUIService = mouseOverUIService;
             _spellcoreProgressionService = spellcoreProgressionService;
+            _sectorRegistryService = sectorRegistryService;
+            _lmbFrostProjectileService = lmbFrostProjectileService;
         }
 
         public override void Enter()
         {
             base.Enter();
-            
+
             _preparationTriggerService.Create(_contactTriggerConfig.ContactTriggerStartPosition);
-            
+
             _mainHero = _mainHeroHolderService.MainHero;
-            
+
             _mainHero.GameplayPhase.Value = GameplayStates.Preparation;
             _mainHeroHolderService.TowerWalker.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
             _mainHeroHolderService.TowerBrother.GameplayPhase.Value = _mainHeroHolderService.MainHero.GameplayPhase.Value;
@@ -71,7 +79,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 : AbilityType.ExplodeAtPoint;
 
             _spellcoreProgressionService.OnPreparationEntered();
-            
+
+            _lmbFrostProjectileService.ClearQueuedProjectileLaunch();
+
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
         }
 
@@ -81,12 +91,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
                 return;
-            
+
             if (MouseClickedOnPlacementSurface(out Vector3 hitPoint))
                 _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
                     .AbilityUseRequest.Invoke(hitPoint);
         }
-        
+
         private bool MouseClickedOnPlacementSurface(out Vector3 hitPoint)
         {
             hitPoint = Vector3.zero;
@@ -94,26 +104,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             if (_mouseInputService.FireButtonPressed == false)
                 return false;
 
-            if (_mouseRaycastService.TryGetHit(
-                    _mouseInputService.PointerScreenPosition,
-                    out RaycastHit hit,
-                    _mouseRaycastConfig.MouseRaycastDistance,
-                    Layers.FloorAndTriggerMask) == false)
-            {
-                return false;
-            }
-
-            if (hit.collider.gameObject.layer == Layers.ContactTrigger)
-            {
-                bool isSectorVolume = hit.collider.GetComponent<SectorVolumeRegistrator>() != null
-                                      || hit.collider.GetComponentInParent<SectorVolumeRegistrator>() != null;
-
-                if (isSectorVolume == false)
-                    return false;
-            }
-
-            hitPoint = hit.point;
-            return true;
+            return SectorSurfaceClickUtility.TryGetArenaPlanePoint(
+                _mouseRaycastService,
+                _mouseInputService.PointerScreenPosition,
+                _sectorRegistryService,
+                out hitPoint);
         }
 
         public override void Exit()

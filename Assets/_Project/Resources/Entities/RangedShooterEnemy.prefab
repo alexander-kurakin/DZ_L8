@@ -375,7 +375,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _effectSpawnPoint: {fileID: 2952238018204608046}
-  _takeDamageEffectPrefab: {fileID: 6523699520211762466, guid: 0edef91621bb6b34384ccc9dbb98729c,
+  _defaultDamageEffectPrefab: {fileID: 4924508274929071776, guid: 0edef91621bb6b34384ccc9dbb98729c,
+    type: 3}
+  _sectorAbilityDamageEffectPrefab: {fileID: 8260617210669617129, guid: 5ebe2034595c94f41a8e89907c5be9a5,
+    type: 3}
+  _mineDamageEffectPrefab: {fileID: 5013878782555061258, guid: d9fa0c80412e48448acaa78def63d086,
     type: 3}
   _damageNumberPrefab: {fileID: 7821128393817716321, guid: 4731d76092b0c8b4da146ab30a8dc7f9,
     type: 3}

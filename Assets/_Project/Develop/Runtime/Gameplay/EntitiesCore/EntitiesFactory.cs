@@ -1,6 +1,8 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
@@ -22,6 +24,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
+using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -168,6 +171,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
+            SectorGridConfig sectorGridConfig = _container.Resolve<ConfigsProviderService>().GetConfig<SectorGridConfig>();
+            float stopDistance = config.GetStopDistance(sectorGridConfig);
+
             entity
                 .AddMoveDirection()
                 .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
@@ -183,8 +189,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
                 .AddCurrentTarget()
-                .AddDistanceToTargetGoal(new ReactiveVariable<float>(config.AttackRange))
-                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.AttackRange))
+                .AddDistanceToTargetGoal(new ReactiveVariable<float>(stopDistance))
+                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(stopDistance))
                 .AddDistanceToTargetReachedEvent()
                 .AddDistanceToTargetReached()
                 .AddAttackProcessInitialTime(new ReactiveVariable<float>(config.AttackProcessTime))
@@ -528,7 +534,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     _container.Resolve<SectorEnemyQueryService>(),
                     _container.Resolve<PlantDamageApplicationService>(),
                     _container.Resolve<PlantDamageCounterService>(),
-                    toxicAreaConfig.SlowMoveSpeedFraction));
+                    toxicAreaConfig.SlowMoveSpeedFraction,
+                    toxicAreaConfig.SlowAuraPrefab,
+                    toxicAreaConfig.SlowAuraBaseScale,
+                    toxicAreaConfig.SlowAuraLocalPositionOffset,
+                    toxicAreaConfig.SlowAuraLocalScaleMultiplier));
 
             return entity;
         }
@@ -582,6 +592,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new DealDamageOnContactSystem())
                 .AddSystem(new DeathMaskTouchDetectorSystem())
                 .AddSystem(new AnotherTeamTouchDetectorSystem())
+                .AddSystem(new ProjectileOffScreenBoundsSystem(
+                    _container.Resolve<MouseRaycastService>().Camera,
+                    _container.Resolve<SectorRegistryService>(),
+                    _container.Resolve<ConfigsProviderService>().GetConfig<ProjectileBoundsConfig>()))
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
@@ -18,14 +21,14 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly ExplodeAtPointAbilityConfig _config;
-
-        private const float LMB_NEARBY_ENEMY_RADIUS = 14f;
+        private readonly LmbFrostProjectileService _lmbFrostProjectileService;
 
         private readonly List<Entity> _enemiesInSector = new();
 
         private Entity _entity;
         private Entity _mainHero;
         private ReactiveVariable<float> _cooldownFill;
+        private ReactiveVariable<GameplayStates> _gameplayPhase;
         private ReactiveEvent<Vector3> _dealAreaImpactDamageRequest;
         private IDisposable _requestDisposable;
         private float _cooldownRemaining;
@@ -35,13 +38,15 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             SectorEnemyQueryService sectorEnemyQueryService,
             SectorRegistryService sectorRegistryService,
             LmbFlavorToastService lmbFlavorToastService,
-            ExplodeAtPointAbilityConfig config)
+            ExplodeAtPointAbilityConfig config,
+            LmbFrostProjectileService lmbFrostProjectileService)
         {
             _sectorMembershipService = sectorMembershipService;
             _sectorEnemyQueryService = sectorEnemyQueryService;
             _sectorRegistryService = sectorRegistryService;
             _lmbFlavorToastService = lmbFlavorToastService;
             _config = config;
+            _lmbFrostProjectileService = lmbFrostProjectileService;
         }
 
         public void OnInit(Entity entity)
@@ -55,25 +60,62 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
             if (_mainHero != null && _mainHero.TryGetExplosionPreviewCooldownFill(out _cooldownFill))
                 _cooldownFill.Value = 0f;
+
+            if (_mainHero != null)
+                _gameplayPhase = _mainHero.GameplayPhase;
+
+            _lmbFrostProjectileService.Configure(_config);
+            _lmbFrostProjectileService.RegisterImpactHandler(OnProjectileImpact);
         }
 
         private void OnAbilityUse(Vector3 usePoint)
         {
+            if (IsCombatPhase() == false)
+                return;
+
             if (_cooldownRemaining > 0f)
                 return;
 
             if (_sectorRegistryService.IsInitialized == false)
                 return;
 
-            SectorId sectorId = _sectorMembershipService.ResolveSectorAtClick(usePoint);
+            Vector3 impactPoint = GetClickImpactPoint(usePoint);
+
+            _cooldownRemaining = _config.CooldownSeconds;
+            SyncCooldownFill();
+
+            _lmbFrostProjectileService.ShowTargetOrbs(
+                _config.FrostTargetOrbsPrefab,
+                impactPoint,
+                _config.FrostTargetOrbsScale);
+            _lmbFrostProjectileService.QueueProjectileLaunch(impactPoint);
+        }
+
+        private bool IsCombatPhase()
+        {
+            if (_gameplayPhase == null)
+                return false;
+
+            return _gameplayPhase.Value == GameplayStates.StageProcess;
+        }
+
+        private Vector3 GetClickImpactPoint(Vector3 clickWorldPoint)
+        {
+            float impactPlaneY = _sectorRegistryService.Center.y + _config.ImpactGroundYOffset;
+            return new Vector3(clickWorldPoint.x, impactPlaneY, clickWorldPoint.z);
+        }
+
+        private void OnProjectileImpact(Vector3 impactPoint)
+        {
+            SectorId sectorId = _sectorMembershipService.ResolveFromWorldPosition(impactPoint);
             _sectorEnemyQueryService.CollectEnemiesInSector(sectorId, _enemiesInSector);
 
-            SectorId clickPositionSector = _sectorMembershipService.ResolveFromWorldPosition(usePoint);
+            SectorId clickPositionSector = _sectorMembershipService.ResolveFromWorldPosition(impactPoint);
 
             if (clickPositionSector != sectorId)
                 _sectorEnemyQueryService.AppendEnemiesInSector(clickPositionSector, _enemiesInSector);
 
-            _sectorEnemyQueryService.AppendEnemiesNearWorldPosition(usePoint, LMB_NEARBY_ENEMY_RADIUS, _enemiesInSector);
+            _sectorEnemyQueryService.AppendEnemiesNearWorldPosition(impactPoint, _config.NearbyEnemyRadius, _enemiesInSector);
 
             bool showTankToast = false;
             bool showDragonToast = false;
@@ -81,6 +123,9 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             for (int index = 0; index < _enemiesInSector.Count; index++)
             {
                 Entity enemy = _enemiesInSector[index];
+
+                if (IsEnemyInLmbDamageBelt(enemy) == false)
+                    continue;
 
                 if (enemy.TryGetEnemyWavePreviewType(out WaveEnemyPreviewType previewType) == false)
                 {
@@ -110,10 +155,17 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             if (showDragonToast)
                 _lmbFlavorToastService.Show(LmbFlavorToastType.DragonMagicalDefense);
 
-            _cooldownRemaining = _config.CooldownSeconds;
-            SyncCooldownFill();
+            _dealAreaImpactDamageRequest?.Invoke(impactPoint);
+        }
 
-            _dealAreaImpactDamageRequest?.Invoke(usePoint);
+        private bool IsEnemyInLmbDamageBelt(Entity enemy)
+        {
+            if (enemy.TryGetTransform(out Transform enemyTransform) == false)
+                return false;
+
+            SectorId enemySector = _sectorMembershipService.ResolveFromWorldPosition(enemyTransform.position);
+
+            return enemySector.Belt != SectorBelt.Spawn;
         }
 
         private void ApplyCatDamage(Entity enemy)
@@ -126,7 +178,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             if (damage <= 0f)
                 return;
 
-            EntitiesHelper.TryTakeDamageFrom(_entity, enemy, damage);
+            EntitiesHelper.TryTakeDamageFrom(_entity, enemy, damage, TakeDamageVisualKind.SectorAbility);
         }
 
         public void OnUpdate(float deltaTime)
@@ -159,6 +211,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         public void OnDispose()
         {
             _requestDisposable?.Dispose();
+            _lmbFrostProjectileService.ClearImpactHandler();
         }
     }
 }

@@ -511,6 +511,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _effectSpawnPoint: {fileID: 2479376013985928550}
+  _towerDamageEffectPrefab: {fileID: 7634420434017284396, guid: b9ed127bfed05be4db493ca51e744a76,
+    type: 3}
   _healNumberPrefab: {fileID: 6074747914645113848, guid: e9c924ec8c0754e4bb78bccc382fae2a,
     type: 3}
   _damageNumberPrefab: {fileID: 7821128393817716321, guid: 4731d76092b0c8b4da146ab30a8dc7f9,

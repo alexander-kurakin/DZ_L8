@@ -1,7 +1,9 @@
 using System;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -10,13 +12,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 {
     public class ExplosionAbilityView : EntityView
     {
-        private const float ReferenceDiameter = 10f;
-        private const float PaddingMult = 2f;
-        private const float VFXscalingMult = 0.85f;
-        private const float COOLDOWN_FILL_Y_OFFSET = 0.01f;
-
-        private static readonly Color COOLDOWN_FILL_COLOR = new Color(1f, 0.15f, 0.15f, 0.6f);
-
         [SerializeField] private Transform _indicatorPrefab;
         [SerializeField] private ParticleSystem _castVfxPrefab;
         [SerializeField] private GameSoundsIDs _castSound;
@@ -25,7 +20,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
         private Transform _indicator;
         private Transform _cooldownFillIndicator;
         private Material _cooldownFillMaterial;
-        private ParticleSystem _castVfxPrefabInstance;
 
         private ReactiveVariable<Vector3> _previewWorldPoint;
         private ReactiveVariable<bool> _previewVisible;
@@ -63,15 +57,24 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 
         private float GetVFXScale(float indicatorDiameter)
         {
-            return VFXscalingMult * (indicatorDiameter / ReferenceDiameter);
+            ExplodeAtPointAbilityConfig config = LmbFrostProjectileService.Instance?.Config;
+
+            if (config == null)
+                return indicatorDiameter;
+
+            return config.CastVfxScaleMultiplier * (indicatorDiameter / config.PreviewReferenceDiameter);
         }
 
         private void OnExplosionRequested(Vector3 worldPoint)
         {
-            _castVfxPrefabInstance = Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
+            if (_castVfxPrefab == null)
+                return;
 
+            ParticleSystem castInstance = Instantiate(_castVfxPrefab, worldPoint, Quaternion.identity);
             float scale = GetVFXScale(_previewIndicatorDiameter.Value);
-            _castVfxPrefabInstance.transform.localScale = new Vector3(scale, 1f, scale);
+            castInstance.transform.localScale = new Vector3(scale, 1f, scale);
+            castInstance.Play(true);
+            GameplayVfxUtility.ScheduleDestroyAfterLifetime(castInstance.gameObject);
 
             GameSoundsService.PlayOneShot(_castSound, _localAudioSource);
         }
@@ -93,14 +96,18 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 
         private void InitCooldownFillOverlay()
         {
+            ExplodeAtPointAbilityConfig config = LmbFrostProjectileService.Instance?.Config;
+            float cooldownFillYOffset = config != null ? config.CooldownFillYOffset : 0f;
+            Color cooldownFillColor = config != null ? config.CooldownFillColor : Color.red;
+
             _cooldownFillIndicator = Instantiate(_indicatorPrefab, _indicator);
-            _cooldownFillIndicator.localPosition = new Vector3(0f, COOLDOWN_FILL_Y_OFFSET, 0f);
+            _cooldownFillIndicator.localPosition = new Vector3(0f, cooldownFillYOffset, 0f);
             _cooldownFillIndicator.localRotation = Quaternion.identity;
             _cooldownFillIndicator.localScale = Vector3.one;
 
             Renderer cooldownRenderer = _cooldownFillIndicator.GetComponent<Renderer>();
             _cooldownFillMaterial = cooldownRenderer.material;
-            _cooldownFillMaterial.color = COOLDOWN_FILL_COLOR;
+            _cooldownFillMaterial.color = cooldownFillColor;
 
             _cooldownFillIndicator.gameObject.SetActive(false);
         }
@@ -127,8 +134,11 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 
         private void ApplyIndicatorScale()
         {
+            ExplodeAtPointAbilityConfig config = LmbFrostProjectileService.Instance?.Config;
+            float referenceDiameter = config != null ? config.PreviewReferenceDiameter : 1f;
+            float paddingMultiplier = config != null ? config.PreviewPaddingMultiplier : 0f;
             float diameter = _previewIndicatorDiameter.Value;
-            float padding = diameter / ReferenceDiameter * PaddingMult;
+            float padding = diameter / referenceDiameter * paddingMultiplier;
             float visualDiameter = diameter + padding;
 
             _indicator.localScale = new Vector3(visualDiameter, visualDiameter, 1f);

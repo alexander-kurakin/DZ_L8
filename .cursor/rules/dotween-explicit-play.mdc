@@ -1,0 +1,54 @@
+---
+description: DOTween — в проекте defaultAutoPlay 0, всегда вызывай .Play() явно
+globs: Assets/_Project/**/*.cs
+alwaysApply: true
+---
+
+# DOTween — явный `.Play()`
+
+В проекте в `Assets/Resources/DOTweenSettings.asset` задано **`defaultAutoPlay: 0`** (AutoPlay.None). Твины **не стартуют сами** — без `.Play()` анимация не выполнится (в т.ч. `DOVirtual.DelayedCall`, отложенный урон, UI, juice).
+
+## Правило
+
+После создания любого tween / sequence **всегда** завершай цепочку вызовом `.Play()` (или используй API, который явно запускает tween).
+
+## Примеры
+
+```csharp
+// ❌ BAD — не запустится
+transform.DOScale(targetScale, duration).SetEase(Ease.OutCubic);
+
+DOVirtual.DelayedCall(delaySeconds, OnComplete).SetUpdate(true);
+
+DOTween.Sequence()
+    .Append(transform.DOScale(a, 0.2f))
+    .Append(transform.DOScale(b, 0.3f));
+
+// ✅ GOOD
+transform
+    .DOScale(targetScale, duration)
+    .SetEase(Ease.OutCubic)
+    .Play();
+
+DOVirtual
+    .DelayedCall(delaySeconds, OnComplete)
+    .SetUpdate(true)
+    .Play();
+
+DOTween.Sequence()
+    .Append(transform.DOScale(a, 0.2f))
+    .Append(transform.DOScale(b, 0.3f))
+    .SetUpdate(true)
+    .Play();
+```
+
+## Чеклист при ревью / новом коде
+
+- `DOMove`, `DOScale`, `DOFade`, `DORotate` и т.д. — есть `.Play()`?
+- `DOVirtual.DelayedCall` / `DOVirtual.Float` — есть `.Play()`?
+- `DOTween.Sequence()` — `.Play()` на sequence, не только на append?
+- При рефакторинге не убирай `.Play()`, даже если «раньше работало» в другом проекте.
+
+## Исключения
+
+Не трогай пакетный код под `Assets/Plugins/` — правило для пользовательского кода в `Assets/_Project/`.

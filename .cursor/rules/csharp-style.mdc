@@ -1,0 +1,29 @@
+---
+description: C# стиль проекта — Unity Random и прочие соглашения Assets/_Project
+globs: Assets/_Project/**/*.cs
+alwaysApply: true
+---
+
+# Random (Unity)
+
+Если в файле нужен `Random.Range` или другой API Unity-рандома — **всегда** добавляй явный alias сразу после блока `using`:
+
+```csharp
+using Random = UnityEngine.Random;
+```
+
+**Почему:** в проекте есть другой тип `Random` (не `UnityEngine.Random`). Без alias — ошибки компиляции или резолв не тот тип.
+
+```csharp
+// ❌ BAD
+float delay = Random.Range(0.5f, 1f);
+
+// ✅ GOOD
+using Random = UnityEngine.Random;
+// ...
+float delay = Random.Range(0.5f, 1f);
+```
+
+Не заменяй alias на `UnityEngine.Random.Range(...)` в теле кода — придерживайся alias-конвенции проекта.
+
+`System.Random` — только если нужен именно он; тогда используй полное имя `System.Random`, не alias `Random`.

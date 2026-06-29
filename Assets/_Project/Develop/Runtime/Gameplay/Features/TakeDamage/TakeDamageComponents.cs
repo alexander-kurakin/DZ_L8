@@ -6,12 +6,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
 {
     public class TakeDamageRequest : IEntityComponent
     {
-        public ReactiveEvent<float> Value;
+        public ReactiveEvent<TakeDamageInfo> Value;
     }
 
     public class TakeDamageEvent : IEntityComponent
     {
-        public ReactiveEvent<float> Value;
+        public ReactiveEvent<TakeDamageInfo> Value;
     }
 
     public class CanTakeDamage : IEntityComponent

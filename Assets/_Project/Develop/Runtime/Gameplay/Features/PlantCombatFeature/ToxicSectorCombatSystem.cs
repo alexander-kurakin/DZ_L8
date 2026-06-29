@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
 {
@@ -17,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
         private readonly List<Entity> _enemiesInSector = new();
         private readonly HashSet<Entity> _slowedEnemies = new();
         private readonly Dictionary<Entity, float> _baseMoveSpeedByEnemy = new();
+        private readonly Dictionary<Entity, GameObject> _slowAuraByEnemy = new();
 
         private Entity _toxicEntity;
         private PlantSector _plantSector;
@@ -24,17 +28,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
         private ReactiveVariable<float> _dotTickInterval;
         private ReactiveVariable<float> _dotTimer;
         private float _slowMoveSpeedFraction;
+        private GameObject _slowAuraPrefab;
+        private float _slowAuraBaseScale;
+        private Vector3 _slowAuraLocalPositionOffset;
+        private Vector3 _slowAuraLocalScaleMultiplier;
 
         public ToxicSectorCombatSystem(
             SectorEnemyQueryService sectorEnemyQueryService,
             PlantDamageApplicationService plantDamageApplicationService,
             PlantDamageCounterService plantDamageCounterService,
-            float slowMoveSpeedFraction)
+            float slowMoveSpeedFraction,
+            GameObject slowAuraPrefab,
+            float slowAuraBaseScale,
+            Vector3 slowAuraLocalPositionOffset,
+            Vector3 slowAuraLocalScaleMultiplier)
         {
             _sectorEnemyQueryService = sectorEnemyQueryService;
             _plantDamageApplicationService = plantDamageApplicationService;
             _plantDamageCounterService = plantDamageCounterService;
             _slowMoveSpeedFraction = slowMoveSpeedFraction;
+            _slowAuraPrefab = slowAuraPrefab;
+            _slowAuraBaseScale = slowAuraBaseScale;
+            _slowAuraLocalPositionOffset = slowAuraLocalPositionOffset;
+            _slowAuraLocalScaleMultiplier = slowAuraLocalScaleMultiplier;
         }
 
         public void OnInit(Entity entity)
@@ -91,6 +107,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             float baseMoveSpeed = _baseMoveSpeedByEnemy[enemy];
             moveSpeed.Value = baseMoveSpeed * (1f - _slowMoveSpeedFraction);
             _slowedEnemies.Add(enemy);
+            EnsureSlowAura(enemy);
         }
 
         private void RestoreSlowForEnemiesLeftSector(HashSet<Entity> enemiesInSectorThisTick)
@@ -123,6 +140,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
                 return;
 
             moveSpeed.Value = baseMoveSpeed;
+            RemoveSlowAura(enemy);
+        }
+
+        private void EnsureSlowAura(Entity enemy)
+        {
+            if (_slowAuraPrefab == null)
+                return;
+
+            if (_slowAuraByEnemy.ContainsKey(enemy))
+                return;
+
+            if (enemy.TryGetTransform(out Transform enemyTransform) == false)
+                return;
+
+            GameObject auraInstance = GameplayVfxUtility.SpawnAt(
+                _slowAuraPrefab,
+                enemyTransform.position,
+                Quaternion.identity,
+                enemyTransform,
+                1f);
+
+            ApplySlowAuraTransform(auraInstance.transform);
+            _slowAuraByEnemy[enemy] = auraInstance;
+        }
+
+        private void ApplySlowAuraTransform(Transform auraTransform)
+        {
+            auraTransform.localPosition = _slowAuraLocalPositionOffset;
+            auraTransform.localScale = new Vector3(
+                _slowAuraBaseScale * _slowAuraLocalScaleMultiplier.x,
+                _slowAuraBaseScale * _slowAuraLocalScaleMultiplier.y,
+                _slowAuraBaseScale * _slowAuraLocalScaleMultiplier.z);
+        }
+
+        private void RemoveSlowAura(Entity enemy)
+        {
+            if (_slowAuraByEnemy.TryGetValue(enemy, out GameObject auraInstance) == false)
+                return;
+
+            if (auraInstance != null)
+                Object.Destroy(auraInstance);
+
+            _slowAuraByEnemy.Remove(enemy);
         }
     }
 }

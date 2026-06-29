@@ -7,8 +7,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 {
     public class SectorBootstrap : MonoBehaviour
     {
-        private const float BELT_REVEAL_STEP_SECONDS = 0.32f;
-
         public void RegisterSceneVolumes(SectorRegistryService registry, SectorVisualConfig visualConfig)
         {
             if (registry == null)
@@ -84,8 +82,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 if (pathIndices.Contains(registrator.SectorId.Index) == false)
                     continue;
 
-                float delaySeconds = GetUnlockRevealBeltOrder(registrator.SectorId.Belt) * BELT_REVEAL_STEP_SECONDS;
-                view.PlayUnlockReveal(lockedFill, unlockedFill, delaySeconds);
+                if (registrator.SectorId.Belt == SectorBelt.Spawn)
+                    continue;
+
+                float delaySeconds = GetUnlockRevealBeltOrder(registrator.SectorId.Belt) * visualConfig.BeltRevealStepSeconds;
+                view.PlayUnlockReveal(lockedFill, unlockedFill, delaySeconds, visualConfig.UnlockRevealDurationSeconds);
             }
         }
 

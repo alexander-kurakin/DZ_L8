@@ -16,3 +16,9 @@ MonoBehaviour:
   <CostInEssence>k__BackingField: 25
   <DamagePerTick>k__BackingField: 35
   <DamageInterval>k__BackingField: 1
+  <SlowMoveSpeedFraction>k__BackingField: 0.33
+  <SlowAuraPrefab>k__BackingField: {fileID: 8476858034194145137, guid: 84c915043f939b8469605560770bb2d1,
+    type: 3}
+  <SlowAuraBaseScale>k__BackingField: 1.2
+  <SlowAuraLocalPositionOffset>k__BackingField: {x: 0, y: -0.75, z: 0}
+  <SlowAuraLocalScaleMultiplier>k__BackingField: {x: 3.4, y: 0.85, z: 3.4}

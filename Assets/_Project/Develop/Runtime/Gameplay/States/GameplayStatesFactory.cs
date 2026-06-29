@@ -1,10 +1,12 @@
-﻿using _Project.Develop.Runtime.Gameplay.Features.Input;
+﻿using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
@@ -31,14 +33,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         public PreparationState CreatePreparationState()
         {
             return new PreparationState(
-                _container.Resolve<PreparationTriggerService>(), 
+                _container.Resolve<PreparationTriggerService>(),
                 _container.Resolve<ConfigsProviderService>(),
                 _container.Resolve<MainHeroHolderService>(),
                 _container.Resolve<MouseRaycastService>(),
                 _container.Resolve<IMouseInputService>(),
                 _container.Resolve<IBackgroundMusicService>(),
                 _container.Resolve<MouseOverUIService>(),
-                _container.Resolve<SpellcoreProgressionService>());
+                _container.Resolve<SpellcoreProgressionService>(),
+                _container.Resolve<SectorRegistryService>(),
+                _container.Resolve<LmbFrostProjectileService>());
         }
 
         public StageProcessState CreateStageProcessState()
@@ -46,7 +50,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             return new StageProcessState(
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<MainHeroHolderService>(),
-                _container.Resolve<SpellcoreProgressionService>());
+                _container.Resolve<SpellcoreProgressionService>(),
+                _container.Resolve<LmbFrostProjectileService>());
         }
 
         public WinState CreateWinState(GameplayInputArgs inputArgs)

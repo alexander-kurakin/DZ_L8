@@ -1,11 +1,10 @@
 using _Project.Develop.Runtime.Gameplay.Features.Input;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
-using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -13,13 +12,10 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
 {
     public class ExplosionAbilityPreviewSystem : IInitializableSystem, IUpdatableSystem
     {
-        private const float PREVIEW_INDICATOR_DIAMETER = 10f;
-        private const float PREVIEW_GROUND_Y_OFFSET = 0.25f;
-
         private readonly IMouseInputService _mouseInput;
         private readonly IMouseRaycastService _mouseRaycast;
-        private readonly RaycastConfig _raycastConfig;
         private readonly SectorRegistryService _sectorRegistryService;
+        private readonly ExplodeAtPointAbilityConfig _config;
 
         private ReactiveVariable<GameplayStates> _gameplayPhase;
         private ReactiveVariable<Vector3> _previewWorldPoint;
@@ -29,13 +25,13 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
         public ExplosionAbilityPreviewSystem(
             IMouseInputService mouseInput,
             IMouseRaycastService mouseRaycast,
-            RaycastConfig raycastConfig,
-            SectorRegistryService sectorRegistryService)
+            SectorRegistryService sectorRegistryService,
+            ExplodeAtPointAbilityConfig config)
         {
             _mouseInput = mouseInput;
             _mouseRaycast = mouseRaycast;
-            _raycastConfig = raycastConfig;
             _sectorRegistryService = sectorRegistryService;
+            _config = config;
         }
 
         public void OnInit(Entity entity)
@@ -44,7 +40,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
             _previewWorldPoint = entity.ExplosionPreviewWorldPoint;
             _previewVisible = entity.ExplosionPreviewVisible;
             _previewIndicatorDiameter = entity.ExplosionPreviewIndicatorDiameter;
-            _previewIndicatorDiameter.Value = PREVIEW_INDICATOR_DIAMETER;
+            _previewIndicatorDiameter.Value = _config.PreviewIndicatorDiameter;
         }
 
         public void OnUpdate(float deltaTime)
@@ -55,58 +51,17 @@ namespace _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview
             if (_previewVisible.Value == false)
                 return;
 
-            if (TryGetGroundPointUnderCursor(out Vector3 groundPoint))
-                _previewWorldPoint.Value = groundPoint;
-        }
-
-        private bool TryGetGroundPointUnderCursor(out Vector3 groundPoint)
-        {
-            if (TryGetCursorHitPoint(out Vector3 hitPoint) == false)
+            if (SectorSurfaceClickUtility.TryGetHorizontalPlanePoint(
+                    _mouseRaycast,
+                    _mouseInput.PointerScreenPosition,
+                    _sectorRegistryService,
+                    out Vector3 planePoint) == false)
             {
-                groundPoint = default;
-                return false;
+                return;
             }
 
-            float previewPlaneY = GetPreviewPlaneY();
-            groundPoint = new Vector3(hitPoint.x, previewPlaneY, hitPoint.z);
-            return true;
-        }
-
-        private bool TryGetCursorHitPoint(out Vector3 hitPoint)
-        {
-            Vector2 pointerScreenPosition = _mouseInput.PointerScreenPosition;
-            float raycastDistance = _raycastConfig.MouseRaycastDistance;
-
-            if (_mouseRaycast.TryGetHit(
-                    pointerScreenPosition,
-                    out RaycastHit floorHit,
-                    raycastDistance,
-                    Layers.FloorLayerMask))
-            {
-                hitPoint = floorHit.point;
-                return true;
-            }
-
-            if (_mouseRaycast.TryGetHit(
-                    pointerScreenPosition,
-                    out RaycastHit genericHit,
-                    raycastDistance,
-                    Layers.GenericLayerMask))
-            {
-                hitPoint = genericHit.point;
-                return true;
-            }
-
-            hitPoint = default;
-            return false;
-        }
-
-        private float GetPreviewPlaneY()
-        {
-            if (_sectorRegistryService.IsInitialized)
-                return _sectorRegistryService.Center.y + PREVIEW_GROUND_Y_OFFSET;
-
-            return PREVIEW_GROUND_Y_OFFSET;
+            planePoint.y = _sectorRegistryService.Center.y + _sectorRegistryService.GridConfig.SectorSurfaceGroundYOffset;
+            _previewWorldPoint.Value = planePoint;
         }
     }
 }

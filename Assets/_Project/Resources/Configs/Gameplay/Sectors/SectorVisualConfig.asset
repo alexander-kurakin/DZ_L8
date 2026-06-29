@@ -22,4 +22,8 @@ MonoBehaviour:
   _outlineWidth: 0.35
   _spawnPreviewOutlineColor: {r: 1, g: 0.92, b: 0.35, a: 1}
   _spawnPreviewOutlineWidth: 0.55
-  _spawnPathArrowSprite: {fileID: 21300000, guid: 70f2b1a5ab38444a989bed3ac6cc25a3, type: 3}
+  _spawnPathArrowSprite: {fileID: 21300000, guid: 70f2b1a5ab38444a989bed3ac6cc25a3,
+    type: 3}
+  _unlockRevealDurationSeconds: 0.65
+  _beltRevealStepSeconds: 0.85
+  _spawnPreviewRevealStepOrder: 3

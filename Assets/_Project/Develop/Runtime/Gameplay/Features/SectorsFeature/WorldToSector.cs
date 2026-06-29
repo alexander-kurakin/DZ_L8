@@ -80,6 +80,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return new Vector3(center.x + offsetX, center.y, center.z + offsetZ);
         }
 
+        public static Vector3 GetSectorWedgeMarkerPosition(
+            Vector3 center,
+            SectorId sectorId,
+            SectorGridConfig gridConfig,
+            float wedgeAngleFraction,
+            float beltRadiusFraction,
+            float groundYOffset)
+        {
+            float sectorWidthRadians = FULL_CIRCLE_RADIANS / SectorId.SectorsPerRing;
+            float angleRadians = sectorId.Index * sectorWidthRadians + sectorWidthRadians * wedgeAngleFraction;
+            float innerRadius = GetBeltInnerRadius(sectorId.Belt, gridConfig);
+            float outerRadius = GetBeltOuterRadius(sectorId.Belt, gridConfig);
+            float radius = Mathf.Lerp(innerRadius, outerRadius, beltRadiusFraction);
+
+            return new Vector3(
+                center.x + Mathf.Cos(angleRadians) * radius,
+                center.y + groundYOffset,
+                center.z + Mathf.Sin(angleRadians) * radius);
+        }
+
         public static float GetSectorArcWidth(SectorBelt belt, SectorGridConfig gridConfig)
         {
             float radius = GetAnchorRadius(belt, gridConfig);
@@ -104,6 +124,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
                 default:
                     return gridConfig.SpawnBeltAnchorRadius;
+            }
+        }
+
+        private static float GetBeltInnerRadius(SectorBelt belt, SectorGridConfig gridConfig)
+        {
+            switch (belt)
+            {
+                case SectorBelt.Inner:
+                    return 0f;
+
+                case SectorBelt.Middle:
+                    return gridConfig.InnerBeltMaxRadius;
+
+                case SectorBelt.Outer:
+                    return gridConfig.MiddleBeltMaxRadius;
+
+                default:
+                    return gridConfig.OuterBeltMaxRadius;
+            }
+        }
+
+        private static float GetBeltOuterRadius(SectorBelt belt, SectorGridConfig gridConfig)
+        {
+            switch (belt)
+            {
+                case SectorBelt.Inner:
+                    return gridConfig.InnerBeltMaxRadius;
+
+                case SectorBelt.Middle:
+                    return gridConfig.MiddleBeltMaxRadius;
+
+                case SectorBelt.Outer:
+                    return gridConfig.OuterBeltMaxRadius;
+
+                default:
+                    return gridConfig.SpawnBeltMaxRadius;
             }
         }
     }

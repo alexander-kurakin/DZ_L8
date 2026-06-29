@@ -5,7 +5,6 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -23,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
         private readonly ConfigsProviderService _configsProviderService;
         private readonly SpawnPathPreviewService _spawnPathPreviewService;
         private readonly WaveSpawnPlanService _waveSpawnPlanService;
-        private readonly GameplayJuiceService _gameplayJuiceService;
+        private readonly PathUnlockSequenceService _pathUnlockSequenceService;
 
         private int _completedWaves;
         private int _freeMinesRemaining;
@@ -39,7 +38,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             ConfigsProviderService configsProviderService,
             SpawnPathPreviewService spawnPathPreviewService,
             WaveSpawnPlanService waveSpawnPlanService,
-            GameplayJuiceService gameplayJuiceService)
+            PathUnlockSequenceService pathUnlockSequenceService)
         {
             _config = config;
             _sectorRegistryService = sectorRegistryService;
@@ -47,7 +46,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             _configsProviderService = configsProviderService;
             _spawnPathPreviewService = spawnPathPreviewService;
             _waveSpawnPlanService = waveSpawnPlanService;
-            _gameplayJuiceService = gameplayJuiceService;
+            _pathUnlockSequenceService = pathUnlockSequenceService;
         }
 
         public event Action Changed;
@@ -80,6 +79,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
         public void OnCombatWaveEntered(int waveNumber)
         {
+            _pathUnlockSequenceService.Cancel();
             _showSpawnPathPreview = false;
             RefreshSectorVisuals();
             Changed?.Invoke();
@@ -192,6 +192,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             IReadOnlyList<int> pendingUnlockRevealPathIndices = hasPendingUnlockReveal
                 ? _pendingUnlockRevealPathIndices
                 : null;
+            bool deferSpawnPathPreview = hasPendingUnlockReveal;
 
             if (_showSpawnPathPreview)
             {
@@ -207,12 +208,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
                     false,
                     pendingUnlockRevealPathIndices);
 
-                _spawnPathPreviewService.Refresh(
-                    true,
-                    _sectorRegistryService,
-                    visualConfig,
-                    enemyIconsConfig,
-                    _waveSpawnPlanService.GroupPlans);
+                if (deferSpawnPathPreview == false)
+                {
+                    _spawnPathPreviewService.Refresh(
+                        true,
+                        _sectorRegistryService,
+                        visualConfig,
+                        enemyIconsConfig,
+                        _waveSpawnPlanService.GroupPlans);
+                }
+                else
+                {
+                    _spawnPathPreviewService.ClearMarkers();
+                }
             }
             else
             {
@@ -238,12 +246,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
                 return;
 
             SectorVisualConfig visualConfig = _configsProviderService.GetConfig<SectorVisualConfig>();
+            WaveEnemyPreviewIconsConfig enemyIconsConfig =
+                _configsProviderService.GetConfig<WaveEnemyPreviewIconsConfig>();
+            List<int> pathIndicesToReveal = new List<int>(_pendingUnlockRevealPathIndices);
 
-            _gameplayJuiceService.PlayPathUnlockPulse(
+            _pathUnlockSequenceService.Play(
+                pathIndicesToReveal,
                 sectorBootstrap,
                 visualConfig,
                 _sectorRegistryService,
-                _pendingUnlockRevealPathIndices);
+                enemyIconsConfig,
+                _waveSpawnPlanService.GroupPlans);
 
             _pendingUnlockRevealPathIndices.Clear();
         }

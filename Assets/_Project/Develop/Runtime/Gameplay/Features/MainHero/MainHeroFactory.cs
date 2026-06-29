@@ -1,5 +1,6 @@
 ﻿using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
@@ -9,6 +10,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -79,9 +81,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new ExplosionAbilityPreviewSystem(
                     _mouseInput,
                     _container.Resolve<MouseRaycastService>(),
-                    _configsProviderService.GetConfig<RaycastConfig>(),
-                    _container.Resolve<SectorRegistryService>()
-                    ));
+                    _container.Resolve<SectorRegistryService>(),
+                    _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>()))
+                .AddSystem(new PlantPlacementPreviewHoverSystem(
+                    _mouseInput,
+                    _container.Resolve<MouseRaycastService>(),
+                    _container.Resolve<MouseOverUIService>(),
+                    _container.Resolve<SectorRegistryService>(),
+                    _container.Resolve<SectorMembershipService>(),
+                    _container.Resolve<PlantPlacementService>(),
+                    _container.Resolve<PlantPlacementPreviewService>()));
             
             ApplyPermanentPowerups(entity);
             _abilitiesFactory.SetupAbilitiesForMainHero(entity);

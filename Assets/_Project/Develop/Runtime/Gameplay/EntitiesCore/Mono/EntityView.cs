@@ -11,6 +11,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
         {
             GameSoundsService = gameSoundsService;
             entity.Initialized += OnEntityStartedWork;
+
+            if (entity.IsInit)
+                OnEntityStartedWork(entity);
         }
 
         public virtual void Cleanup(Entity entity)

@@ -1,4 +1,4 @@
-using _Project.Develop.Runtime.Gameplay.Features.Input;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
+using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -17,10 +18,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 {
     public class EssenceFeatureService : IDisposable
     {
-        private const float PICKUP_COLOR_RED = 0.45f;
-        private const float PICKUP_COLOR_GREEN = 0.95f;
-        private const float PICKUP_COLOR_BLUE = 1f;
-
         private readonly EssenceConfig _essenceConfig;
         private readonly RunEssenceService _runEssenceService;
         private readonly EntitiesLifeContext _entitiesLifeContext;
@@ -69,7 +66,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (_activePickups.Count == 0)
                 return;
 
-            Vector3 towerPosition = GetTowerPosition();
+            Vector3 towerCollectPosition = GetTowerCollectPosition();
             EssencePickupView hoveredPickup = TryGetHoveredPickup();
 
             for (int pickupIndex = _activePickups.Count - 1; pickupIndex >= 0; pickupIndex--)
@@ -89,9 +86,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 
                 if (pickup.IsVacuuming)
                 {
-                    pickup.MoveTowards(towerPosition, _essenceConfig.VacuumMoveSpeed, deltaTime);
+                    pickup.MoveTowards(towerCollectPosition, _essenceConfig.VacuumMoveSpeed, deltaTime);
 
-                    float collectDistance = GetFlatDistance(pickup.transform.position, towerPosition);
+                    float collectDistance = GetFlatDistance(pickup.transform.position, towerCollectPosition);
 
                     if (collectDistance <= _essenceConfig.TowerCollectRadius)
                         CollectPickup(pickupIndex);
@@ -147,26 +144,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (enemy.TryGetTransform(out Transform enemyTransform) == false)
                 return;
 
+            if (_essenceConfig.PickupGlowPrefab == null)
+            {
+                Debug.LogError("EssenceConfig.PickupGlowPrefab is not assigned.");
+                return;
+            }
+
             int dropAmount = _essenceConfig.GetDropAmountFor(previewType);
 
             if (dropAmount <= 0)
                 return;
 
             Vector3 spawnPosition = enemyTransform.position;
+            Vector3 pickupWorldPosition = spawnPosition;
+            pickupWorldPosition.y += _essenceConfig.PickupFloorOffset;
 
-            GameObject pickupObject = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-            pickupObject.name = "EssencePickup";
+            if (_essenceConfig.PickupDropPrefab != null)
+            {
+                GameplayVfxUtility.SpawnTransientAt(
+                    _essenceConfig.PickupDropPrefab,
+                    pickupWorldPosition,
+                    Quaternion.identity,
+                    uniformScale: _essenceConfig.PickupDropVfxScale);
+            }
 
-            MeshCollider meshCollider = pickupObject.GetComponent<MeshCollider>();
+            GameObject pickupRoot = new GameObject("EssencePickup");
+            GameObject glowInstance = Object.Instantiate(_essenceConfig.PickupGlowPrefab, pickupRoot.transform);
+            glowInstance.transform.localPosition = Vector3.zero;
+            glowInstance.transform.localRotation = Quaternion.identity;
+            glowInstance.transform.localScale = Vector3.one;
 
-            if (meshCollider != null)
-                Object.Destroy(meshCollider);
-
-            Renderer pickupRenderer = pickupObject.GetComponent<Renderer>();
-            pickupRenderer.material.color = new Color(PICKUP_COLOR_RED, PICKUP_COLOR_GREEN, PICKUP_COLOR_BLUE);
-
-            EssencePickupView pickup = pickupObject.AddComponent<EssencePickupView>();
-            pickup.Initialize(dropAmount, spawnPosition, _essenceConfig.HoverUnlockDelay);
+            EssencePickupView pickup = pickupRoot.AddComponent<EssencePickupView>();
+            pickup.Initialize(
+                dropAmount,
+                spawnPosition,
+                _essenceConfig,
+                _essenceConfig.PickupVacuumTrailPrefab);
             _activePickups.Add(pickup);
         }
 
@@ -212,7 +225,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             int collectedAmount = Mathf.FloorToInt(pickup.Amount * _essenceConfig.TowerEatFraction);
             _runEssenceService.Add(collectedAmount);
 
+            PlayTowerCollectVfx();
             Object.Destroy(pickup.gameObject);
+        }
+
+        private void PlayTowerCollectVfx()
+        {
+            if (_essenceConfig.TowerCollectPrefab == null)
+                return;
+
+            Entity mainHero = _mainHeroHolderService.MainHero;
+
+            if (mainHero == null || mainHero.TryGetTransform(out Transform towerTransform) == false)
+                return;
+
+            Vector3 spawnPosition = towerTransform.position;
+            spawnPosition.y += _essenceConfig.TowerCollectHeightOffset;
+
+            GameplayVfxUtility.SpawnTransientAt(
+                _essenceConfig.TowerCollectPrefab,
+                spawnPosition,
+                Quaternion.identity,
+                towerTransform,
+                _essenceConfig.TowerCollectVfxScale);
         }
 
         private void ClearActivePickups()
@@ -226,12 +261,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             _activePickups.Clear();
         }
 
-        private Vector3 GetTowerPosition()
+        private Vector3 GetTowerCollectPosition()
         {
             Entity mainHero = _mainHeroHolderService.MainHero;
 
             if (mainHero != null && mainHero.TryGetTransform(out Transform towerTransform))
-                return towerTransform.position;
+            {
+                Vector3 towerCollectPosition = towerTransform.position;
+                towerCollectPosition.y += _essenceConfig.TowerCollectHeightOffset;
+                return towerCollectPosition;
+            }
 
             return Vector3.zero;
         }

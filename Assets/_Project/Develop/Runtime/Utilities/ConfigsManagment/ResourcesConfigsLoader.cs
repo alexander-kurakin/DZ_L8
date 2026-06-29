@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using _Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Juice;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
@@ -41,6 +42,9 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(EssenceConfig), "Configs/Gameplay/Essence/EssenceConfig" },
             {typeof(WaveEnemyPreviewIconsConfig), "Configs/Gameplay/Stages/WaveEnemyPreviewIconsConfig" },
             {typeof(ExplodeAtPointAbilityConfig), "Configs/Gameplay/Entities/Abilities/ExplodeAtPointAbilityConfig" },
+            {typeof(GameplayVfxConfig), "Configs/Gameplay/Juice/GameplayVfxConfig" },
+            {typeof(ProjectileBoundsConfig), "Configs/Gameplay/Entities/ProjectileBoundsConfig" },
+            {typeof(DragonEnrageConfig), "Configs/Gameplay/Entities/DragonEnrageConfig" },
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
             {typeof(GameSoundsConfig), "Configs/Utilities/Audio/GameSoundsConfig" },

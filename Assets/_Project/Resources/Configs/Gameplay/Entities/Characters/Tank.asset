@@ -18,6 +18,7 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 500
   <DeathProcessTime>k__BackingField: 1
   <AttackRange>k__BackingField: 20
+  <StopAtMiddleBeltAnchor>k__BackingField: 1
   <AttackProcessTime>k__BackingField: 1
   <AttackDelayTime>k__BackingField: 0.3
   <AttackCooldown>k__BackingField: 0.2

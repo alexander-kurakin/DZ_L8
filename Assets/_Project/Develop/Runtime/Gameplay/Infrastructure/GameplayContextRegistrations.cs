@@ -5,6 +5,7 @@ using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
 using _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
@@ -23,6 +24,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
+using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -53,6 +55,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSectorEnemyQueryService);
             container.RegisterAsSingle(CreateSectorGridFactory);
             container.RegisterAsSingle(CreateSpawnPathPreviewService);
+            container.RegisterAsSingle(CreatePathUnlockSequenceService);
+            container.RegisterAsSingle(CreatePlantPlacementPreviewService);
+            container.RegisterAsSingle(CreatePlantPlacementPreviewController).NonLazy();
             container.RegisterAsSingle(CreateWaveSpawnPlanService);
             container.RegisterAsSingle(CreatePlantPlacementService);
             container.RegisterAsSingle(CreatePlantDamageCounterService);
@@ -60,6 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayJuiceService).NonLazy();
             container.RegisterAsSingle(CreatePlantDamageApplicationService);
             container.RegisterAsSingle(CreateLmbFlavorToastService);
+            container.RegisterAsSingle(CreateLmbFrostProjectileService).NonLazy();
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
             container.RegisterAsSingle(CreateRunEssenceService);
             container.RegisterAsSingle(CreateEssenceFeatureService).NonLazy();
@@ -247,6 +253,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new LmbFlavorToastService();
         }
 
+        private static LmbFrostProjectileService CreateLmbFrostProjectileService(DIContainer c)
+        {
+            return new LmbFrostProjectileService();
+        }
+
         private static SectorGridFactory CreateSectorGridFactory(DIContainer c)
         {
             return new SectorGridFactory(c);
@@ -267,12 +278,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static DragonEnrageService CreateDragonEnrageService(DIContainer c)
         {
-            return new DragonEnrageService();
+            return new DragonEnrageService(
+                c.Resolve<ConfigsProviderService>().GetConfig<DragonEnrageConfig>());
         }
 
         private static GameplayJuiceService CreateGameplayJuiceService(DIContainer c)
         {
-            return new GameplayJuiceService(c.Resolve<EntitiesLifeContext>());
+            return new GameplayJuiceService(
+                c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<DragonEnrageConfig>());
         }
 
         private static PlantDamageApplicationService CreatePlantDamageApplicationService(DIContainer c)
@@ -286,6 +300,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static SpawnPathPreviewService CreateSpawnPathPreviewService(DIContainer c)
         {
             return new SpawnPathPreviewService();
+        }
+
+        private static PathUnlockSequenceService CreatePathUnlockSequenceService(DIContainer c)
+        {
+            return new PathUnlockSequenceService(c.Resolve<SpawnPathPreviewService>());
+        }
+
+        private static PlantPlacementPreviewService CreatePlantPlacementPreviewService(DIContainer c)
+        {
+            return new PlantPlacementPreviewService();
+        }
+
+        private static PlantPlacementPreviewController CreatePlantPlacementPreviewController(DIContainer c)
+        {
+            return new PlantPlacementPreviewController(
+                c.Resolve<PlantPlacementPreviewService>(),
+                c.Resolve<SectorRegistryService>(),
+                c.Resolve<PlantPlacementService>(),
+                c.Resolve<MainHeroHolderService>(),
+                c.Resolve<SpellcoreProgressionService>(),
+                c.Resolve<PathUnlockSequenceService>());
         }
 
         private static WaveSpawnPlanService CreateWaveSpawnPlanService(DIContainer c)
@@ -302,7 +337,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<ConfigsProviderService>(),
                 c.Resolve<SpawnPathPreviewService>(),
                 c.Resolve<WaveSpawnPlanService>(),
-                c.Resolve<GameplayJuiceService>());
+                c.Resolve<PathUnlockSequenceService>());
         }
 
         private static RunEssenceService CreateRunEssenceService(DIContainer c)

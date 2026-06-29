@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
@@ -16,7 +17,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
         private const float VolumeMaxMult = 1.2f;
         private const float PitchMin = 0.7f;
         private const float PitchMax = 1.2f;
-        private const float DEFAULT_VFX_LIFETIME_SECONDS = 3f;
 
         [SerializeField] private Animator _animator;
         [SerializeField] private GameObject _spawnEffectPrefab;
@@ -70,7 +70,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
                 _spawnEffectPrefab.transform.rotation);
 
             PlayAllParticleSystems(spawnEffectInstance);
-            Destroy(spawnEffectInstance, GetEffectLifetimeSeconds(spawnEffectInstance));
+            Destroy(spawnEffectInstance, GameplayVfxUtility.GetEffectLifetimeSeconds(spawnEffectInstance));
 
             if (_localAudioSource == null)
                 return;
@@ -85,29 +85,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature
 
             for (int index = 0; index < particleSystems.Length; index++)
                 particleSystems[index].Play(true);
-        }
-
-        private static float GetEffectLifetimeSeconds(GameObject root)
-        {
-            float maxLifetimeSeconds = DEFAULT_VFX_LIFETIME_SECONDS;
-            ParticleSystem[] particleSystems = root.GetComponentsInChildren<ParticleSystem>(true);
-
-            for (int index = 0; index < particleSystems.Length; index++)
-            {
-                ParticleSystem particleSystem = particleSystems[index];
-                ParticleSystem.MainModule mainModule = particleSystem.main;
-                float startLifetime = mainModule.startLifetime.constantMax;
-
-                if (mainModule.startLifetime.mode == ParticleSystemCurveMode.TwoConstants)
-                    startLifetime = mainModule.startLifetime.constantMax;
-
-                float effectLifetimeSeconds = mainModule.duration + startLifetime;
-
-                if (effectLifetimeSeconds > maxLifetimeSeconds)
-                    maxLifetimeSeconds = effectLifetimeSeconds;
-            }
-
-            return maxLifetimeSeconds + 0.35f;
         }
 
         private void SetupRandomSettingsOnAudioSource()

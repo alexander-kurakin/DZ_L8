@@ -1,6 +1,8 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
+using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
 {
@@ -35,7 +37,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             if (damage <= 0f)
                 return false;
 
-            bool damageApplied = EntitiesHelper.TryTakeDamageFrom(source, target, damage);
+            TakeDamageVisualKind visualKind = damageSource == PlantDamageSource.Mine
+                ? TakeDamageVisualKind.Mine
+                : TakeDamageVisualKind.Default;
+
+            bool damageApplied = EntitiesHelper.TryTakeDamageFrom(source, target, damage, visualKind);
 
             if (damageApplied
                 && damageSource == PlantDamageSource.Mine
@@ -44,7 +50,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
                 _dragonEnrageService.RegisterMineHit(target);
 
                 if (target.TryGetDragonEnrageStackCount(out int stackCount))
+                {
                     _gameplayJuiceService.PlayDragonEnragePulse(target, stackCount);
+
+                    if (target.TryGetTransform(out Transform dragonTransform))
+                    {
+                        DragonEnrageView enrageView = dragonTransform.GetComponentInChildren<DragonEnrageView>(true);
+                        enrageView?.PlayEnrage(stackCount, _dragonEnrageService.EnrageEffectScalePerStack);
+                    }
+                }
             }
 
             return damageApplied;

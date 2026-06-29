@@ -14,6 +14,7 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 {
@@ -30,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly SectorEnemyQueryService _sectorEnemyQueryService;
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFlavorToastService _lmbFlavorToastService;
+        private readonly LmbFrostProjectileService _lmbFrostProjectileService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         
@@ -46,6 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _sectorEnemyQueryService = container.Resolve<SectorEnemyQueryService>();
             _sectorRegistryService = container.Resolve<SectorRegistryService>();
             _lmbFlavorToastService = container.Resolve<LmbFlavorToastService>();
+            _lmbFrostProjectileService = container.Resolve<LmbFrostProjectileService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -174,7 +177,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _sectorEnemyQueryService,
                     _sectorRegistryService,
                     _lmbFlavorToastService,
-                    _explodeAtPointAbilityConfig));
+                    _explodeAtPointAbilityConfig,
+                    _lmbFrostProjectileService));
             
             return entity;
         }

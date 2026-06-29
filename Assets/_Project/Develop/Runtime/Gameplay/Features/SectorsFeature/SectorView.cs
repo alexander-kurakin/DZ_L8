@@ -9,8 +9,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
     [RequireComponent(typeof(SectorVolumeRegistrator))]
     public class SectorView : MonoBehaviour
     {
-        private const float UNLOCK_REVEAL_DURATION_SECONDS = 0.34f;
-
         [SerializeField] private Renderer _fillRenderer;
         [SerializeField] private LineRenderer _outline;
 
@@ -60,8 +58,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                                          && pendingUnlockRevealPathIndices.Contains(_registrator.SectorId.Index);
             bool isSpawnPath = spawnPathIndices != null
                                && spawnPathIndices.Contains(_registrator.SectorId.Index);
+            bool isHighlightableBelt = _registrator.SectorId.Belt != SectorBelt.Spawn;
             bool useUnlockedFill = isPathUnlocked
                                    && isPendingUnlockReveal == false
+                                   && isHighlightableBelt
                                    && (restrictFillToSpawnPaths == false || isSpawnPath);
 
             SectorFillVisualData fillVisual = useUnlockedFill
@@ -70,8 +70,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
             _currentFillVisual = fillVisual;
 
-            if (IsUnlockRevealPlaying() == false)
+            if (useUnlockedFill)
+            {
+                if (IsUnlockRevealPlaying() == false)
+                    ApplyFill(fillVisual);
+            }
+            else if (IsUnlockRevealPlaying() == false)
+            {
                 ApplyFill(fillVisual);
+            }
 
             ApplyOutline(visualConfig);
         }
@@ -79,7 +86,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         public void PlayUnlockReveal(
             SectorFillVisualData lockedFill,
             SectorFillVisualData unlockedFill,
-            float delaySeconds)
+            float delaySeconds,
+            float revealDurationSeconds)
         {
             if (_fillRenderer == null)
                 return;
@@ -109,7 +117,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                         SectorVisualUtility.ApplyTransparentColor(fillMaterial, color, alpha);
                     },
                     1f,
-                    UNLOCK_REVEAL_DURATION_SECONDS)
+                    revealDurationSeconds)
                 .SetEase(Ease.OutQuad));
             revealSequence.OnKill(() => ApplyFill(unlockedFill));
             revealSequence.OnComplete(() => ApplyFill(unlockedFill));
@@ -120,7 +128,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
         private void OnDestroy()
         {
-            _unlockRevealTween?.Kill();
+            StopUnlockRevealIfPlaying();
+        }
+
+        private void StopUnlockRevealIfPlaying()
+        {
+            if (_unlockRevealTween == null)
+                return;
+
+            _unlockRevealTween.Kill();
+            _unlockRevealTween = null;
         }
 
         private bool IsUnlockRevealPlaying()

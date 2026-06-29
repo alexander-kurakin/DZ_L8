@@ -20,3 +20,7 @@ MonoBehaviour:
   <MiddleBeltAnchorRadius>k__BackingField: 35.1
   <OuterBeltAnchorRadius>k__BackingField: 54.9
   <SpawnBeltAnchorRadius>k__BackingField: 77.4
+  <SpawnWedgeAngleMarginFraction>k__BackingField: 0.15
+  <SpawnWedgeRadiusMarginFraction>k__BackingField: 0.12
+  <SectorSurfaceGroundYOffset>k__BackingField: 0.25
+  <ClickArenaRadiusMargin>k__BackingField: 2

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 {
@@ -95,6 +96,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
             if (IsPathUnlocked(pathIndex) == false)
                 throw new InvalidOperationException($"Path {pathIndex} is not unlocked for spawn.");
+
+            return WorldToSector.GetPositionInWedge(_center, pathIndex, _gridConfig, angleOffsetRadians, radiusScale);
+        }
+
+        public Vector3 GetRandomSpawnPositionInWedge(int pathIndex)
+        {
+            EnsureInitialized();
+
+            if (IsPathUnlocked(pathIndex) == false)
+                throw new InvalidOperationException($"Path {pathIndex} is not unlocked for spawn.");
+
+            float sectorWidthRadians = (Mathf.PI * 2f) / SectorId.SectorsPerRing;
+            float angleMarginRadians = sectorWidthRadians * _gridConfig.SpawnWedgeAngleMarginFraction;
+            float minAngleOffsetRadians = angleMarginRadians;
+            float maxAngleOffsetRadians = sectorWidthRadians - angleMarginRadians;
+            float angleOffsetRadians = Random.Range(minAngleOffsetRadians, maxAngleOffsetRadians);
+
+            float radiusMarginFraction = _gridConfig.SpawnWedgeRadiusMarginFraction;
+            float minRadiusScale = radiusMarginFraction;
+            float maxRadiusScale = 1f - radiusMarginFraction;
+            float radiusScale = Random.Range(minRadiusScale, maxRadiusScale);
 
             return WorldToSector.GetPositionInWedge(_center, pathIndex, _gridConfig, angleOffsetRadians, radiusScale);
         }

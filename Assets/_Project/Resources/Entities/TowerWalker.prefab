@@ -134,6 +134,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _animator: {fileID: 5701155334034682124}
+  _projectileSpawnPoint: {fileID: 5645989512588368130}
   _castVfxPrefab: {fileID: 5374757574983774937, guid: b1ae5055f08b8284d9e996465d1d37e3,
     type: 3}
   _castSound: 6
