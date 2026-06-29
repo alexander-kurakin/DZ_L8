@@ -6,6 +6,7 @@ using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
 using _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Juice;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
@@ -62,6 +63,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreatePlantPlacementService);
             container.RegisterAsSingle(CreatePlantDamageCounterService);
             container.RegisterAsSingle(CreateDragonEnrageService);
+            container.RegisterAsSingle(CreateScreenShakeService);
             container.RegisterAsSingle(CreateGameplayJuiceService).NonLazy();
             container.RegisterAsSingle(CreatePlantDamageApplicationService);
             container.RegisterAsSingle(CreateLmbFlavorToastService);
@@ -282,11 +284,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<ConfigsProviderService>().GetConfig<DragonEnrageConfig>());
         }
 
+        private static ScreenShakeService CreateScreenShakeService(DIContainer c)
+        {
+            return new ScreenShakeService(c.Resolve<ConfigsProviderService>().GetConfig<GameplayVfxConfig>());
+        }
+
         private static GameplayJuiceService CreateGameplayJuiceService(DIContainer c)
         {
             return new GameplayJuiceService(
                 c.Resolve<EntitiesLifeContext>(),
-                c.Resolve<ConfigsProviderService>().GetConfig<DragonEnrageConfig>());
+                c.Resolve<ConfigsProviderService>().GetConfig<DragonEnrageConfig>(),
+                c.Resolve<ScreenShakeService>());
         }
 
         private static PlantDamageApplicationService CreatePlantDamageApplicationService(DIContainer c)

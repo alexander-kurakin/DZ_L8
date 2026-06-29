@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
@@ -22,6 +23,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly ExplodeAtPointAbilityConfig _config;
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
+        private readonly GameplayJuiceService _gameplayJuiceService;
 
         private readonly List<Entity> _enemiesInSector = new();
 
@@ -39,7 +41,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             SectorRegistryService sectorRegistryService,
             LmbFlavorToastService lmbFlavorToastService,
             ExplodeAtPointAbilityConfig config,
-            LmbFrostProjectileService lmbFrostProjectileService)
+            LmbFrostProjectileService lmbFrostProjectileService,
+            GameplayJuiceService gameplayJuiceService)
         {
             _sectorMembershipService = sectorMembershipService;
             _sectorEnemyQueryService = sectorEnemyQueryService;
@@ -47,6 +50,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             _lmbFlavorToastService = lmbFlavorToastService;
             _config = config;
             _lmbFrostProjectileService = lmbFrostProjectileService;
+            _gameplayJuiceService = gameplayJuiceService;
         }
 
         public void OnInit(Entity entity)
@@ -107,6 +111,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
         private void OnProjectileImpact(Vector3 impactPoint)
         {
+            _gameplayJuiceService.PlayScreenShakeSmall();
+
             SectorId sectorId = _sectorMembershipService.ResolveFromWorldPosition(impactPoint);
             _sectorEnemyQueryService.CollectEnemiesInSector(sectorId, _enemiesInSector);
 

@@ -11,6 +11,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOnTargetReached;
 using Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
@@ -83,6 +84,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddSystem(new TakeDamageSystem())
+                .AddSystem(new TowerTakeDamageScreenShakeSystem(_container.Resolve<GameplayJuiceService>()))
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new DeathProcessTimerSystem())
@@ -467,6 +469,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new MineSectorDetonationSystem(
                     _container.Resolve<SectorEnemyQueryService>(),
                     _container.Resolve<PlantDamageApplicationService>(),
+                    _container.Resolve<GameplayJuiceService>(),
                     mineConfig.ProcDelaySeconds));
 
             return entity;

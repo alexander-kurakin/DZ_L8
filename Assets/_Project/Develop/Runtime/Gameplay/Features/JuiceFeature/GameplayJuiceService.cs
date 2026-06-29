@@ -11,12 +11,27 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
     public class GameplayJuiceService
     {
         private readonly DragonEnrageConfig _dragonEnrageConfig;
+        private readonly ScreenShakeService _screenShakeService;
         private readonly Dictionary<Transform, Vector3> _baseScaleByTransform = new();
 
-        public GameplayJuiceService(EntitiesLifeContext entitiesLifeContext, DragonEnrageConfig dragonEnrageConfig)
+        public GameplayJuiceService(
+            EntitiesLifeContext entitiesLifeContext,
+            DragonEnrageConfig dragonEnrageConfig,
+            ScreenShakeService screenShakeService)
         {
             _dragonEnrageConfig = dragonEnrageConfig;
+            _screenShakeService = screenShakeService;
             entitiesLifeContext.Released += OnEntityReleased;
+        }
+
+        public void PlayScreenShakeSmall()
+        {
+            _screenShakeService.PlaySmall();
+        }
+
+        public void PlayScreenShakeMedium()
+        {
+            _screenShakeService.PlayMedium();
         }
 
         public void PlayPathUnlockPulse(

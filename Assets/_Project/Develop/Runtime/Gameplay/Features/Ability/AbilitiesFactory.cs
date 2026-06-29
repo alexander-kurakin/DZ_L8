@@ -12,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
@@ -32,6 +33,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
+        private readonly GameplayJuiceService _gameplayJuiceService;
         
         private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
         
@@ -49,6 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _sectorRegistryService = container.Resolve<SectorRegistryService>();
             _lmbFlavorToastService = container.Resolve<LmbFlavorToastService>();
             _lmbFrostProjectileService = container.Resolve<LmbFrostProjectileService>();
+            _gameplayJuiceService = container.Resolve<GameplayJuiceService>();
             
             _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
         }
@@ -178,7 +181,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _sectorRegistryService,
                     _lmbFlavorToastService,
                     _explodeAtPointAbilityConfig,
-                    _lmbFrostProjectileService));
+                    _lmbFrostProjectileService,
+                    _gameplayJuiceService));
             
             return entity;
         }

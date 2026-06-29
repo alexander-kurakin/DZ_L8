@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
     {
         private readonly SectorEnemyQueryService _sectorEnemyQueryService;
         private readonly PlantDamageApplicationService _plantDamageApplicationService;
+        private readonly GameplayJuiceService _gameplayJuiceService;
 
         private readonly List<Entity> _enemiesInSector = new();
         private readonly HashSet<Entity> _damagedEnemies = new();
@@ -29,10 +31,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
         public MineSectorDetonationSystem(
             SectorEnemyQueryService sectorEnemyQueryService,
             PlantDamageApplicationService plantDamageApplicationService,
+            GameplayJuiceService gameplayJuiceService,
             float procDelaySeconds)
         {
             _sectorEnemyQueryService = sectorEnemyQueryService;
             _plantDamageApplicationService = plantDamageApplicationService;
+            _gameplayJuiceService = gameplayJuiceService;
             _procDelaySeconds = procDelaySeconds;
         }
 
@@ -68,6 +72,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Mines
                 return;
 
             ApplySectorDamageToUndamagedEnemies();
+            _gameplayJuiceService.PlayScreenShakeMedium();
             _dealAreaImpactDamageRequest?.Invoke(_mineTransform.position);
             _isDetonating = false;
         }

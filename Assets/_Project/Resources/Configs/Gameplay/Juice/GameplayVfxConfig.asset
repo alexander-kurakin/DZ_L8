@@ -14,3 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <DefaultEffectLifetimeSeconds>k__BackingField: 3
   <EffectLifetimePaddingSeconds>k__BackingField: 0.35
+  <SmallScreenShakeDurationSeconds>k__BackingField: 0.12
+  <SmallScreenShakeStrength>k__BackingField: 0.12
+  <MediumScreenShakeDurationSeconds>k__BackingField: 0.22
+  <MediumScreenShakeStrength>k__BackingField: 0.28
+  <ScreenShakeVibrato>k__BackingField: 18
+  <ScreenShakeRandomness>k__BackingField: 45
