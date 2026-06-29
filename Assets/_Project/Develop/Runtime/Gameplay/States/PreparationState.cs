@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
@@ -30,6 +31,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
+        private readonly EssenceFeatureService _essenceFeatureService;
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
         private MouseOverUIService _mouseOverUIService;
@@ -47,7 +49,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             MouseOverUIService mouseOverUIService,
             SpellcoreProgressionService spellcoreProgressionService,
             SectorRegistryService sectorRegistryService,
-            LmbFrostProjectileService lmbFrostProjectileService)
+            LmbFrostProjectileService lmbFrostProjectileService,
+            EssenceFeatureService essenceFeatureService)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -60,6 +63,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _spellcoreProgressionService = spellcoreProgressionService;
             _sectorRegistryService = sectorRegistryService;
             _lmbFrostProjectileService = lmbFrostProjectileService;
+            _essenceFeatureService = essenceFeatureService;
         }
 
         public override void Enter()
@@ -79,6 +83,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 : AbilityType.ExplodeAtPoint;
 
             _spellcoreProgressionService.OnPreparationEntered();
+
+            _essenceFeatureService.TryGrantBailoutOnPreparation(
+                _mainHeroHolderService.MainHero,
+                _spellcoreProgressionService.CompletedWaves);
 
             _lmbFrostProjectileService.ClearQueuedProjectileLaunch();
 

@@ -1,6 +1,6 @@
 # Balance — Spellcore Princess Demo
 
-**Status:** единственный источник **всех чисел** для demo-среза  
+**Status:** синхронизировано с `LevelConfig` / `*Config.asset` (Epic 8)  
 **Правила и flow:** [[00-one-pager]] — без цифр, только качественные описания  
 **Код / конфиги:** значения вносятся сюда после playtest → перенос в `LevelConfig` / `*Config.asset` (не дублировать в плане, one-pager, word doc)
 
@@ -12,11 +12,11 @@
 
 | Параметр          | Значение | Примечание |
 | ----------------- | -------- | ---------- |
-| Tower max HP      | 2000     |            |
+| Tower max HP      | 2000     | `LevelConfig 1` |
 | Tower start HP    | 2000     |            |
-| Refund price      | 35%      |            |
-| Starter free Mine | 2        | after W1   |
-| LMB cooldown      | 5с       |            |
+| Refund price      | 35%      | `EssenceConfig.PlantSellRefundFraction` |
+| Starter free Mine | 2        | after W1; `SpellcoreProgressionConfig` |
+| LMB cooldown      | 5с       | `ExplodeAtPointAbilityConfig` |
 
 ---
 
@@ -24,20 +24,22 @@
 
 | Параметр                       | Значение | Примечание |
 | ------------------------------ | -------- | ---------- |
-| Start Essence (run)            |          |            |
-| Essence drop per kill (Cat)    |          |            |
-| Essence drop per kill (Tank)   |          |            |
-| Essence drop per kill (Dragon) |          |            |
-| Tower eat fraction             |          |            |
-| Vacuum hover radius            |          |            |
+| Start Essence (run)            | **0**    |            |
+| Essence drop per kill (Cat)    | **25**   |            |
+| Essence drop per kill (Tank)   | **60**   |            |
+| Essence drop per kill (Dragon) | **125**  |            |
+| Tower eat fraction             | **1.0**  | весь дроп в кошелёк |
+| Vacuum hover radius            | **2.5**  | `PickupHoverColliderRadius` |
 
 ### Plant costs (Essence)
 
 | Plant | Cost | Belt |
 | ----- | ---- | ---- |
-| Mine | TBD | O / M / I |
-| Toxic | TBD | O / M |
-| Turret | TBD | O / M / I |
+| Mine | **10** | O / M / I |
+| Toxic | **25** | O / M |
+| Turret | **100** | O / M / I |
+
+**Экономика W1→W3 (ориентир):** W1 ≈ 75 Essence; после W1 — 2 free mines; к W3 при полном сборе ≈ 270+ Essence → хватает на 1–2 платных растения без паники.
 
 ---
 
@@ -47,13 +49,13 @@
 | ----- | -------- | -------- | ---------- |
 | **Mine** | Damage | **250** | 2× на танка (500 HP); sector-based |
 | | Proc delay | **0.25с** | «short delay» |
-| | Radius / sector | TBD | sector-based в demo |
-| **Toxic** | DoT per tick | TBD | |
-| | Tick interval | TBD | |
-| | Slow | **−33%** move speed | канон |
-| | Radius / sector | TBD | O/M only |
+| | Radius / sector | **sector** | `ExplosionRadius` 15 — визуал/legacy; урон по сектору |
+| **Toxic** | DoT per tick | **35** | |
+| | Tick interval | **1с** | 35 DPS на Cat |
+| | Slow | **−33%** move speed | `SlowMoveSpeedFraction` 0.33 → `speed × (1 − 0.33)` |
+| | Radius / sector | **sector** | O/M only |
 | **Turret** | Damage per shot | **100** | inner belt vs dragon |
-| | Fire interval | TBD | |
+| | Fire interval | **~0.9с** | 0.5 process + 0.3 delay + 0.1 cooldown |
 | | Target arc | N±1 same belt | канон |
 | **LMB** | Cat damage | **50% max HP** | канон; не от current — иначе не убить |
 | | Tank / Dragon | 0 | flavor toasts |
@@ -64,8 +66,8 @@
 
 | Enemy | Belt | Max HP | Move speed | Другое |
 | ----- | ---- | ------ | ---------- | ------ |
-| Cat | Inner | **300** | **4** | explosion dmg TBD |
-| Tank | Middle | **500** | **9** | ranged dmg 100, range 20 |
+| Cat | Inner | **300** | **4** | explosion dmg **500** к башне |
+| Tank | Middle | **500** | **9** | ranged dmg 100; stop at **Middle belt anchor** (~35) via `StopAtMiddleBeltAnchor` |
 | Dragon | Inner | **400** | **9** | beam 40/tick; fly over toxic; 2 mines or inner turret |
 
 ---
@@ -77,7 +79,7 @@
 | Source → / Enemy ↓ | Cat | Tank | Dragon |
 | ------------------ | --- | ---- | ------ |
 | **Toxic DoT** | 1.0 + slow | 0.5 + slow | 0 (fly over) |
-| **Turret** | TBD | **0.5** (shield) | 1.0 |
+| **Turret** | **1.0** | **0.5** (shield) | 1.0 |
 | **Mine** | 1.0 | 1.0 | 1.0 + enrage |
 | **LMB** | 50% max HP | 0 | 0 |
 
@@ -86,7 +88,7 @@
 | Правило | Значение |
 | ------- | -------- |
 | Dragon enrage per mine hit | **+50%** outgoing damage (stack) |
-| Dragon enrage cap (demo) | TBD | max stacks или once per dragon |
+| Dragon enrage cap (demo) | **2 stacks** | max outgoing ×2; `DragonEnrageConfig.MaxEnrageStacks` |
 | Tank shield depletion | out of scope | post-demo |
 
 ---
@@ -97,11 +99,11 @@
 
 | Wave | Paths total | Cat count | Tank count | Dragon count | Spawn interval | Group pause | Notes |
 | ---- | ----------- | --------- | ---------- | ------------ | -------------- | ----------- | ----- |
-| 1 | 1 | **3** | 0 | 0 | 4–5с | — | teach LMB |
-| 2 | 2 | **3** | **2** | 0 | 1–1.5с / 1.5–2с | 2с | 2 mines vs tank |
-| 3 | 4 | **3** | **2** | **1** | см. Intro3 | 1.5–2с | inner turret/mine vs dragon |
-| 4 | 6 | **5** | **3** | **1** | см. Intro4 | 1.5–2с | intro toxic |
-| 5 | 6 | **6** | **5** | **2** | см. Intro5 | 1–1.5с | full factory |
+| 1 | 1 | **3** | 0 | 0 | 4–5с | — | teach LMB; `Intro1` |
+| 2 | 2 | **3** | **2** | 0 | 1–1.5с / 1.5–2с | 2с | 2 mines vs tank; `Intro2` |
+| 3 | 4 | **3** | **2** | **1** | 0.8–1.2 / 1–1.5с | 1.5–2с | inner turret/mine vs dragon; `Intro3` |
+| 4 | 6 | **5** | **3** | **1** | 0.6–1 / 0.8–1.2с | 1.5–2с | intro toxic; `Intro4` |
+| 5 | 6 | **6** | **5** | **2** | 0.4–1.5с (ускорение) | 1–1.5с | full factory; `Intro5` |
 
 **Difficulty scaling:** open Paths ↑ → больше направлений / микс (без per-sector % eff).
 
@@ -133,4 +135,4 @@
 
 | Cheat | Условие | Действие |
 | ----- | ------- | -------- |
-| Essence bailout | Tower HP < 20% | +TBD Essence |
+| Essence bailout | Tower HP < 20% на входе в prep | **+100 Essence** (1× за prep-фазу); `EssenceConfig` |

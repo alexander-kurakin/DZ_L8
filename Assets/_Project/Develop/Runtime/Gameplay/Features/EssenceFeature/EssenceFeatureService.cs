@@ -28,6 +28,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 
         private readonly List<EssencePickupView> _activePickups = new();
         private readonly Dictionary<Entity, IDisposable> _enemyDeathSubscriptions = new();
+        private readonly HashSet<int> _bailoutGrantedForCompletedWaves = new();
 
         public EssenceFeatureService(
             ConfigsProviderService configsProviderService,
@@ -52,13 +53,44 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
         public void InitializeForRun()
         {
             ClearActivePickups();
+            _bailoutGrantedForCompletedWaves.Clear();
             _runEssenceService.InitializeForRun(_essenceConfig);
         }
 
         public void ClearForNewRun()
         {
             ClearActivePickups();
+            _bailoutGrantedForCompletedWaves.Clear();
             _runEssenceService.ClearForNewRun();
+        }
+
+        public void TryGrantBailoutOnPreparation(Entity tower, int completedWaves)
+        {
+            if (_essenceConfig.BailoutEssenceAmount <= 0)
+                return;
+
+            if (_bailoutGrantedForCompletedWaves.Contains(completedWaves))
+                return;
+
+            if (tower == null)
+                return;
+
+            if (tower.TryGetCurrentHealth(out ReactiveVariable<float> currentHealth) == false)
+                return;
+
+            if (tower.TryGetMaxHealth(out ReactiveVariable<float> maxHealth) == false)
+                return;
+
+            if (maxHealth.Value <= 0f)
+                return;
+
+            float healthFraction = currentHealth.Value / maxHealth.Value;
+
+            if (healthFraction >= _essenceConfig.BailoutTowerHealthFraction)
+                return;
+
+            _runEssenceService.Add(_essenceConfig.BailoutEssenceAmount);
+            _bailoutGrantedForCompletedWaves.Add(completedWaves);
         }
 
         public void Update(float deltaTime)

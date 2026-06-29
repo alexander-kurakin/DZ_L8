@@ -18,3 +18,4 @@ MonoBehaviour:
   <EnragePunchDurationSeconds>k__BackingField: 0.2
   <EnragePunchScalePerStack>k__BackingField: 0.04
   <EnragePunchMaxStacksForScale>k__BackingField: 4
+  <MaxEnrageStacks>k__BackingField: 2

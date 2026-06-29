@@ -26,6 +26,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             if (dragon.TryGetDragonEnrageStackCount(out int stackCount) == false)
                 return;
 
+            if (stackCount >= _config.MaxEnrageStacks)
+                return;
+
             dragon.DragonEnrageStackCountC.Value = stackCount + 1;
         }
 

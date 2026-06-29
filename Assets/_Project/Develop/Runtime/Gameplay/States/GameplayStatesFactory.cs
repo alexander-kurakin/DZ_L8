@@ -7,6 +7,7 @@ using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
@@ -42,7 +43,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<MouseOverUIService>(),
                 _container.Resolve<SpellcoreProgressionService>(),
                 _container.Resolve<SectorRegistryService>(),
-                _container.Resolve<LmbFrostProjectileService>());
+                _container.Resolve<LmbFrostProjectileService>(),
+                _container.Resolve<EssenceFeatureService>());
         }
 
         public StageProcessState CreateStageProcessState()

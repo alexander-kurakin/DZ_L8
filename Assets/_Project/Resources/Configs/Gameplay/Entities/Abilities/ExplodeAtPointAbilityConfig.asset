@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: ExplodeAtPointAbilityConfig
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: 
-  <CooldownSeconds>k__BackingField: 3
+  <CooldownSeconds>k__BackingField: 5
   <CatMaxHealthDamageFraction>k__BackingField: 0.5
   <FrostProjectilePrefab>k__BackingField: {fileID: 3814496778439236206, guid: 0e97097ebbad225488a0264463560ec6,
     type: 3}

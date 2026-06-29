@@ -16,6 +16,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Essence
         [field: SerializeField, Min(0f)] public float TowerCollectHeightOffset { get; private set; } = 3.5f;
         [field: SerializeField, Range(0f, 1f)] public float TowerEatFraction { get; private set; } = 1f;
         [field: SerializeField, Range(0f, 1f)] public float PlantSellRefundFraction { get; private set; } = 0.35f;
+        [field: SerializeField, Range(0f, 1f)] public float BailoutTowerHealthFraction { get; private set; } = 0.2f;
+        [field: SerializeField, Min(0)] public int BailoutEssenceAmount { get; private set; } = 100;
         [field: SerializeField] public GameObject PickupGlowPrefab { get; private set; }
         [field: SerializeField] public GameObject PickupDropPrefab { get; private set; }
         [field: SerializeField] public GameObject PickupVacuumTrailPrefab { get; private set; }

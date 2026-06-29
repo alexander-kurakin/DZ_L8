@@ -11,5 +11,6 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         [field: SerializeField, Min(0f)] public float EnragePunchDurationSeconds { get; private set; } = 0.2f;
         [field: SerializeField, Min(0f)] public float EnragePunchScalePerStack { get; private set; } = 0.04f;
         [field: SerializeField, Min(0)] public int EnragePunchMaxStacksForScale { get; private set; } = 4;
+        [field: SerializeField, Min(0)] public int MaxEnrageStacks { get; private set; } = 2;
     }
 }
