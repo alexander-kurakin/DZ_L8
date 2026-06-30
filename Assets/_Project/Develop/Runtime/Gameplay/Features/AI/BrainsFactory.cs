@@ -17,6 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
         private readonly TimerServiceFactory _timerServiceFactory;
         private readonly AIBrainsContext _brainsContext;
         private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly BrotherRandomWalkerBrainsRegistry _brotherRandomWalkerBrainsRegistry;
 
         public BrainsFactory(DIContainer container)
         {
@@ -24,6 +25,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             _brainsContext = _container.Resolve<AIBrainsContext>();
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _timerServiceFactory = _container.Resolve<TimerServiceFactory>();
+            _brotherRandomWalkerBrainsRegistry = _container.Resolve<BrotherRandomWalkerBrainsRegistry>();
+        }
+
+        public bool TryRestartBrotherWalkerIdleCycle(Entity entity)
+        {
+            return _brotherRandomWalkerBrainsRegistry.TryRestartIdleCycle(entity);
         }
 
         public StateMachineBrain CreateWalkingTowardsTargetBrain(Entity entity, ITargetSelector targetSelector)
@@ -174,7 +181,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return stateMachine;
         }        
         
-        private AIStateMachine CreateRandomMovementStateMachine(Entity entity)
+        private AIStateMachine CreateRandomMovementStateMachine(Entity entity, out BrotherRandomWalkerBrainHandle brainHandle)
         {
             List<IDisposable> disposables = new List<IDisposable>();
 
@@ -200,12 +207,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             stateMachine.AddTransition(randomMovementState, informativeIdleState, movementTimerEndedCondition);
             stateMachine.AddTransition(informativeIdleState, randomMovementState, idleTimerEndedCondition);
 
+            brainHandle = new BrotherRandomWalkerBrainHandle(
+                stateMachine,
+                informativeIdleState,
+                movementTimer,
+                idleTimer);
+
             return stateMachine;
         }
         
         public StateMachineBrain CreateSimpleRandomWalkerBrain(Entity entity)
         {
-            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity);
+            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity, out BrotherRandomWalkerBrainHandle brainHandle);
+            _brotherRandomWalkerBrainsRegistry.Register(entity, brainHandle);
             StateMachineBrain brain = new StateMachineBrain(stateMachine);
 
             _brainsContext.SetFor(entity, brain);

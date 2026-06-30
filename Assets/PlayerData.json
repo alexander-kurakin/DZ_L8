@@ -1,9 +1,9 @@
 {
   "WalletData": {
-    "Gold": 720200
+    "Gold": 1120200
   },
-  "Wins": 12,
-  "Losses": 4,
+  "Wins": 14,
+  "Losses": 5,
   "PowerupsData": {
     "MultiplyMainAbilityDamage": {
       "Level": 1,

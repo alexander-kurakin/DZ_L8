@@ -15,7 +15,7 @@ MonoBehaviour:
   <PrefabPath>k__BackingField: Entities/WalkingExplodingEnemy
   <MoveSpeed>k__BackingField: 4
   <RotationSpeed>k__BackingField: 900
-  <MaxHealth>k__BackingField: 300
+  <MaxHealth>k__BackingField: 325
   <DeathProcessTime>k__BackingField: 1
   <DistanceToTargetGoal>k__BackingField: 15
   <ExplosionDamage>k__BackingField: 150

@@ -13,9 +13,11 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -135,18 +137,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         
         public Entity CreateTowerBrother()
         {
-            
+            TowerBrotherStoneThrowConfig stoneThrowConfig =
+                _configsProviderService.GetConfig<TowerBrotherStoneThrowConfig>();
+
             Entity entity = _entitiesFactory.CreateTowerBrother(_townWalkerSpawnPoint.position + (Vector3.right * 2));
-            
+
+            ReactiveVariable<bool> isStoneThrowing = new ReactiveVariable<bool>(false);
+
             entity
                 .AddGameplayPhase()
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
+                .AddBrotherStoneThrowEvent()
+                .AddBrotherStoneThrowing(isStoneThrowing)
+                .AddSystem(new TowerBrotherStoneThrowSystem(
+                    _container.Resolve<SectorEnemyQueryService>(),
+                    _entitiesFactory,
+                    stoneThrowConfig,
+                    _brainsFactory));
+
+            entity.CanMove.Add(new FuncCondition(() => isStoneThrowing.Value == false));
+            entity.CanRotate.Add(new FuncCondition(() => isStoneThrowing.Value == false));
 
             _mainHeroHolderService.RegisterTowerBrother(entity);
 
             _entitiesLifeContext.Add(entity);
             _brainsFactory.CreateSimpleRandomWalkerBrain(entity);
-            
+
             return entity;
         }
     }

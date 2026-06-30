@@ -92,5 +92,18 @@ namespace Assets._Project.Develop.Runtime.Utilities.StateMachineCore
             _currentState = nextState;
             _currentState.State.Enter();
         }
+
+        public void ForceState(TState state)
+        {
+            if (_isRunning == false)
+                return;
+
+            StateNode<TState> nextState = _states.First(stateNode => stateNode.State == state);
+
+            if (_currentState == nextState)
+                return;
+
+            SwitchState(nextState);
+        }
     }
 }

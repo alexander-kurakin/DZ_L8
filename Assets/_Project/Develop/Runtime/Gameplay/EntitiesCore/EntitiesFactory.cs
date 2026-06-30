@@ -21,6 +21,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
@@ -548,13 +549,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         
         public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, Entity owner)
         {
+            return CreateProjectile(position, direction, damage, 25f, owner);
+        }
+
+        public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, float speed, Entity owner)
+        {
             Entity entity = CreateEmpty();
 
             _monoEntitiesFactory.Create(entity, position, "Entities/Projectile");
 
             entity
                 .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
-                .AddMoveSpeed(new ReactiveVariable<float>(25))
+                .AddMoveSpeed(new ReactiveVariable<float>(speed))
                 .AddIsMoving()
                 .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
                 .AddRotationSpeed(new ReactiveVariable<float>(9999))
@@ -599,6 +605,86 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     _container.Resolve<MouseRaycastService>().Camera,
                     _container.Resolve<SectorRegistryService>(),
                     _container.Resolve<ConfigsProviderService>().GetConfig<ProjectileBoundsConfig>()))
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+
+        public Entity CreateBrotherStoneProjectile(
+            Vector3 startPosition,
+            Vector3 targetPosition,
+            Entity targetEntity,
+            float damage,
+            float speed,
+            Entity owner)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, startPosition, "Entities/Projectile");
+
+            TowerBrotherStoneThrowConfig stoneThrowConfig =
+                _container.Resolve<ConfigsProviderService>().GetConfig<TowerBrotherStoneThrowConfig>();
+
+            Vector3 direction = targetPosition - startPosition;
+            direction.Normalize();
+
+            BrotherStoneArcFlight arcFlight = new BrotherStoneArcFlight
+            {
+                StartPosition = startPosition,
+                TargetPosition = targetPosition,
+                TargetEntity = targetEntity,
+                Speed = speed,
+                TotalDistance = Vector3.Distance(startPosition, targetPosition),
+                TraveledTime = 0f,
+                IsCompleted = false,
+            };
+
+            entity
+                .AddComponent(arcFlight)
+                .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
+                .AddMoveSpeed(new ReactiveVariable<float>(speed))
+                .AddIsMoving()
+                .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
+                .AddRotationSpeed(new ReactiveVariable<float>(9999))
+                .AddIsDead()
+                .AddContactsDetectingMask(Layers.CharactersMask)
+                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+                .AddIsTouchAnotherTeam()
+                .AddTeam(new ReactiveVariable<Teams>(owner.Team.Value));
+
+            ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition canRotate = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
+                .Add(new FuncCondition(() => entity.IsTouchAnotherTeam.Value))
+                .Add(new FuncCondition(() => arcFlight.IsCompleted));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value));
+
+            entity
+                .AddCanMove(canMove)
+                .AddCanRotate(canRotate)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new BrotherStoneArcMovementSystem(stoneThrowConfig))
+                .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new AnotherTeamTouchDetectorSystem())
+                .AddSystem(new BrotherStoneProjectileImpactVfxSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
                 .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));

@@ -15,7 +15,7 @@ MonoBehaviour:
   <PrefabPath>k__BackingField: Entities/RangedDotEnemy
   <MoveSpeed>k__BackingField: 9
   <RotationSpeed>k__BackingField: 900
-  <MaxHealth>k__BackingField: 400
+  <MaxHealth>k__BackingField: 425
   <DeathProcessTime>k__BackingField: 1
   <DistanceToTargetGoal>k__BackingField: 20
   <DamagePerTick>k__BackingField: 40

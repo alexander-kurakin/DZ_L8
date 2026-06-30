@@ -112,6 +112,61 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent BrotherStoneThrowEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> BrotherStoneThrowEvent => BrotherStoneThrowEventC.Value;
+
+		public bool TryGetBrotherStoneThrowEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing BrotherStoneThrowingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> BrotherStoneThrowing => BrotherStoneThrowingC.Value;
+
+		public bool TryGetBrotherStoneThrowing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowing()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight BrotherStoneArcFlightC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneArcFlight(UnityEngine.Vector3 startPosition,UnityEngine.Vector3 targetPosition,Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity targetEntity,System.Single speed,System.Single totalDistance,System.Single traveledTime,System.Boolean isCompleted)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight() {StartPosition = startPosition, TargetPosition = targetPosition, TargetEntity = targetEntity, Speed = speed, TotalDistance = totalDistance, TraveledTime = traveledTime, IsCompleted = isCompleted}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;

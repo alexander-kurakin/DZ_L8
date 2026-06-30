@@ -45,6 +45,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             {typeof(GameplayVfxConfig), "Configs/Gameplay/Juice/GameplayVfxConfig" },
             {typeof(ProjectileBoundsConfig), "Configs/Gameplay/Entities/ProjectileBoundsConfig" },
             {typeof(DragonEnrageConfig), "Configs/Gameplay/Entities/DragonEnrageConfig" },
+            {typeof(TowerBrotherStoneThrowConfig), "Configs/Gameplay/Entities/TowerBrotherStoneThrowConfig" },
             {typeof(BackgroundMusicConfig), "Configs/Utilities/Audio/BackgroundMusicConfig" },
             {typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
             {typeof(GameSoundsConfig), "Configs/Utilities/Audio/GameSoundsConfig" },

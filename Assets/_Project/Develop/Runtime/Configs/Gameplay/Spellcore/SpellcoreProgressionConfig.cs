@@ -5,7 +5,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore
     [CreateAssetMenu(menuName = "Configs/Gameplay/Spellcore/NewSpellcoreProgressionConfig", fileName = "SpellcoreProgressionConfig")]
     public class SpellcoreProgressionConfig : ScriptableObject
     {
-        [SerializeField] private int[] _pathCountsByWave = { 1, 2, 4, 6, 6 };
+        [SerializeField] private int[] _pathCountsByWave = { 1, 2, 3, 5, 6 };
         [SerializeField, Min(0)] private int _starterFreeMines = 2;
 
         public int GetPathCountForWave(int waveNumber)

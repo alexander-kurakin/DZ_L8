@@ -43,8 +43,8 @@ MonoBehaviour:
   <PickupVacuumSettleDurationSeconds>k__BackingField: 0.28
   _enemyDrops:
   - <PreviewType>k__BackingField: 0
-    <DropAmount>k__BackingField: 25
+    <DropAmount>k__BackingField: 20
   - <PreviewType>k__BackingField: 1
-    <DropAmount>k__BackingField: 60
+    <DropAmount>k__BackingField: 50
   - <PreviewType>k__BackingField: 2
-    <DropAmount>k__BackingField: 125
+    <DropAmount>k__BackingField: 100

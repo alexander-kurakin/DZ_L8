@@ -72,6 +72,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateRunEssenceService);
             container.RegisterAsSingle(CreateEssenceFeatureService).NonLazy();
 
+            container.RegisterAsSingle(CreateBrotherRandomWalkerBrainsRegistry);
             container.RegisterAsSingle(CreateBrainsFactory);
             
             container.RegisterAsSingle(CreateAbilitiesFactory);
@@ -221,6 +222,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static AIBrainsContext CreateAIBrainsContext(DIContainer c)
         {
             return new AIBrainsContext();
+        }
+
+        private static BrotherRandomWalkerBrainsRegistry CreateBrotherRandomWalkerBrainsRegistry(DIContainer c)
+        {
+            return new BrotherRandomWalkerBrainsRegistry();
         }
 
         private static BrainsFactory CreateBrainsFactory(DIContainer c)

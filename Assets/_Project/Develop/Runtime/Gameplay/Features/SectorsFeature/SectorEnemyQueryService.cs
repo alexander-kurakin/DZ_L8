@@ -71,6 +71,42 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             }
         }
 
+        public void CollectEnemiesOnBelt(SectorBelt belt, List<Entity> results)
+        {
+            results.Clear();
+
+            foreach (Entity entity in _entitiesLifeContext.Entities)
+            {
+                if (IsEnemyAlive(entity) == false)
+                    continue;
+
+                SectorId enemySector = ResolveEnemySector(entity);
+
+                if (enemySector.Belt != belt)
+                    continue;
+
+                results.Add(entity);
+            }
+        }
+
+        public void CollectEnemiesOnBelts(SectorBelt firstBelt, SectorBelt secondBelt, List<Entity> results)
+        {
+            results.Clear();
+
+            foreach (Entity entity in _entitiesLifeContext.Entities)
+            {
+                if (IsEnemyAlive(entity) == false)
+                    continue;
+
+                SectorId enemySector = ResolveEnemySector(entity);
+
+                if (enemySector.Belt != firstBelt && enemySector.Belt != secondBelt)
+                    continue;
+
+                results.Add(entity);
+            }
+        }
+
         public void CollectEnemiesOnBeltAtPathIndices(SectorBelt belt, int centerPathIndex, List<Entity> results)
         {
             results.Clear();
