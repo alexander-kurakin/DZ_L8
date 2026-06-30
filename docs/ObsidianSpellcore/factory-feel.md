@@ -1,7 +1,7 @@
 # Factory feel — целевое ощущение боя
 
 **Status:** черновик направления · **v2 (build-only damage)** — см. §12  
-**Связь:** [[00-one-pager]] · [[pillars]] · [[balance]] · [[balance-budgets]]  
+**Связь:** [[00-one-pager]] · [[pillars]] · [[balance]] · [[balance-budgets]] · **[[plan-v3]]**  
 **Референс по ощущению:** King is Watching (не клон механик)
 
 ---

@@ -28,3 +28,4 @@
 ## В работе
 - [[scope-mvp]]
 - [[open-questions]]
+- **[[plan-v3]]** — Spellcore v3 (ветка `Spellcore_v3`, factory / idle)
