@@ -7,8 +7,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
         fileName = "TowerBrotherStoneThrowConfig")]
     public class TowerBrotherStoneThrowConfig : ScriptableObject
     {
-        [field: SerializeField, Min(0f)] public float ThrowIntervalSeconds { get; private set; } = 3f;
-        [field: SerializeField, Min(0f)] public float DamagePerThrow { get; private set; } = 95f;
+        [field: SerializeField, Min(0f)] public float ThrowIntervalSeconds { get; private set; } = 2.2f;
+        [field: SerializeField, Min(0f)] public float DamagePerThrow { get; private set; } = 135f;
         [field: SerializeField, Min(0f)] public float ThrowAnimationDurationSeconds { get; private set; } = 0.65f;
         [field: SerializeField, Min(0f)] public float ProjectileSpeed { get; private set; } = 28f;
         [field: SerializeField, Min(0f)] public float ProjectileScale { get; private set; } = 0.35f;

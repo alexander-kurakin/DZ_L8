@@ -135,17 +135,18 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
                 if (enemy.TryGetEnemyWavePreviewType(out WaveEnemyPreviewType previewType) == false)
                 {
-                    ApplyCatDamage(enemy);
+                    ApplyMaxHealthFractionDamage(enemy, _config.CatMaxHealthDamageFraction);
                     continue;
                 }
 
                 switch (previewType)
                 {
                     case WaveEnemyPreviewType.Cat:
-                        ApplyCatDamage(enemy);
+                        ApplyMaxHealthFractionDamage(enemy, _config.CatMaxHealthDamageFraction);
                         break;
 
                     case WaveEnemyPreviewType.Tank:
+                        ApplyMaxHealthFractionDamage(enemy, _config.TankMaxHealthDamageFraction);
                         showTankToast = true;
                         break;
 
@@ -174,12 +175,12 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             return enemySector.Belt != SectorBelt.Spawn;
         }
 
-        private void ApplyCatDamage(Entity enemy)
+        private void ApplyMaxHealthFractionDamage(Entity enemy, float damageFraction)
         {
             if (enemy.TryGetMaxHealth(out ReactiveVariable<float> maxHealth) == false)
                 return;
 
-            float damage = maxHealth.Value * _config.CatMaxHealthDamageFraction;
+            float damage = maxHealth.Value * damageFraction;
 
             if (damage <= 0f)
                 return;

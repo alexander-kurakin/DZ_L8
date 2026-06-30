@@ -53,6 +53,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
         public int CompletedWaves => _completedWaves;
 
+        public int UpcomingWaveNumber => _completedWaves + 1;
+
         public int FreeMinesRemaining => _freeMinesRemaining;
 
         public void InitializeForRun()
@@ -63,7 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             _pendingUnlockRevealPathIndices.Clear();
             _stageCompletedSubscription = _stageProviderService.StageCompleted.Subscribe(OnWaveCompleted);
 
-            ApplyPathsForWave(GetUpcomingWaveNumber());
+            ApplyPathsForWave(UpcomingWaveNumber);
             RefreshSectorVisuals();
             Changed?.Invoke();
         }
@@ -71,7 +73,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
         public void OnPreparationEntered()
         {
             _showSpawnPathPreview = true;
-            ApplyPathsForWave(GetUpcomingWaveNumber());
+            ApplyPathsForWave(UpcomingWaveNumber);
             RefreshSectorVisuals();
             TryPlayPendingPathUnlockReveal();
             Changed?.Invoke();
@@ -135,8 +137,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             Changed?.Invoke();
         }
 
-        private int GetUpcomingWaveNumber() => _completedWaves + 1;
-
         private void ApplyPathsForWave(int waveNumber)
         {
             int targetPathCount = _config.GetPathCountForWave(waveNumber);
@@ -196,9 +196,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
             if (_showSpawnPathPreview)
             {
-                int upcomingWaveNumber = GetUpcomingWaveNumber();
                 ClearAllEnemiesStageConfig stageConfig =
-                    _stageProviderService.GetClearAllEnemiesStageConfigForWave(upcomingWaveNumber);
+                    _stageProviderService.GetClearAllEnemiesStageConfigForWave(UpcomingWaveNumber);
 
                 _waveSpawnPlanService.BuildForWave(stageConfig, _sectorRegistryService);
                 sectorBootstrap.RefreshViews(

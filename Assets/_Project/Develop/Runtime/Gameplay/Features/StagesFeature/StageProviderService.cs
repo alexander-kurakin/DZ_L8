@@ -66,14 +66,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
 
-        public IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypes()
+        public IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypesForWave(int waveNumber)
         {
-            int stageConfigIndex = _currentStageNumber.Value;
-
-            if (_currentStageResult.Value == StageResults.Uncompleted)
-                stageConfigIndex--;
-
-            return GetWaveEnemyPreviewTypesAtIndex(stageConfigIndex);
+            return GetWaveEnemyPreviewTypesAtIndex(waveNumber - 1);
         }
 
         public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;

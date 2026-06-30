@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Dragon
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/RangedDotEnemy
-  <MoveSpeed>k__BackingField: 9
+  <MoveSpeed>k__BackingField: 6
   <RotationSpeed>k__BackingField: 900
-  <MaxHealth>k__BackingField: 425
+  <MaxHealth>k__BackingField: 550
   <DeathProcessTime>k__BackingField: 1
   <DistanceToTargetGoal>k__BackingField: 20
-  <DamagePerTick>k__BackingField: 40
+  <DamagePerTick>k__BackingField: 30
   <DamageInterval>k__BackingField: 1
   <SpawnProcessTime>k__BackingField: 2

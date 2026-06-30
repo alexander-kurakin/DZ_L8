@@ -8,6 +8,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Entities
     {
         [field: SerializeField, Min(0)] public float CooldownSeconds { get; private set; } = 5f;
         [field: SerializeField, Range(0f, 1f)] public float CatMaxHealthDamageFraction { get; private set; } = 0.5f;
+        [field: SerializeField, Range(0f, 1f)] public float TankMaxHealthDamageFraction { get; private set; } = 0.2f;
         [field: SerializeField] public GameObject FrostProjectilePrefab { get; private set; }
         [field: SerializeField, Min(0)] public float FrostProjectileSpeed { get; private set; } = 45f;
         [field: SerializeField, Min(0)] public float FrostProjectileScale { get; private set; } = 1.5f;

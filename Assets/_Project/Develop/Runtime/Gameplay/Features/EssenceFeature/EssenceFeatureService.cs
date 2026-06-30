@@ -98,7 +98,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (_activePickups.Count == 0)
                 return;
 
-            Vector3 towerCollectPosition = GetTowerCollectPosition();
+            if (TryGetTowerCollectPosition(out Vector3 towerCollectPosition) == false)
+                return;
+
             EssencePickupView hoveredPickup = TryGetHoveredPickup();
 
             for (int pickupIndex = _activePickups.Count - 1; pickupIndex >= 0; pickupIndex--)
@@ -271,6 +273,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (mainHero == null || mainHero.TryGetTransform(out Transform towerTransform) == false)
                 return;
 
+            if (towerTransform == null)
+                return;
+
             Vector3 spawnPosition = towerTransform.position;
             spawnPosition.y += _essenceConfig.TowerCollectHeightOffset;
 
@@ -293,18 +298,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             _activePickups.Clear();
         }
 
-        private Vector3 GetTowerCollectPosition()
+        private bool TryGetTowerCollectPosition(out Vector3 towerCollectPosition)
         {
+            towerCollectPosition = Vector3.zero;
+
             Entity mainHero = _mainHeroHolderService.MainHero;
 
-            if (mainHero != null && mainHero.TryGetTransform(out Transform towerTransform))
-            {
-                Vector3 towerCollectPosition = towerTransform.position;
-                towerCollectPosition.y += _essenceConfig.TowerCollectHeightOffset;
-                return towerCollectPosition;
-            }
+            if (mainHero == null)
+                return false;
 
-            return Vector3.zero;
+            if (mainHero.TryGetTransform(out Transform towerTransform) == false)
+                return false;
+
+            if (towerTransform == null)
+                return false;
+
+            towerCollectPosition = towerTransform.position;
+            towerCollectPosition.y += _essenceConfig.TowerCollectHeightOffset;
+            return true;
         }
 
         private static float GetFlatDistance(Vector3 firstPoint, Vector3 secondPoint)

@@ -16,43 +16,51 @@ MonoBehaviour:
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
         type: 2}
-      <EnemiesCount>k__BackingField: 2
-    MinTimeBetweenSpawns: 0.3
-    MaxTimeBetweenSpawns: 0.45
-    PauseAfterGroup: 0.45
+      <EnemiesCount>k__BackingField: 1
+    MinTimeBetweenSpawns: 0.35
+    MaxTimeBetweenSpawns: 0.5
+    PauseAfterGroup: 0.65
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
         type: 2}
-      <EnemiesCount>k__BackingField: 2
+      <EnemiesCount>k__BackingField: 1
+    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
+        type: 2}
+      <EnemiesCount>k__BackingField: 1
+    MinTimeBetweenSpawns: 0.3
+    MaxTimeBetweenSpawns: 0.45
+    PauseAfterGroup: 0.6
+  - EnemyItems:
+    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
+        type: 2}
+      <EnemiesCount>k__BackingField: 1
+    MinTimeBetweenSpawns: 0
+    MaxTimeBetweenSpawns: 0
+    PauseAfterGroup: 0.55
+  - EnemyItems:
+    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 9150831a2f4a78c4d95177b1c9e5f563,
+        type: 2}
+      <EnemiesCount>k__BackingField: 1
+    MinTimeBetweenSpawns: 0
+    MaxTimeBetweenSpawns: 0
+    PauseAfterGroup: 0.6
+  - EnemyItems:
+    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
+        type: 2}
+      <EnemiesCount>k__BackingField: 1
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
         type: 2}
       <EnemiesCount>k__BackingField: 1
     MinTimeBetweenSpawns: 0.25
     MaxTimeBetweenSpawns: 0.4
-    PauseAfterGroup: 0.35
+    PauseAfterGroup: 0.55
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
         type: 2}
       <EnemiesCount>k__BackingField: 1
-    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 9150831a2f4a78c4d95177b1c9e5f563,
-        type: 2}
-      <EnemiesCount>k__BackingField: 1
-    MinTimeBetweenSpawns: 0.15
-    MaxTimeBetweenSpawns: 0.3
-    PauseAfterGroup: 0.25
-  - EnemyItems:
-    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
-        type: 2}
-      <EnemiesCount>k__BackingField: 1
-    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
-        type: 2}
-      <EnemiesCount>k__BackingField: 2
-    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 9150831a2f4a78c4d95177b1c9e5f563,
-        type: 2}
-      <EnemiesCount>k__BackingField: 1
-    MinTimeBetweenSpawns: 0.2
-    MaxTimeBetweenSpawns: 0.35
-    PauseAfterGroup: 0.25
+    MinTimeBetweenSpawns: 0
+    MaxTimeBetweenSpawns: 0
+    PauseAfterGroup: 0.55
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
         type: 2}
@@ -60,7 +68,14 @@ MonoBehaviour:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 143c457446a7ad241aca72f647abb559,
         type: 2}
       <EnemiesCount>k__BackingField: 1
-    MinTimeBetweenSpawns: 0.2
-    MaxTimeBetweenSpawns: 0.3
+    MinTimeBetweenSpawns: 0.25
+    MaxTimeBetweenSpawns: 0.4
+    PauseAfterGroup: 0.55
+  - EnemyItems:
+    - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 9150831a2f4a78c4d95177b1c9e5f563,
+        type: 2}
+      <EnemiesCount>k__BackingField: 1
+    MinTimeBetweenSpawns: 0
+    MaxTimeBetweenSpawns: 0
     PauseAfterGroup: 0
   <EnemySpawnRadius>k__BackingField: 90

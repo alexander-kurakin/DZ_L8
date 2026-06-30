@@ -154,7 +154,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _runEssenceService, 
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
-                    _stageProviderService,
                     _spellcoreProgressionService,
                     _plantPlacementService));
 

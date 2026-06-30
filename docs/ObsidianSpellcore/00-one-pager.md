@@ -4,7 +4,7 @@
 **Scope:** 5 waves + optional Survival 
 **Meetup:** screenshot + **pitch:** Unveil Spellcore secrets by feeding your magic tower
 
-**Links:** [[pillars]] · [[essence]] · [[world/spellcore]] · [[systems/spellcore-gameplay]]  · [[balance]]
+**Links:** [[pillars]] · [[essence]] · [[world/spellcore]] · [[systems/spellcore-gameplay]]  · [[balance]] · [[factory-feel]]
 
 
 ---
@@ -15,8 +15,8 @@ Full text: [[pillars]]
 | Pillar          | Demo means                                                                                           |
 | --------------- | ---------------------------------------------------------------------------------------------------- |
 | **Family**      | Brother run↔emote; Princess follows cursor; HP bar under platform                                    |
-| **Less clicks** | Few plants per wave; watch combat; LMB on cooldown; sell refund is rare - [[balance#1. Tower & run]] |
-| **Secrets**     | Spellcore reveals rules on the field; peak = 6 Paths working as a factory                            |
+| **Less clicks** | Few plants per wave; watch combat; LMB buffs buildings (v2) — [[factory-feel#12.8 LMB → баф постройки (принцесса)]] |
+| **Secrets**     | Spellcore reveals rules on the field; peak = paths working as a factory — см. [[factory-feel]] |
 
 ---
 

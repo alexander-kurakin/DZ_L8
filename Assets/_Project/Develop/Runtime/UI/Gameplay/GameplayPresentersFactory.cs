@@ -94,7 +94,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         public StagePresenter CreateStagePresenter(IconTextView view)
         {
-            return new StagePresenter(view, _container.Resolve<StageProviderService>());
+            return new StagePresenter(
+                view,
+                _container.Resolve<StageProviderService>(),
+                _container.Resolve<MainHeroHolderService>(),
+                _container.Resolve<SpellcoreProgressionService>());
         }
 
         public WavePreviewPresenter CreateWavePreviewPresenter(WavePreviewView view)
@@ -103,7 +107,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<WaveEnemyPreviewIconsConfig>(),
-                _container.Resolve<SpellcoreProgressionService>());
+                _container.Resolve<SpellcoreProgressionService>(),
+                _container.Resolve<MainHeroHolderService>());
         }
         
         public EntityHealthPresenter CreateEntityHealthPresenter(Entity entity, BarWithText view)

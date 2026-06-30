@@ -21,6 +21,6 @@ MonoBehaviour:
   <StopAtMiddleBeltAnchor>k__BackingField: 1
   <AttackProcessTime>k__BackingField: 1
   <AttackDelayTime>k__BackingField: 0.3
-  <AttackCooldown>k__BackingField: 0.2
-  <InstantDamage>k__BackingField: 100
+  <AttackCooldown>k__BackingField: 0.35
+  <InstantDamage>k__BackingField: 70
   <SpawnProcessTime>k__BackingField: 2

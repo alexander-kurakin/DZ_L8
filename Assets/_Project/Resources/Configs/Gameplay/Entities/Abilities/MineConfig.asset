@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <PrefabPath>k__BackingField: Entities/Mine
   <CostInEssence>k__BackingField: 28
-  <Damage>k__BackingField: 190
+  <Damage>k__BackingField: 150
   <ExplosionRadius>k__BackingField: 15
   <ProcDelaySeconds>k__BackingField: 0.25

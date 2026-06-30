@@ -7,7 +7,6 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
-using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using UnityEngine;
 
@@ -18,7 +17,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly RunEssenceService _runEssenceService;
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
-        private readonly StageProviderService _stageProviderService;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private readonly PlantPlacementService _plantPlacementService;
         
@@ -29,14 +27,12 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             RunEssenceService runEssenceService,
             PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
-            StageProviderService stageProviderService,
             SpellcoreProgressionService spellcoreProgressionService,
             PlantPlacementService plantPlacementService)
         {
             _runEssenceService = runEssenceService;
             _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
-            _stageProviderService = stageProviderService;
             _spellcoreProgressionService = spellcoreProgressionService;
             _plantPlacementService = plantPlacementService;
         }
@@ -64,7 +60,6 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                 _runEssenceService.Spend(_purchasableEntityConfig.CostInEssence);
                 Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig, sectorId);
                 _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
-                _stageProviderService.AddTemporaryEntity(plantEntity);
             }            
         }
 

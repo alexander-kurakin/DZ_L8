@@ -47,7 +47,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
             _canMove = entity.CanMove;
 
             _rigidbody.isKinematic = true;
-            _rigidbody.velocity = Vector3.zero;
 
             if (_sphereCollider != null)
                 _sphereCollider.isTrigger = true;

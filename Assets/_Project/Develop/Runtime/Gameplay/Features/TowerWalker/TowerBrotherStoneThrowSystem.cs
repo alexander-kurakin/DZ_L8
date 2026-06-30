@@ -61,11 +61,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
             if (_cooldownRemaining > 0f)
                 return;
 
-            if (TryThrowStoneAtNearestTarget() == false)
+            if (TryThrowStoneAtTarget() == false)
                 return;
         }
 
-        private bool TryThrowStoneAtNearestTarget()
+        private bool TryThrowStoneAtTarget()
         {
             _sectorEnemyQueryService.CollectEnemiesOnBelts(
                 SectorBelt.Middle,
@@ -77,7 +77,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
             if (TryGetBrotherSpawnPosition(out Vector3 spawnPosition) == false)
                 return false;
-            Entity target = PickNearestEnemy(_targetEnemies, spawnPosition);
+
+            Entity target = PickLowestHealthEnemy(_targetEnemies, spawnPosition);
 
             if (target == null)
                 return false;
@@ -110,25 +111,45 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
             return true;
         }
 
-        private static Entity PickNearestEnemy(List<Entity> enemies, Vector3 fromPosition)
+        private static Entity PickLowestHealthEnemy(List<Entity> enemies, Vector3 fromPosition)
         {
-            Entity nearestEnemy = null;
-            float nearestDistanceSqr = float.MaxValue;
+            Entity priorityEnemy = null;
+            float lowestHealth = float.MaxValue;
+            float nearestDistanceSqrAtLowestHealth = float.MaxValue;
 
             for (int index = 0; index < enemies.Count; index++)
             {
                 Entity enemy = enemies[index];
-                Vector3 aimPoint = BrotherStoneThrowAimUtility.GetEnemyAimPoint(enemy);
-                float distanceSqr = (aimPoint - fromPosition).sqrMagnitude;
 
-                if (distanceSqr >= nearestDistanceSqr)
+                if (enemy.TryGetCurrentHealth(out ReactiveVariable<float> currentHealth) == false)
                     continue;
 
-                nearestDistanceSqr = distanceSqr;
-                nearestEnemy = enemy;
+                if (currentHealth.Value <= 0f)
+                    continue;
+
+                Vector3 aimPoint = BrotherStoneThrowAimUtility.GetEnemyAimPoint(enemy);
+                float distanceSqr = (aimPoint - fromPosition).sqrMagnitude;
+                float health = currentHealth.Value;
+
+                if (health > lowestHealth)
+                    continue;
+
+                if (health < lowestHealth)
+                {
+                    lowestHealth = health;
+                    nearestDistanceSqrAtLowestHealth = distanceSqr;
+                    priorityEnemy = enemy;
+                    continue;
+                }
+
+                if (distanceSqr >= nearestDistanceSqrAtLowestHealth)
+                    continue;
+
+                nearestDistanceSqrAtLowestHealth = distanceSqr;
+                priorityEnemy = enemy;
             }
 
-            return nearestEnemy;
+            return priorityEnemy;
         }
 
         private bool TryGetBrotherSpawnPosition(out Vector3 spawnPosition)

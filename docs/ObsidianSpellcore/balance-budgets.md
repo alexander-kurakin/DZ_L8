@@ -48,7 +48,7 @@
 | Turret | **100**/shot ~0.9с, cost **100** |
 | LMB (Cat) | **~162** (= 50% max HP @ 325) |
 | LMB CD | **5с** |
-| Brother | **95** / **3с** → ~**31.7 DPS** (Middle + Inner, nearest) |
+| Brother | **120** / **2.5с** → ~**48 DPS** (Middle + Inner only) |
 | Free mines | **2** после W1 |
 | Paths by wave | **1 → 2 → 3 → 5 → 6** |
 
@@ -356,7 +356,9 @@ W3 может остаться чуть выше цели — калибровк
 | `Intro2` / `Intro3` | split танков: 1 tank per spawn group |
 | Mine damage | 175 → **190** |
 | Tank HP | 525 → **500** |
-| Brother | 80 → **95** |
+| Brother | 80 → **120** |
+| Brother interval | 3с → **2.5с** |
+| `Intro2` pause before 2nd tank | 3с → **10с** |
 | Free mines | 1 → **2** |
 
 Экономика iter.3 (дроп, cost 28, paths) **без изменений** — поздняя игра остаётся туже.
