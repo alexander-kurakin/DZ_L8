@@ -94,7 +94,7 @@
 
 **Done (сверх чеклиста):**
 
-- [x] `FactoryV3CombatConfig` + `.asset`, регистрация в `ResourcesConfigsLoader`
+- [x] `SpellcoreCombatConfig` + `.asset`, регистрация в `ResourcesConfigsLoader`
 - [x] Mine v3: `MineFactoryPulseDetonationSystem`, `MineFactoryPulseTimingUtility`, `MineFactoryPulseBehaviorUtility` — см. **Mine pulse rules** ниже
 - [x] `CollectEnemiesInMineSector` — клин по геометрии + proximity на M/I (не outer)
 - [x] Кошка: `StopAtInnerBeltAnchor` → стоп на inner-якоре (как танк на middle)
@@ -147,10 +147,10 @@
 
 **Цель:** одна mine на W1; танк требует две.
 
-- [x] Tank **shield**: 1-й mine pulse на танка ×0.15 (`TankMineShieldService` + `FactoryV3CombatConfig._tankFirstMinePulseDamageMultiplier`)
+- [x] Tank **shield**: 1-й mine pulse на танка ×0.15 (`TankMineShieldService` + `SpellcoreCombatConfig._tankFirstMinePulseDamageMultiplier`)
 - [x] `Intro1` composition: только коты (5), 1 path (progression), spawn 6–8 с, pause 4
 - [x] `Intro2`: 3 кота → пауза → **1 tank** per wave (teach 2 mines)
-- [x] Move speed ×0.7 (Epic 1 `FactoryV3CombatConfig`); Intro spawn/pause замедлены в `.asset`
+- [x] Move speed ×0.7 (Epic 1 `SpellcoreCombatConfig`); Intro spawn/pause замедлены в `.asset`
 
 **Gate:** W1 одна mine; W2 две mines на одном пути — без брата/LMB.
 
@@ -210,7 +210,7 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 **Цель:** Outer slow, не драконы; визуальные тики.
 
-- [x] Toxic: slow **−50%** speed в FactoryV3 (`FactoryV3CombatConfig.ToxicSlowMoveSpeedFraction`); dragon immune (×0 dmg, no slow, `FlyingEnemy`)
+- [x] Toxic: slow **−50%** speed в FactoryV3 (`SpellcoreCombatConfig.ToxicSlowMoveSpeedFraction`); dragon immune (×0 dmg, no slow, `FlyingEnemy`)
 - [x] FactoryV3: toxic только **Outer** (`PlantPlacementService`); preview — ярче/крупнее маркер на O
 - [x] `Intro4` pacing v3: spawn 5–8 с, паузы 4–6, без dragon (ground teach)
 - [x] Juice: `TakeDamageVisualKind.Toxic`, `PlayToxicTick` scale punch на тик (на **visual child**, без `DOKill` корня)
@@ -246,7 +246,7 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 **Цель:** медленный ремонт, idle прерывает.
 
-- [x] `TowerBrotherRepairSystem`: +integrity / interval (`FactoryV3CombatConfig`: 1 hit / 6 с, радиус 18)
+- [x] `TowerBrotherRepairSystem`: +1 integrity на старт фазы движения (`SpellcoreCombatConfig._brotherRepairHitsPerMovementPhase`); idle прерывает
 - [x] Прерывание idle-циклом (`IsCurrentlyIdle` → таймер сбрасывается, ремонт не тикает)
 - [x] Stone throw **off** в FactoryV3 (`AllowsPlayerPassiveEnemyDamage`); prefab без throw view
 
@@ -311,10 +311,12 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 ### Epic 9 — Balance pass & docs
 
-- [ ] `balance-v3.md` синхрон с .asset
-- [ ] Обновить [[00-one-pager]] rules под v3 (LMB buff, no brother DPS)
-- [ ] Meetup build checklist
-- [ ] **End-of-run beat:** победа/поражение → сразу `WinState`/`DefeatState` → попап → главное меню; нет паузы/момента «завершения» на сцене. Целевое: задержка, камера, fade или короткий beat до попапа — **ближе к balance playtests**, не блокер эпиков 3–8.
+- [x] `balance-v3.md` синхрон с `.asset` (`SpellcoreCombatConfig`, plants, integrity, toxic/beam intervals)
+- [x] Обновить [[00-one-pager]] rules под v3 (LMB buff, no brother/LMB DPS, integrity, survival)
+- [x] [[meetup-build-checklist]] — smoke test + meetup-day
+- [x] **End-of-run beat:** `EndGameState` — **1.2 с** delay (`SetUpdate(true)`) перед попапом win/defeat
+
+**Gate:** доки согласованы с кодом; meetup smoke 10/10; победа/поражение не «в лоб» в попап.
 
 ---
 
@@ -357,8 +359,8 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 ## 9. Следующий шаг
 
-**Epic 9** — balance pass, one-pager, meetup checklist, end-of-run beat; survival tier numbers — playtest в [[balance-v3]].
+**Merge readiness** — playtest W1–W5 + survival smoke по [[meetup-build-checklist]]; сторонний playtest на factory-feel шкале.
 
 ---
 
-*`Spellcore_v3` @ Epic 8+ survival playtest slice done. Gold persist, path rotation, sell-shovel UX, enemy hit juice iter — 2026-06-30. Дизайн-обоснование: [[factory-feel]].*
+*`Spellcore_v3` @ Epic 9 done. Balance/docs sync, meetup checklist, end-of-run beat — 2026-06-30. Дизайн-обоснование: [[factory-feel]].*

@@ -1,142 +1,103 @@
 # Spellcore Princess — Demo One-Pager (Meetup)
 
-**Status:** draft 
-**Scope:** 5 waves + optional Survival 
-**Meetup:** screenshot + **pitch:** Unveil Spellcore secrets by feeding your magic tower
+**Status:** v3 · **Scope:** W1–W5 campaign + survival offer  
+**Meetup:** [[meetup-build-checklist]] · **Pitch:** Unveil Spellcore secrets by feeding your magic tower
 
-**Links:** [[pillars]] · [[essence]] · [[world/spellcore]] · [[systems/spellcore-gameplay]]  · [[balance]] · [[factory-feel]]
-
+**Links:** [[pillars]] · [[essence]] · [[world/spellcore]] · [[systems/spellcore-gameplay]] · [[balance-v3]] · [[factory-feel]] · [[plan-v3]]
 
 ---
+
 ## 1. Design pillars
 
-Full text: [[pillars]]
-
-| Pillar          | Demo means                                                                                           |
-| --------------- | ---------------------------------------------------------------------------------------------------- |
-| **Family**      | Brother run↔emote; Princess follows cursor; HP bar under platform                                    |
-| **Less clicks** | Few plants per wave; watch combat; LMB buffs buildings (v2) — [[factory-feel#12.8 LMB → баф постройки (принцесса)]] |
-| **Secrets**     | Spellcore reveals rules on the field; peak = paths working as a factory — см. [[factory-feel]] |
+| Pillar | Demo means |
+| ------ | ---------- |
+| **Family** | Brother idle/repair loop; Princess LMB buffs plants; integrity bar under platform |
+| **Less clicks** | Few plants per wave; watch combat; LMB = **building buff**, not enemy damage |
+| **Secrets** | Spellcore reveals rules on the field; peak = paths working as a factory |
 
 ---
 
 ## 2. Core loop
 
-**Diagram:**
-![[Pasted image 20260622000949.png]]
-
-Between iterations: spend Essence to fill unlocked Path slots, read wave preview. 
-In combat: mostly watch; sometimes LMB or sell→buy to react
-
-**Sub-loops (one line each):**
-Economy
-![[Pasted image 20260622003350.png]]
-
-Idle LMB  
-![[Pasted image 20260622003437.png]]
-
-Wave details
-![[Pasted image 20260622003654.png]]
-
-React
-![[Pasted image 20260622003716.png]]
-
-## 3. Tutorial unlockable flow
-### Secrets ladder (S1-S9)
-
-| #   | Secret               | Reveal                                                    | Milestone  |
-| --- | -------------------- | --------------------------------------------------------- | ---------- |
-| S1  | Sectors + LMB        | 1 Path, spawn arrow                                       | pre Wave 1 |
-| S2  | Plant layer (Mine)   | Path +1, free Mine (starter) - [[balance#1. Tower & run]] | After W1   |
-| S3  | Essence / feed tower | hover vacuum, eat VFX                                     | W2         |
-| S4  | Threat read          | wave preview                                              | W2 prep    |
-| S5  | Belt rules           | toxic O/M only; etc.                                      | W2–3       |
-| S6  | Layered factory      | outer → mid → inner                                       | W3–5       |
-| S7  | Counters             | cat / tank / dragon                                       | W2–4       |
-| S8  | Sell / react         | sell refund — [[balance#1. Tower & run]]                  | W3+        |
-| S9  | Factory peak         | 6 Paths                                                   | Wave 5     |
-### Abilities ladder
-
-| When         | Unlocks                                               |
-| ------------ | ----------------------------------------------------- |
-| Wave 1       | LMB only (plant bar hidden)                           |
-| After W1 win | Mine + free Mine starter - [[balance#1. Tower & run]] |
-| After W2 win | Turret                                                |
-| After W3 win | Toxic                                                 |
-| W4-W5        | All available                                         |
+Between waves: spend Essence, read wave preview, place/sell plants.  
+In combat: mostly watch; LMB buff on dense packs; sell shovel click to react.
 
 ---
-## 4. Rules
 
-**Grid:** 4 belts × 16 sectors (Spawn / Outer / Middle / Inner). 
-Path N activates index N on all belts. Details: [[world/spellcore]]
+## 3. Tutorial unlock ladder
 
-**Plants:** 
-Toxic O/M 
-Turret+Mine O/M/I 
-Turret hits N±1 same belt 
-Mine = Hit every enemy exactly once after a short delay
-Toxic = DoT
-
-**LMB:** low effectiveness, cooldown - [[balance#1. Tower & run]]
-
-**Enemies:** (множители и урон - [[balance#5. Counter matrix]], статы - [[balance#4. Enemies]])
-
-**Cat** (Inner, emote + explosion)  
-Countered by Mine, LMB, Toxic. Toxic slows and deals full DoT. LMB hurts cats significantly.
-
-**Tank** (Middle, shoots from there)  
-Countered by Turret, Mine, Toxic. 
-Partial toxic/turret due to shield. 
-LMB ineffective ("Aw no, spells do not penetrate armor").
-
-**Dragon** (Inner, emote + continuous DoT)  
-Countered by Turret, Mine. 
-Flies over toxic. 
-Mine detonations enrage dragon (stronger outgoing damage). 
-LMB ineffective ("Aw no, magical defense is too high").
-
-**Essence resource:** corpse drops loot→ hover over loot→ loot flies to tower -> tower eats essence
+| When | Unlock |
+| ---- | ------ |
+| Prep W1 | Mine + **1 free mine** |
+| After W1 | +2 free mines (legacy starter) |
+| After W2 | Turret |
+| After W3 | Toxic |
+| W4–W5 | Full factory toolkit |
+| After W5 win | Survival offer (optional endless) |
 
 ---
+
+## 4. Rules (v3)
+
+**Grid:** 4 belts × up to 16 sectors. Path N unlocks index N on all belts.
+
+**Plants (factory v3):**
+
+| Plant | Role |
+| ----- | ---- |
+| **Mine** | 3 pulses per sector crossing; main cat killer; tank needs 2 mines |
+| **Turret** | Only reliable dragon kill; ×0.5 vs cat/tank |
+| **Toxic** | Outer only; −50% slow + DoT; dragon immune (flies) |
+
+**LMB:** **No enemy damage.** Click plant in sector → **+50% plant damage**, 60 s, max 2 buffs, 10 essence, 5 s CD.
+
+**Brother:** Random walk + idle; **repairs +1 integrity** on movement phase start. **No stone throw.**
+
+**Tower:** **Integrity hits** (200 max), not HP pool. Leaks: cat −1, tank shot −2, dragon beam −1/tick.
+
+**Enemies:** см. [[balance-v3#5. Counter matrix (v3 target)]]
+
+---
+
 ## 5. Waves 1–5
 
-| Wave | Tools in fight              | Preview             | Spawn path(s) | Notes                                  |
-| ---- | --------------------------- | ------------------- | ------------- | -------------------------------------- |
-| 1    | LMB                         | cat                 | 1 random      | need to teach player                   |
-| 2    | Mine + LMB                  | cat + tank          | + 1 random    | shows how 2 mines in a row kills tanks |
-| 3    | Mine + Turret + LMB         | cat + tank + dragon | + 2 random    | shows turrets + enraged dragon         |
-| 4    | Mine + Turret + LMB + Toxic | same                | +2 random     | intro of toxic                         |
-| 5    | same                        | same                | 0 random      | full blown wave                        |
+| Wave | Teach | Spawn |
+| ---- | ----- | ----- |
+| W1 | Mine pulses | 1 path, cats |
+| W2 | Tank + 2 mines | +paths |
+| W3 | Turret vs dragon | dragon on a spoke — need turret |
+| W4 | Toxic Outer slow | ground packs |
+| W5 | Full factory show | fixed path plan, 5 paths |
+
+Wave preview + combat time scale: **Pause / 1× / 3×**.
 
 ---
-## 6. Demo bounds
 
-**Conditions:**
-Lose = Tower HP = 0.
-Win = здоровье башни не должно опуститься до 0, мы должны пройти 5 волн.
-После 5 волны - экран победы с кнопкой сурвайвал мода (продолжается с тем же количеством открытых путей, но с увеличивающейся сложностью и наградами) - survival режим настроить после W4 полировки.
+## 6. Win / lose / survival
 
-**HUD:**
+| | |
+| - | - |
+| **Lose** | Integrity = 0 → **1.2 s beat** → defeat popup |
+| **Win W5** | **1.2 s beat** → win popup → survival offer or main menu |
+| **Survival** | Endless scaled waves; milestone gold +2000 every 5 waves (10, 15, 20…) |
+| **Gold** | Run rewards persist via wallet save |
 
-| Элемент                  | Demo значение                                                                                       |
-| ------------------------ | --------------------------------------------------------------------------------------------------- |
-| Валюта (геймплей и мета) | Essence - геймплей, Coins - мета (out of scope - enemy model parts e.g. cat/tank/dragon 0/10 parts) |
-| Счетчик волн             | иконка замка + цифры 0/5                                                                            |
-| Счетчик убийств          | общий счетчик убийств = иконка черепка                                                              |
-| Plant bar                | bottom center, не слева (так было уже раньше в проекте)                                             |
-| Wave preview             | Стрелка на активных путях. Иконки типов врагов                                                      |
-**Митап:** - нужно приносить свой лэптоп - проверить билд на маке жены.
+---
 
-**Timing:** [[balance#8. Playtest targets]]
+## 7. HUD (demo)
 
-**Out of scope:**
-* Champion monsters (blue / red) - extra toughness + extra loot
-* Clothing meta-progression - нужны предметы, мета система, магазин
-* Tank shield depletion
-* Different levels / bioms / eenemy types
-* Brother active role - animation or abilities (можно сделать ЛКМ = сестра бегает за мышкой - брат анимируется просто - и мы наносим урон по сектору, ПКМ = брат бегает за мышкой - сестра анимируется просто - и он например засасывает лут - или только он может продавать итд)
+| Element | Value |
+| ------- | ----- |
+| Essence | gameplay currency |
+| Wave counter | `N/5` or `N/5+` in survival |
+| Kill counter | skull icon, run total |
+| Plant bar | bottom center |
+| Wave preview | arrows + threat icons per path |
 
-**Numbers:** [[balance]]
+---
 
+## 8. Out of scope
 
+Champion monsters, clothing meta, new enemy types, full meta shop, brother stone DPS, LMB enemy damage.
+
+**Numbers:** [[balance-v3]]

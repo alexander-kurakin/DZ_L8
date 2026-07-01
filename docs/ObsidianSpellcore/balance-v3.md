@@ -1,11 +1,11 @@
 # Balance v3 — factory / idle defense
 
-**Status:** черновик · **ветка** `Spellcore_v3`  
+**Status:** синхрон с `.asset` · **ветка** `Spellcore_v3` · Epic 9  
 **Контракт:** [[factory-feel#12. Направление v2 — урон **только** от построек]] · [[plan-v3]]  
 **Legacy:** [[balance]] — не трогаем при v3-итерациях, только сверка «что выключили»
 
-> Цифры ниже — **целевые** для эпиков 2–9. До реализации эпика помечено *(TBD / Epic N)*.  
-> Код на Epic 1: `CombatModel.FactoryV3` — брат и LMB **не наносят** урон врагам.
+> Источник правды для чисел: `SpellcoreCombatConfig.asset`, plant `.asset`, `TowerIntegrityConfig.asset`, enemy character `.asset`.  
+> Код: `CombatModel.FactoryV3` — брат и LMB **не наносят** урон врагам.
 
 ---
 
@@ -20,20 +20,20 @@
 | Move speed | asset as-is | **×0.7** (было ×0.35) |
 | Mine пульс | таймер | см. **Mine pulse rules** ниже |
 
-### Mine v3 (`FactoryV3CombatConfig`)
+### Mine v3 (`SpellcoreCombatConfig.asset`)
 
-| Параметр | Значение |
-| -------- | -------- |
-| Урон за пульс | **115** |
-| Пульсов на проход сектора | **3** |
-| Tank 1-й mine pulse | **×0.15** (`TankFirstMinePulseDamageMultiplier`) — одна mine ≈247 dmg, нужна вторая |
-| Toxic slow (FactoryV3) | **−50%** move speed (`ToxicSlowMoveSpeedFraction`) |
-| Toxic placement (FactoryV3) | **Outer only** |
-| LMB building buff | **×1.5** dmg, **60 с**, max **2** active, **10** essence |
-| Кошка стоп | **Inner anchor** (`StopAtInnerBeltAnchor`, r=12.6) |
-| Танк стоп | **Middle anchor** (`StopAtMiddleBeltAnchor`, r=35.1) |
-| Выход / смерть в секторе | недоставленные пульсы **добиваются** |
-| Трекинг | **per-enemy**; клин: `CollectEnemiesInMineSector` |
+| Параметр | Значение | Asset field |
+| -------- | -------- | ----------- |
+| Урон за пульс | **115** | `_mineDamagePerPulse` |
+| Пульсов на проход сектора | **3** | `_minePulsesPerSectorCrossing` |
+| Tank 1-й mine pulse | **×0.15** | `_tankFirstMinePulseDamageMultiplier` |
+| Move speed scale | **×0.7** | `_enemyMoveSpeedScale` |
+| Toxic slow (FactoryV3 runtime) | **−50%** (`×0.5`) | `_toxicSlowMoveSpeedFraction` |
+| Toxic placement (FactoryV3) | **Outer only** | код `PlantPlacementService` |
+| LMB building buff | **×1.5** dmg, **60 с**, max **2**, **10** essence | `_buildingBuff*` |
+| Brother repair | **+1 hit** на старт фазы движения | `_brotherRepairHitsPerMovementPhase` |
+
+Кошка стоп — **Inner anchor** (`StopAtInnerBeltAnchor`, r=12.6). Танк стоп — **Middle anchor** (`StopAtMiddleBeltAnchor`, r=35.1). Недоставленные пульсы **добиваются** при выходе/смерти в секторе. Трекинг per-enemy; клин: `CollectEnemiesInMineSector`.
 
 ### Mine pulse rules
 
@@ -75,11 +75,11 @@ HUD kill counter: один `IconTextView` — убитые враги с нач�
 
 | Plant | Параметр | Старт (из legacy .asset) | Цель v3 | Эпик |
 | ----- | -------- | ------------------------- | ------- | ---- |
-| **Mine** | Damage | 150 | W1: **1 mine = все коты пути** | 3 |
-| | Proc delay | 0.25с | без изменений | — |
-| | Tank shield | — | 1-й pulse **×0.15** (Epic 3) | 3 |
-| **Toxic** | DoT / slow | 35/tick, **1.0 с** | **35/tick, 2.5 с**; **−50%** slow, **Outer only**, дракон immune; **без** hit stun | 5 ✓ |
-| **Turret** | Damage / interval | 100 / ~0.9с | path-wide **O/M/I**; **×0.5** cat/tank; hit juice см. §4.1 | 4 ✓ |
+| **Mine** | Damage (asset) | 150 | runtime pulse **115** (`SpellcoreCombatConfig`) | 3 ✓ |
+| | Proc delay | 0.25с | `MineConfig` | — |
+| | Tank shield | — | 1-й pulse **×0.15** | 3 ✓ |
+| **Toxic** | DoT / interval | 35/tick, **2.5 с** | `ToxicAreaConfig`; slow в бою **−50%** из `SpellcoreCombatConfig` (asset slow **0.33** — legacy, не используется в FactoryV3) | 5 ✓ |
+| **Turret** | Damage / cooldown | 100 / **2.5 с** | `TurretConfig`; hit juice §4.1 | 4 ✓ |
 | **LMB** | — | cooldown 5с | баф +50% plant (`BuildingBuffDamageMultiplier` 1.5), 60 с, max 2 | 6 ✓ |
 
 ### Plant costs (Essence)
@@ -135,15 +135,27 @@ Mine / turret / projectile — **не** toxic DoT.
 
 Composition/timing — переписываются в эпиках 3, 5, 8. **Intro3 (Epic 4):** 3 cats (5–7 с) → pause 5 → **1 dragon** (teach: mine бесполезна, нужна турель на спице).
 
+### W5 `Intro5.asset` (факт, survival template)
+
+| Параметр | Значение |
+| -------- | -------- |
+| Групп | **10** сериальных |
+| Пути | **0–4** (5 paths), `PathIndex` в каждой группе |
+| Состав | **11** cats, **3** tanks, **2** dragons (tank+dragon **не** в одной группе) |
+| Cat spawn interval | **5–7** или **5–8** с |
+| Tank/dragon spawn | instant (`0–0` с) |
+| Group pause | **5–6** с (последняя **0**) |
+| `EnemySpawnRadius` | **90** |
+
 ---
 
 ## 7. Family (v3)
 
 | Роль | Параметр | Цель |
 | ---- | -------- | ---- |
-| Принцесса (LMB) | Баф plant | +50% damage, 60 с, max 2 active — `FactoryV3CombatConfig` |
-| Брат | Ремонт integrity | **+1 hit / 6 с** при движении, в радиусе **18** от башни; idle **прерывает** (Epic 7) |
-| Брат stone DPS | — | **выключен** (Epic 1) |
+| Принцесса (LMB) | Баф plant | +50% damage, 60 с, max 2 — `SpellcoreCombatConfig` |
+| Брат | Ремонт integrity | **+1 hit** на каждый вход в фазу движения; idle **5 с** / move **3 с** (`BrainsFactory`); idle прерывает ремонт |
+| Брат stone DPS | — | **выключен**; компонент снят с `TowerBrother.prefab` |
 
 ---
 
@@ -186,3 +198,4 @@ Composition/timing — переписываются в эпиках 3, 5, 8. **I
 | 2026-07-01 | 7 | Brother repair: config + `TowerBrotherRepairSystem` (draft) |
 | 2026-06-30 | 4–5 | Enemy hit juice: stun + `EnemyHitJuiceUtility`; toxic/beam tick **2.5 / 2 с**; toxic без hitstop |
 | 2026-06-30 | 8+ | Survival playtest slice: flow/popups, tier scaling, path rotation, `PersistedGoldRewardService`, sell-shovel hit radius; enemy hit juice iter (SkipFrames → RemainingTime → Animator child) |
+| 2026-06-30 | 9 | Синхрон с `.asset`; `SpellcoreCombatConfig` naming; brother repair = movement phase; end-of-run beat **1.2 с**; one-pager v3; [[meetup-build-checklist]] |
