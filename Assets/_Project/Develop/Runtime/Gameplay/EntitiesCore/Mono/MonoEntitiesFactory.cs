@@ -33,6 +33,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public MonoEntity Create(Entity entity, Vector3 position, string path)
         {
+            if (_entityToMono.TryGetValue(entity, out MonoEntity existingMonoEntity))
+                return existingMonoEntity;
+
             MonoEntity prefab = _resources.Load<MonoEntity>(path);
 
             MonoEntity viewInstance = Object.Instantiate(prefab, position, Quaternion.identity, null);

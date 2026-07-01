@@ -2,6 +2,7 @@ using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using UnityEngine;
 
@@ -14,6 +15,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         [field: SerializeField] public IconTextView StageNumberView { get; private set; }
         [field: SerializeField] public WavePreviewView WavePreviewView { get; private set; }
         [field: SerializeField] public EntitiesHealthDisplay EntitiesHealthDisplay { get; private set; }
+        [field: SerializeField] public PlantBuildingBuffTimersDisplay PlantBuildingBuffTimersDisplay { get; private set; }
         [field: SerializeField] public AbilitySlotListView AbilitiesView { get; private set; }
     }
 }

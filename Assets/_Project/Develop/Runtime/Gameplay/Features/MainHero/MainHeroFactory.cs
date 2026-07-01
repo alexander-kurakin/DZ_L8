@@ -1,10 +1,11 @@
-﻿using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
@@ -13,6 +14,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
@@ -72,19 +74,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddAbilityUserActiveAbility()
                 .AddAbilityUserAllAbilities()
                 .AddAbilityUserPlantAbilityPreference()
-                .AddExplosionPreviewWorldPoint()
-                .AddExplosionPreviewVisible()
-                .AddExplosionPreviewIndicatorDiameter()
-                .AddExplosionPreviewCooldownFill();
+                .AddLeftClickPreviewWorldPoint()
+                .AddLeftClickPreviewVisible()
+                .AddLeftClickPreviewIndicatorDiameter()
+                .AddLeftClickPreviewCooldownFill();
 
             entity
                 .AddPowerup()
                 .AddSystem(new PowerupOnAddActivatorSystem())
-                .AddSystem(new ExplosionAbilityPreviewSystem(
+                .AddSystem(new LeftClickAbilityPreviewSystem(
                     _mouseInput,
                     _container.Resolve<MouseRaycastService>(),
                     _container.Resolve<SectorRegistryService>(),
-                    _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>()))
+                    _configsProviderService.GetConfig<BuildingBuffCastAbilityConfig>()))
                 .AddSystem(new PlantPlacementPreviewHoverSystem(
                     _mouseInput,
                     _container.Resolve<MouseRaycastService>(),
@@ -130,38 +132,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _mainHeroHolderService.RegisterTowerWalker(entity);
 
             _entitiesLifeContext.Add(entity);
-            _brainsFactory.CreateWalkingTowardsCursorBrain(entity, _mouseInput);
+            _brainsFactory.CreateWalkingTowardsCursorBrain(entity, _mouseInput, respectTowerWalkBounds: true);
             
             return entity;
         }
         
         public Entity CreateTowerBrother()
         {
-            TowerBrotherStoneThrowConfig stoneThrowConfig =
-                _configsProviderService.GetConfig<TowerBrotherStoneThrowConfig>();
-
             Entity entity = _entitiesFactory.CreateTowerBrother(_townWalkerSpawnPoint.position + (Vector3.right * 2));
-
-            ReactiveVariable<bool> isStoneThrowing = new ReactiveVariable<bool>(false);
 
             entity
                 .AddGameplayPhase()
-                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
-                .AddBrotherStoneThrowEvent()
-                .AddBrotherStoneThrowing(isStoneThrowing)
-                .AddSystem(new TowerBrotherStoneThrowSystem(
-                    _container.Resolve<SectorEnemyQueryService>(),
-                    _entitiesFactory,
-                    stoneThrowConfig,
-                    _brainsFactory));
-
-            entity.CanMove.Add(new FuncCondition(() => isStoneThrowing.Value == false));
-            entity.CanRotate.Add(new FuncCondition(() => isStoneThrowing.Value == false));
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero));
 
             _mainHeroHolderService.RegisterTowerBrother(entity);
 
             _entitiesLifeContext.Add(entity);
             _brainsFactory.CreateSimpleRandomWalkerBrain(entity);
+
+            entity.AddSystem(new TowerBrotherRepairSystem(
+                _mainHeroHolderService,
+                _configsProviderService.GetConfig<SpellcoreCombatConfig>(),
+                _container.Resolve<BrotherRandomWalkerBrainsRegistry>()));
 
             return entity;
         }

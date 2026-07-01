@@ -26,5 +26,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 _sectorRegistryService.Center,
                 _sectorRegistryService.GridConfig);
         }
+
+        public SectorId ResolveFlyingEnemyFromWorldPosition(Vector3 worldPosition)
+        {
+            if (_sectorRegistryService.IsInitialized == false)
+                return default;
+
+            return WorldToSector.ResolveForFlyingEnemy(
+                worldPosition,
+                _sectorRegistryService.Center,
+                _sectorRegistryService.GridConfig);
+        }
     }
 }

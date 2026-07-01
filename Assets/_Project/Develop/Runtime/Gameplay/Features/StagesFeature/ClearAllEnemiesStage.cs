@@ -1,16 +1,18 @@
-﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
+using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
-using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
@@ -22,7 +24,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class ClearAllEnemiesStage : IStage
     {
-        private readonly ClearAllEnemiesStageConfig _config;
+        private readonly ClearAllEnemiesWaveRuntimeData _waveData;
         private readonly RaycastConfig _mouseRaycastConfig;
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly WaveSpawnPlanService _waveSpawnPlanService;
@@ -33,6 +35,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
+        private MouseOverUIService _mouseOverUIService;
+        private PlantSellInputService _plantSellInputService;
         private IBackgroundMusicService _backgroundMusicService;
         
         private ReactiveEvent _completed = new();
@@ -48,31 +52,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         private int _currentGroupIndex;
 
 
-        private readonly Queue<SpawnGroupConfig> _spawnGroupsQueue = new();
+        private readonly Queue<RuntimeSpawnGroup> _spawnGroupsQueue = new();
         private readonly Queue<EntityConfig> _currentEnemyQueue = new();
-        private SpawnGroupConfig _currentSpawnGroup;
+        private RuntimeSpawnGroup _currentSpawnGroup;
         private float _secondsUntilNextEnemySpawn;
         private bool _waitingGroupPause;
         
         
         public ClearAllEnemiesStage(
-            ClearAllEnemiesStageConfig config,
+            ClearAllEnemiesWaveRuntimeData waveData,
             EnemiesFactory enemiesFactory,
             EntitiesLifeContext entitiesLifeContext,
             ConfigsProviderService  configsProviderService,
             MainHeroHolderService mainHeroHolderService,
             IMouseInputService mouseInputService,
             MouseRaycastService mouseRaycastService,
+            MouseOverUIService mouseOverUIService,
+            PlantSellInputService plantSellInputService,
             IBackgroundMusicService  backgroundMusicService,
             SectorRegistryService sectorRegistryService,
             WaveSpawnPlanService waveSpawnPlanService)
         {
-            _config = config;
+            _waveData = waveData;
             _enemiesFactory = enemiesFactory;
             _entitiesLifeContext = entitiesLifeContext;
             _mainHeroHolderService = mainHeroHolderService;
             _mouseInputService = mouseInputService;
             _mouseRaycastService = mouseRaycastService;
+            _mouseOverUIService = mouseOverUIService;
+            _plantSellInputService = plantSellInputService;
             _backgroundMusicService = backgroundMusicService;
             _sectorRegistryService = sectorRegistryService;
             _waveSpawnPlanService = waveSpawnPlanService;
@@ -116,10 +124,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             
             if (MouseClickedOnPlacementSurface(out Vector3 hitPoint))
             {
+                if (_plantSellInputService.TryHandleSellClick(hitPoint))
+                    return;
+
                 AbilityType activeAbility = _mainHero.AbilityUserActiveAbility.Value;
                 _mainHero.AbilityUserAllAbilities[activeAbility].AbilityUseRequest.Invoke(hitPoint);
 
-                if (activeAbility == AbilityType.ExplodeAtPoint
+                if (activeAbility == AbilityType.LeftClickAtPoint
                     && _towerWalker != null
                     && LmbFrostProjectileService.Instance.HasQueuedProjectileLaunch())
                 {
@@ -173,7 +184,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _currentEnemyQueue.Clear();
             _currentGroupIndex = 0;
 
-            foreach (SpawnGroupConfig spawnConfigGroup in _config.SpawnGroups)
+            foreach (RuntimeSpawnGroup spawnConfigGroup in _waveData.SpawnGroups)
                 _spawnGroupsQueue.Enqueue(spawnConfigGroup);
         }
         
@@ -196,7 +207,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             _currentGroupIndex++;
 
-            foreach (EnemyItemConfig enemyItem in _currentSpawnGroup.EnemyItems)
+            foreach (RuntimeEnemyItem enemyItem in _currentSpawnGroup.EnemyItems)
             {
                 for (int i = 0; i < enemyItem.EnemiesCount; i++)
                     _currentEnemyQueue.Enqueue(enemyItem.EnemyConfig);
@@ -251,6 +262,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             hitPoint = Vector3.zero;
 
             if (_mouseInputService.FireButtonPressed == false)
+                return false;
+
+            if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
                 return false;
 
             return SectorSurfaceClickUtility.TryGetArenaPlanePoint(

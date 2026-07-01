@@ -1,21 +1,21 @@
 {
   "WalletData": {
-    "Gold": 600200
+    "Gold": 700
   },
-  "Wins": 3,
-  "Losses": 4,
+  "Wins": 4,
+  "Losses": 0,
   "PowerupsData": {
-    "MultiplyMainAbilityDamage": {
+    "LuckyRestore": {
       "Level": 1,
-      "Unlocked": false
-    },
-    "RegenTowerHP": {
-      "Level": 1,
-      "Unlocked": false
+      "Unlocked": true
     },
     "DamageFirstEnemies": {
       "Level": 1,
       "Unlocked": false
+    },
+    "StrongerBuff": {
+      "Level": 1,
+      "Unlocked": true
     }
   }
 }

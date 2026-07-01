@@ -93,6 +93,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             _bailoutGrantedForCompletedWaves.Add(completedWaves);
         }
 
+        public void ActivateAutoHoverForAllPickupsOnPreparation()
+        {
+            for (int pickupIndex = 0; pickupIndex < _activePickups.Count; pickupIndex++)
+            {
+                EssencePickupView pickup = _activePickups[pickupIndex];
+
+                if (pickup == null)
+                    continue;
+
+                pickup.ForceActivateHover();
+
+                if (pickup.IsVacuuming == false)
+                    pickup.StartVacuuming();
+            }
+        }
+
         public void Update(float deltaTime)
         {
             if (_activePickups.Count == 0)

@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                     return false;
             }
 
-            takeDamageRequest.Invoke(new TakeDamageInfo(damage, visualKind));
+            takeDamageRequest.Invoke(new TakeDamageInfo(damage, visualKind, source));
             return true;
         }
     }

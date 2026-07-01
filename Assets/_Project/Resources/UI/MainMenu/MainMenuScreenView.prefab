@@ -1123,7 +1123,7 @@ PrefabInstance:
     - target: {fileID: 1865570729058155713, guid: 23dadc8f8696f43418d4954b598d50b4,
         type: 3}
       propertyPath: m_Name
-      value: StatsListView
+      value: StatsView
       objectReference: {fileID: 0}
     - target: {fileID: 7538671466334454439, guid: 23dadc8f8696f43418d4954b598d50b4,
         type: 3}

@@ -18,6 +18,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
         private readonly ViewsFactory _viewsFactory;
 
         private Dictionary<Entity, EntityHealthBarInfo> _entityToHealthBarInfo = new();
+        private bool _isInitialized;
 
         public EntitiesHealthDisplayPresenter(
             EntitiesLifeContext entitiesLifeContext,
@@ -33,6 +34,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         public void Initialize()
         {
+            if (_isInitialized)
+                return;
+
+            _isInitialized = true;
             _entitiesLifeContext.Added += OnEntityAdded;
             _entitiesLifeContext.Released += OnEntityReleased;
 
@@ -59,6 +64,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         private void OnEntityAdded(Entity entity)
         {
+            if (_entityToHealthBarInfo.ContainsKey(entity))
+                return;
+
             if(entity.TryGetHealthBarPoint(out Transform healthBarPoint))
             {
                 BarWithText healthBarView = null;

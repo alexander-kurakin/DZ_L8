@@ -1,5 +1,6 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -21,21 +22,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Sensors
 
         public void OnUpdate(float deltaTime)
         {
+            bool touchesValidEnemy = false;
+
             for (int i = 0; i < _contacts.Count; i++)
             {
                 Entity contact = _contacts.Items[i];
 
-                if (contact.TryGetTeam(out ReactiveVariable<Teams> anotherTeam))
-                {
-                    if (_sourceTeam.Value != anotherTeam.Value)
-                    {
-                        _isTouchAnotherTeam.Value = true;
-                        return;
-                    }
-                }
+                if (ProjectileContactRules.IsValidDamageTarget(contact) == false)
+                    continue;
+
+                if (contact.TryGetTeam(out ReactiveVariable<Teams> anotherTeam) == false)
+                    continue;
+
+                if (_sourceTeam.Value == anotherTeam.Value)
+                    continue;
+
+                touchesValidEnemy = true;
+                break;
             }
 
-            _isTouchAnotherTeam.Value = false;
+            _isTouchAnotherTeam.Value = touchesValidEnemy;
         }
     }
 }

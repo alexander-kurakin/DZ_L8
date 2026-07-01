@@ -69,6 +69,9 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
         
         public void ReadFrom(PlayerData data)
         {
+            MigratePowerupSaveId(data.PowerupsData, "MultiplyMainAbilityDamage", "StrongerBuff");
+            MigratePowerupSaveId(data.PowerupsData, "RegenTowerHP", "LuckyRestore");
+
             foreach (KeyValuePair<string, PowerupSaveData> kvp in data.PowerupsData)
             {
                 if (_powerupData.ContainsKey(kvp.Key))
@@ -85,6 +88,27 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
                     });                    
                 }
             }
+        }
+
+        private static void MigratePowerupSaveId(
+            Dictionary<string, PowerupSaveData> powerupsData,
+            string oldId,
+            string newId)
+        {
+            if (powerupsData.ContainsKey(oldId) == false)
+                return;
+
+            if (powerupsData.ContainsKey(newId) == false)
+            {
+                powerupsData[newId] = powerupsData[oldId];
+            }
+            else if (powerupsData[oldId].Unlocked)
+            {
+                powerupsData[newId].Unlocked = true;
+                powerupsData[newId].Level = Math.Max(powerupsData[newId].Level, powerupsData[oldId].Level);
+            }
+
+            powerupsData.Remove(oldId);
         }
 
         public void WriteTo(PlayerData data)

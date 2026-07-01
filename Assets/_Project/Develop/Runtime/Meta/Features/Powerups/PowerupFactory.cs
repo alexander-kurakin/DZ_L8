@@ -2,6 +2,7 @@ using System;
 using _Project.Develop.Runtime.Meta.Features.Powerups.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Powerups;
@@ -25,14 +26,18 @@ namespace _Project.Develop.Runtime.Meta.Features.Powerups
         {
             switch (config)
             {
-                case PermanentTowerHealConfig towerHealConfig:
-                    return new TowerHealAbility (entity, towerHealConfig, currentLevel);
+                case PermanentLuckyRestoreConfig luckyRestoreConfig:
+                    return new LuckyRestoreAbility(entity, luckyRestoreConfig, currentLevel);
                 
                 case PermanentDamageFirstEnemiesConfig damageFirstEnemiesConfig:
                     return new DamageFirstEnemiesAbility(entity, damageFirstEnemiesConfig, currentLevel, _entitiesLifeContext, _stageProviderService);
                 
-                case PermanentIncreaseNormalAbilityDamageConfig increaseDamageConfig:
-                    return new IncreaseClickDamageAbility(entity, increaseDamageConfig, currentLevel);
+                case PermanentStrongerBuffConfig strongerBuffConfig:
+                    return new StrongerBuffAbility(
+                        entity,
+                        strongerBuffConfig,
+                        currentLevel,
+                        _container.Resolve<PlantBuildingBuffService>());
 
                 default:
                     throw new ArgumentException();

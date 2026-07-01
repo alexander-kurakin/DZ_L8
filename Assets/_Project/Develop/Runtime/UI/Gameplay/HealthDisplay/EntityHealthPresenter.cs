@@ -88,7 +88,16 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay
 
         private void UpdateHealth()
         {
-            _bar.UpdateText(_health.Value.ToString("0"));
+            if (_team.Value == Teams.MainHero)
+            {
+                int currentHits = Mathf.RoundToInt(_health.Value);
+                _bar.UpdateText(currentHits.ToString());
+            }
+            else
+            {
+                _bar.UpdateText(_health.Value.ToString("0"));
+            }
+
             _bar.UpdateSlider(_health.Value / _maxHealth.Value);
         }
 

@@ -78,6 +78,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return component;
         }
 
+        public bool RemoveComponent<TComponent>() where TComponent : class, IEntityComponent
+        {
+            return _components.Remove(typeof(TComponent));
+        }
+
         public Entity AddSystem(IEntitySystem system)
         {
             if (_systems.Contains(system))

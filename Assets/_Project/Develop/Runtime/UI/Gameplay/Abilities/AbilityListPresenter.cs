@@ -106,7 +106,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         {
             foreach (AbilityType abilityType in _mainHero.AbilityUserAllAbilities.Keys)
             {
-                if (abilityType == AbilityType.ExplodeAtPoint)
+                if (abilityType == AbilityType.LeftClickAtPoint)
                     continue;
 
                 if (_spellcoreProgressionService.IsAbilityUnlocked(abilityType) == false)

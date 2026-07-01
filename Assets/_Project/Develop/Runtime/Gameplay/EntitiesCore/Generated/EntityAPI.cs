@@ -112,61 +112,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.MagicCastRequestedEvent() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent BrotherStoneThrowEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> BrotherStoneThrowEvent => BrotherStoneThrowEventC.Value;
-
-		public bool TryGetBrotherStoneThrowEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowEvent()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowEvent() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing BrotherStoneThrowingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing>();
-
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> BrotherStoneThrowing => BrotherStoneThrowingC.Value;
-
-		public bool TryGetBrotherStoneThrowing(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing component);
-			if(result)
-				value = component.Value;
-			else
-				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
-			return result;
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowing()
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneThrowing(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneThrowing() {Value = value}); 
-		}
-
-		public Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight BrotherStoneArcFlightC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight>();
-
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBrotherStoneArcFlight(UnityEngine.Vector3 startPosition,UnityEngine.Vector3 targetPosition,Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity targetEntity,System.Single speed,System.Single totalDistance,System.Single traveledTime,System.Boolean isCompleted)
-		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker.BrotherStoneArcFlight() {StartPosition = startPosition, TargetPosition = targetPosition, TargetEntity = targetEntity, Speed = speed, TotalDistance = totalDistance, TraveledTime = traveledTime, IsCompleted = isCompleted}); 
-		}
-
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;
@@ -516,6 +461,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantSector() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantedEssenceCost PlantedEssenceCostC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantedEssenceCost>();
+
+		public System.Int32 PlantedEssenceCost => PlantedEssenceCostC.Value;
+
+		public bool TryGetPlantedEssenceCost(out System.Int32 value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantedEssenceCost component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(System.Int32);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddPlantedEssenceCost(System.Int32 value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature.PlantedEssenceCost() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount DragonEnrageStackCountC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount>();
 
 		public System.Int32 DragonEnrageStackCount => DragonEnrageStackCountC.Value;
@@ -533,6 +497,37 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddDragonEnrageStackCount(System.Int32 value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.DragonEnrageStackCount() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.FlyingEnemy FlyingEnemyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.FlyingEnemy>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddFlyingEnemy()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature.FlyingEnemy() ); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff.BuildingBuffRemainingSeconds BuildingBuffRemainingSecondsC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff.BuildingBuffRemainingSeconds>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> BuildingBuffRemainingSeconds => BuildingBuffRemainingSecondsC.Value;
+
+		public bool TryGetBuildingBuffRemainingSeconds(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff.BuildingBuffRemainingSeconds component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuildingBuffRemainingSeconds()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff.BuildingBuffRemainingSeconds() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBuildingBuffRemainingSeconds(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff.BuildingBuffRemainingSeconds() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection MoveDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection>();
@@ -1234,6 +1229,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddBodyContactDamage(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.BodyContactDamage() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageVisualKind ContactDamageVisualKindC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageVisualKind>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageVisualKind ContactDamageVisualKind => ContactDamageVisualKindC.Value;
+
+		public bool TryGetContactDamageVisualKind(out Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageVisualKind value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageVisualKind component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageVisualKind);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddContactDamageVisualKind(Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageVisualKind value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageVisualKind() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageOwner ContactDamageOwnerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageOwner>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity ContactDamageOwner => ContactDamageOwnerC.Value;
+
+		public bool TryGetContactDamageOwner(out Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageOwner component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddContactDamageOwner()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageOwner() { Value = new Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddContactDamageOwner(Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage.ContactDamageOwner() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess InDetonateProcessC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DistanceDetector.InDetonateProcess>();
@@ -2176,13 +2214,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.AbilityUserPlantAbilityPreference() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewWorldPoint ExplosionPreviewWorldPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewWorldPoint>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewWorldPoint LeftClickPreviewWorldPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewWorldPoint>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> ExplosionPreviewWorldPoint => ExplosionPreviewWorldPointC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> LeftClickPreviewWorldPoint => LeftClickPreviewWorldPointC.Value;
 
-		public bool TryGetExplosionPreviewWorldPoint(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> value)
+		public bool TryGetLeftClickPreviewWorldPoint(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewWorldPoint component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewWorldPoint component);
 			if(result)
 				value = component.Value;
 			else
@@ -2190,23 +2228,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewWorldPoint()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewWorldPoint()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewWorldPoint() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewWorldPoint() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewWorldPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewWorldPoint(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewWorldPoint() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewWorldPoint() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible ExplosionPreviewVisibleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewVisible LeftClickPreviewVisibleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewVisible>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> ExplosionPreviewVisible => ExplosionPreviewVisibleC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> LeftClickPreviewVisible => LeftClickPreviewVisibleC.Value;
 
-		public bool TryGetExplosionPreviewVisible(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		public bool TryGetLeftClickPreviewVisible(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewVisible component);
 			if(result)
 				value = component.Value;
 			else
@@ -2214,23 +2252,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewVisible()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewVisible()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewVisible() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewVisible(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewVisible(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewVisible() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewVisible() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter ExplosionPreviewIndicatorDiameterC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewIndicatorDiameter LeftClickPreviewIndicatorDiameterC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewIndicatorDiameter>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionPreviewIndicatorDiameter => ExplosionPreviewIndicatorDiameterC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> LeftClickPreviewIndicatorDiameter => LeftClickPreviewIndicatorDiameterC.Value;
 
-		public bool TryGetExplosionPreviewIndicatorDiameter(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public bool TryGetLeftClickPreviewIndicatorDiameter(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewIndicatorDiameter component);
 			if(result)
 				value = component.Value;
 			else
@@ -2238,23 +2276,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewIndicatorDiameter()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewIndicatorDiameter()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewIndicatorDiameter() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewIndicatorDiameter(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewIndicatorDiameter(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewIndicatorDiameter() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewIndicatorDiameter() {Value = value}); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill ExplosionPreviewCooldownFillC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill>();
+		public Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewCooldownFill LeftClickPreviewCooldownFillC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewCooldownFill>();
 
-		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ExplosionPreviewCooldownFill => ExplosionPreviewCooldownFillC.Value;
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> LeftClickPreviewCooldownFill => LeftClickPreviewCooldownFillC.Value;
 
-		public bool TryGetExplosionPreviewCooldownFill(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public bool TryGetLeftClickPreviewCooldownFill(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill component);
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewCooldownFill component);
 			if(result)
 				value = component.Value;
 			else
@@ -2262,14 +2300,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return result;
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewCooldownFill()
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewCooldownFill()
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewCooldownFill() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
 		}
 
-		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddExplosionPreviewCooldownFill(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddLeftClickPreviewCooldownFill(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
 		{
-			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.ExplosionPreviewCooldownFill() {Value = value}); 
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.Ability.LeftClickPreviewCooldownFill() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent RigidbodyC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Common.RigidbodyComponent>();

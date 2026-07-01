@@ -4,6 +4,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
@@ -19,10 +20,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
         private readonly SpellcoreProgressionConfig _config;
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly StageProviderService _stageProviderService;
+        private readonly SurvivalFlowService _survivalFlowService;
         private readonly ConfigsProviderService _configsProviderService;
         private readonly SpawnPathPreviewService _spawnPathPreviewService;
         private readonly WaveSpawnPlanService _waveSpawnPlanService;
         private readonly PathUnlockSequenceService _pathUnlockSequenceService;
+        private readonly SpellcoreCombatConfig _spellcoreCombatConfig;
 
         private int _completedWaves;
         private int _freeMinesRemaining;
@@ -35,18 +38,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             SpellcoreProgressionConfig config,
             SectorRegistryService sectorRegistryService,
             StageProviderService stageProviderService,
+            SurvivalFlowService survivalFlowService,
             ConfigsProviderService configsProviderService,
             SpawnPathPreviewService spawnPathPreviewService,
             WaveSpawnPlanService waveSpawnPlanService,
-            PathUnlockSequenceService pathUnlockSequenceService)
+            PathUnlockSequenceService pathUnlockSequenceService,
+            SpellcoreCombatConfig spellcoreCombatConfig)
         {
             _config = config;
             _sectorRegistryService = sectorRegistryService;
             _stageProviderService = stageProviderService;
+            _survivalFlowService = survivalFlowService;
             _configsProviderService = configsProviderService;
             _spawnPathPreviewService = spawnPathPreviewService;
             _waveSpawnPlanService = waveSpawnPlanService;
             _pathUnlockSequenceService = pathUnlockSequenceService;
+            _spellcoreCombatConfig = spellcoreCombatConfig;
         }
 
         public event Action Changed;
@@ -60,12 +67,31 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
         public void InitializeForRun()
         {
             _completedWaves = 0;
-            _freeMinesRemaining = 0;
+            _freeMinesRemaining = _spellcoreCombatConfig.WaveOnePrepFreeMines;
+
             _runUnlockedPathIndices.Clear();
             _pendingUnlockRevealPathIndices.Clear();
             _stageCompletedSubscription = _stageProviderService.StageCompleted.Subscribe(OnWaveCompleted);
 
             ApplyPathsForWave(UpcomingWaveNumber);
+            RefreshSectorVisuals();
+            Changed?.Invoke();
+        }
+
+        public void ApplyDebugSimulatedCompletedWaves(int completedWaves)
+        {
+            _completedWaves = completedWaves;
+            _freeMinesRemaining = _spellcoreCombatConfig.WaveOnePrepFreeMines;
+
+            if (completedWaves >= 1)
+                _freeMinesRemaining += _config.StarterFreeMines;
+
+            _runUnlockedPathIndices.Clear();
+            _pendingUnlockRevealPathIndices.Clear();
+            _showSpawnPathPreview = true;
+
+            ApplyPathsForWave(UpcomingWaveNumber);
+            _pendingUnlockRevealPathIndices.Clear();
             RefreshSectorVisuals();
             Changed?.Invoke();
         }
@@ -99,7 +125,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             switch (abilityType)
             {
                 case AbilityType.PlantMine:
-                    return _completedWaves >= 1;
+                    return true;
 
                 case AbilityType.PlantTurret:
                     return _completedWaves >= 2;
@@ -132,10 +158,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
             _completedWaves++;
 
             if (_completedWaves == 1)
-                _freeMinesRemaining = _config.StarterFreeMines;
+                _freeMinesRemaining += _config.StarterFreeMines;
+
+            if (_completedWaves == _stageProviderService.StagesCount)
+                _survivalFlowService.OnNormalCampaignCompleted();
+            else if (_stageProviderService.IsSurvivalModeActive
+                     && SurvivalWaveScalingService.IsSurvivalMilestoneCompletedWave(
+                         _completedWaves,
+                         _stageProviderService.StagesCount))
+                _survivalFlowService.OnSurvivalMilestoneReached();
 
             Changed?.Invoke();
         }
+
+        public void OnSurvivalModeEntered()
+        {
+            _showSpawnPathPreview = true;
+            ApplyPathsForWave(UpcomingWaveNumber);
+            RefreshSectorVisuals();
+            TryPlayPendingPathUnlockReveal();
+            Changed?.Invoke();
+        }
+
+        public bool IsNextWaveStartBlocked => _pathUnlockSequenceService.IsPlaying;
 
         private void ApplyPathsForWave(int waveNumber)
         {
@@ -150,7 +195,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
             List<int> availablePathIndices = new List<int>();
 
-            for (int pathIndex = 0; pathIndex < SectorId.SectorsPerRing; pathIndex++)
+            for (int pathIndex = 0; pathIndex < _config.MaxPathCount; pathIndex++)
             {
                 if (_runUnlockedPathIndices.Contains(pathIndex) == false)
                     availablePathIndices.Add(pathIndex);
@@ -196,10 +241,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgression
 
             if (_showSpawnPathPreview)
             {
-                ClearAllEnemiesStageConfig stageConfig =
-                    _stageProviderService.GetClearAllEnemiesStageConfigForWave(UpcomingWaveNumber);
+                ClearAllEnemiesWaveRuntimeData waveData =
+                    _stageProviderService.GetWaveRuntimeDataForWave(UpcomingWaveNumber);
 
-                _waveSpawnPlanService.BuildForWave(stageConfig, _sectorRegistryService);
+                _waveSpawnPlanService.BuildForWave(waveData, _sectorRegistryService, UpcomingWaveNumber);
                 sectorBootstrap.RefreshViews(
                     _sectorRegistryService,
                     visualConfig,

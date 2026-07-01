@@ -53,7 +53,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
                     _config.ScreenShakeRandomness,
                     false,
                     true)
-                .SetUpdate(true)
                 .Play();
         }
 

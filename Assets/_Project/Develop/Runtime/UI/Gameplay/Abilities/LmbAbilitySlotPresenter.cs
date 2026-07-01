@@ -28,7 +28,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
         public void Initialize()
         {
-            _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(AbilityType.ExplodeAtPoint));
+            _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(AbilityType.LeftClickAtPoint));
             _view.SetCostVisible(false);
             _view.IconView.IconClicked += OnIconClicked;
             UpdateHighlight(_mainHero.AbilityUserActiveAbility.Value);
@@ -39,7 +39,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
         private void OnIconClicked()
         {
-            _mainHero.AbilityUserActiveAbility.Value = AbilityType.ExplodeAtPoint;
+            _mainHero.AbilityUserActiveAbility.Value = AbilityType.LeftClickAtPoint;
         }
 
         private void OnActiveAbilityChanged(AbilityType oldValue, AbilityType newValue)
@@ -49,7 +49,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
         private void UpdateHighlight(AbilityType activeAbility)
         {
-            _view.IconView.SetHighlighted(activeAbility == AbilityType.ExplodeAtPoint);
+            _view.IconView.SetHighlighted(activeAbility == AbilityType.LeftClickAtPoint);
         }
 
         public void Dispose()

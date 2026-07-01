@@ -9,17 +9,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
     {
         public BrotherRandomWalkerBrainHandle(
             AIStateMachine stateMachine,
+            RandomMovementState movementState,
             InformativeIdleState idleState,
             TimerService movementTimer,
             TimerService idleTimer)
         {
             StateMachine = stateMachine;
+            MovementState = movementState;
             IdleState = idleState;
             MovementTimer = movementTimer;
             IdleTimer = idleTimer;
         }
 
         public AIStateMachine StateMachine { get; }
+
+        public RandomMovementState MovementState { get; }
 
         public InformativeIdleState IdleState { get; }
 
@@ -42,6 +46,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
         public void Register(Entity entity, BrotherRandomWalkerBrainHandle handle)
         {
             _handles[entity] = handle;
+        }
+
+        public bool TryGetHandle(Entity entity, out BrotherRandomWalkerBrainHandle handle)
+        {
+            return _handles.TryGetValue(entity, out handle);
         }
 
         public bool TryRestartIdleCycle(Entity entity)

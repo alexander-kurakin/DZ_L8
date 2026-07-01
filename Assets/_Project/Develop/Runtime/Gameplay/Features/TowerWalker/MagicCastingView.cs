@@ -1,5 +1,5 @@
 using System;
-using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
@@ -59,13 +59,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
 
             _animator.SetTrigger(MagicCastedHash);
 
-            ExplodeAtPointAbilityConfig config = _lmbFrostProjectileService?.Config;
+            BuildingBuffCastAbilityConfig config = _lmbFrostProjectileService?.Config;
             float castWindupSeconds = config != null ? config.CastWindupSeconds : 0f;
 
             _castWindupTween?.Kill();
             _castWindupTween = DOVirtual
                 .DelayedCall(castWindupSeconds, OnCastWindupComplete)
-                .SetUpdate(true)
                 .Play();
         }
 
@@ -87,7 +86,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
                 return;
             }
 
-            ExplodeAtPointAbilityConfig config = _lmbFrostProjectileService.Config;
+            BuildingBuffCastAbilityConfig config = _lmbFrostProjectileService.Config;
             Transform spawnTransform = _projectileSpawnPoint != null ? _projectileSpawnPoint : transform;
             float projectileSpawnHeight = config != null ? config.ProjectileSpawnHeight : 0f;
             Vector3 startPosition = spawnTransform.position + Vector3.up * projectileSpawnHeight;
@@ -120,7 +119,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
             projectileInstance.transform
                 .DOMove(targetWorldPoint, flightDuration)
                 .SetEase(Ease.Linear)
-                .SetUpdate(true)
                 .OnComplete(() =>
                 {
                     if (projectileInstance != null)

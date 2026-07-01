@@ -36,22 +36,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         public ReactiveVariable<AbilityType> Value;
     }
     
-    public class ExplosionPreviewWorldPoint : IEntityComponent
+    public class LeftClickPreviewWorldPoint : IEntityComponent
     {
         public ReactiveVariable<Vector3> Value;
     }
     
-    public class ExplosionPreviewVisible : IEntityComponent
+    public class LeftClickPreviewVisible : IEntityComponent
     {
         public ReactiveVariable<bool> Value;
     }
 
-    public class ExplosionPreviewIndicatorDiameter : IEntityComponent
+    public class LeftClickPreviewIndicatorDiameter : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }
 
-    public class ExplosionPreviewCooldownFill : IEntityComponent
+    public class LeftClickPreviewCooldownFill : IEntityComponent
     {
         public ReactiveVariable<float> Value;
     }

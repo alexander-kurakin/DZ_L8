@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
@@ -12,6 +13,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private ReactiveVariable<SectorId> _currentSector;
         private Transform _trackedTransform;
         private Rigidbody _rigidbody;
+        private bool _isFlyingEnemy;
 
         public SectorMembershipSystem(SectorMembershipService sectorMembershipService)
         {
@@ -21,6 +23,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         public void OnInit(Entity entity)
         {
             _currentSector = entity.CurrentSector;
+            _isFlyingEnemy = entity.HasComponent<FlyingEnemy>();
 
             if (entity.TryGetTransform(out Transform transform))
                 _trackedTransform = transform;
@@ -38,7 +41,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 ? _trackedTransform.position
                 : _rigidbody.position;
 
-            SectorId resolvedSector = _sectorMembershipService.ResolveFromWorldPosition(worldPosition);
+            SectorId resolvedSector = _isFlyingEnemy
+                ? _sectorMembershipService.ResolveFlyingEnemyFromWorldPosition(worldPosition)
+                : _sectorMembershipService.ResolveFromWorldPosition(worldPosition);
 
             if (_currentSector.Value.Equals(resolvedSector))
                 return;

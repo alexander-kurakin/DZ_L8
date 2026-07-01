@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using _Project.Develop.Runtime.UI.Gameplay.CombatTimeScale;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -13,6 +13,7 @@ using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using _Project.Develop.Runtime.UI.Gameplay.Essence;
+using Assets._Project.Develop.Runtime.UI.Gameplay.PlantBuildingBuff;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.UI.Gameplay
@@ -29,6 +30,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private readonly List<IPresenter> _childPresenters = new();
         
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
+        private PlantBuildingBuffTimersDisplayPresenter _plantBuildingBuffTimersDisplayPresenter;
 
         private MainHeroHolderService _mainHeroHolderService;
         private SpellcoreProgressionService _spellcoreProgressionService;
@@ -36,6 +38,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         private IDisposable _mainHeroRegisteredDisposable;
         private IDisposable _gameplayStateChangedDisposable;
+        private bool _isInitialized;
 
         public GameplayScreenPresenter(
             ProjectPresentersFactory projectPresentersFactory,
@@ -53,13 +56,23 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         public void Initialize()
         {
+            if (_isInitialized)
+                return;
+
+            _isInitialized = true;
+
             CreateCurrencyHud();
-            CreateStats();
+            CreateStatsView();
             CreateStageNumber();
             CreateWavePreview();
+            CreateCombatTimeScale();
             CreateEntitiesHealthDisplay();
+            CreatePlantBuildingBuffTimersDisplay();
             
             _mainHeroRegisteredDisposable = _mainHeroHolderService.HeroRegistred.Subscribe(OnMainHeroRegistered);
+
+            if (_mainHeroHolderService.MainHero != null)
+                OnMainHeroRegistered(_mainHeroHolderService.MainHero);
             
             foreach (IPresenter presenter in _childPresenters)
             {
@@ -115,6 +128,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         public void LateUpdate()
         {
             _entitiesHealthDisplayPresenter.LateUpdate();
+            _plantBuildingBuffTimersDisplayPresenter?.LateUpdate();
         }
         
         private void CreateCurrencyHud()
@@ -125,10 +139,12 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _childPresenters.Add(currencyHudPresenter);
         }
         
-        private void CreateStats()
+        private void CreateStatsView()
         {
-            GameStatsPresenter gameStatsPresenter = _projectPresentersFactory.CreateGameStatsPresenter(_screen.StatsIconTextListView);
-            _childPresenters.Add(gameStatsPresenter);            
+            GameplayStatsPresenter gameplayStatsPresenter =
+                _gameplayPresentersFactory.CreateGameplayStatsPresenter(_screen.StatsIconTextListView);
+
+            _childPresenters.Add(gameplayStatsPresenter);
         }
 
         private void CreateStageNumber()
@@ -145,6 +161,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _childPresenters.Add(wavePreviewPresenter);
         }
 
+        private void CreateCombatTimeScale()
+        {
+            CombatTimeScalePresenter combatTimeScalePresenter =
+                _gameplayPresentersFactory.CreateCombatTimeScalePresenter(_screen.transform);
+
+            _childPresenters.Add(combatTimeScalePresenter);
+        }
+
         private void CreateAbitities(Entity mainHero)
         {
             _abilityListPresenter = _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView, mainHero);
@@ -158,6 +182,17 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _entitiesHealthDisplayPresenter = _gameplayPresentersFactory.CreateEntitiesHealthDisplayPresenter(_screen.EntitiesHealthDisplay);
 
             _childPresenters.Add(_entitiesHealthDisplayPresenter);
+        }
+
+        private void CreatePlantBuildingBuffTimersDisplay()
+        {
+            if (_screen.PlantBuildingBuffTimersDisplay == null)
+                return;
+
+            _plantBuildingBuffTimersDisplayPresenter =
+                _gameplayPresentersFactory.CreatePlantBuildingBuffTimersDisplayPresenter(_screen.PlantBuildingBuffTimersDisplay);
+
+            _childPresenters.Add(_plantBuildingBuffTimersDisplayPresenter);
         }
     }
 }

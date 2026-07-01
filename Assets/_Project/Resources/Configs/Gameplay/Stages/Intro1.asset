@@ -16,8 +16,8 @@ MonoBehaviour:
   - EnemyItems:
     - <EnemyConfig>k__BackingField: {fileID: 11400000, guid: 419057e70c911b849a10dc7bbc6d6db8,
         type: 2}
-      <EnemiesCount>k__BackingField: 3
-    MinTimeBetweenSpawns: 4
-    MaxTimeBetweenSpawns: 5
-    PauseAfterGroup: 0
+      <EnemiesCount>k__BackingField: 5
+    MinTimeBetweenSpawns: 6
+    MaxTimeBetweenSpawns: 8
+    PauseAfterGroup: 4
   <EnemySpawnRadius>k__BackingField: 90

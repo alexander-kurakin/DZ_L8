@@ -60,6 +60,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
                         ? _mineDamageEffectPrefab
                         : _defaultDamageEffectPrefab;
 
+                case TakeDamageVisualKind.Turret:
+                    return _defaultDamageEffectPrefab;
+
+                case TakeDamageVisualKind.Toxic:
+                    return _sectorAbilityDamageEffectPrefab != null
+                        ? _sectorAbilityDamageEffectPrefab
+                        : _defaultDamageEffectPrefab;
+
                 default:
                     return _defaultDamageEffectPrefab;
             }

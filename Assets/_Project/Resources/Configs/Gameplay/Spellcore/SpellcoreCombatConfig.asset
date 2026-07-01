@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c9dbafce72d44eef8b8ebdcfb9af4190, type: 3}
+  m_Name: SpellcoreCombatConfig
+  m_EditorClassIdentifier: 
+  _enemyMoveSpeedScale: 0.7
+  _waveOnePrepFreeMines: 1
+  _minePulsesPerSectorCrossing: 3
+  _referenceCatMoveSpeed: 4
+  _mineLastPulseProgressThreshold: 0.92
+  _mineLastPulseTimeFraction: 0.92
+  _mineDamagePerPulse: 115
+  _tankFirstMinePulseDamageMultiplier: 0.15
+  _toxicSlowMoveSpeedFraction: 0.5
+  _buildingBuffMaxActiveCount: 2
+  _buildingBuffDamageMultiplier: 1.5
+  _buildingBuffDurationSeconds: 60
+  _buildingBuffEssenceCost: 10
+  _brotherRepairHitsPerMovementPhase: 1

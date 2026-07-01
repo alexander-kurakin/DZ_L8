@@ -1,4 +1,5 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using DamageNumbersPro;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,7 +16,8 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Essence
         [field: SerializeField, Min(0f)] public float TowerCollectRadius { get; private set; } = 4f;
         [field: SerializeField, Min(0f)] public float TowerCollectHeightOffset { get; private set; } = 3.5f;
         [field: SerializeField, Range(0f, 1f)] public float TowerEatFraction { get; private set; } = 1f;
-        [field: SerializeField, Range(0f, 1f)] public float PlantSellRefundFraction { get; private set; } = 0.35f;
+        [field: SerializeField, Range(0f, 1f)] public float PlantSellRefundFraction { get; private set; } = 0.5f;
+        [field: SerializeField] public DamageNumber PlantSellRefundNumberPrefab { get; private set; }
         [field: SerializeField, Range(0f, 1f)] public float BailoutTowerHealthFraction { get; private set; } = 0.2f;
         [field: SerializeField, Min(0)] public int BailoutEssenceAmount { get; private set; } = 100;
         [field: SerializeField] public GameObject PickupGlowPrefab { get; private set; }

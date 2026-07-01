@@ -18,6 +18,7 @@ MonoBehaviour:
   <MaxHealth>k__BackingField: 325
   <DeathProcessTime>k__BackingField: 1
   <DistanceToTargetGoal>k__BackingField: 15
+  <StopAtInnerBeltAnchor>k__BackingField: 1
   <ExplosionDamage>k__BackingField: 150
   <SpawnProcessTime>k__BackingField: 1
   <HideExplosionSourceDelayTime>k__BackingField: 0.1

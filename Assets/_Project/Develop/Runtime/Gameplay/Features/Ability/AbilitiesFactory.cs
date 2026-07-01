@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.AbilitySystems;
-using _Project.Develop.Runtime.Gameplay.Features.DealAreaDamage;
 using _Project.Develop.Runtime.Gameplay.Features.PlantableObjects;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -13,9 +12,10 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
 {
@@ -28,14 +28,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly PlantableObjectsFactory _plantableObjectsFactory;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private readonly PlantPlacementService _plantPlacementService;
-        private readonly SectorMembershipService _sectorMembershipService;
-        private readonly SectorEnemyQueryService _sectorEnemyQueryService;
         private readonly SectorRegistryService _sectorRegistryService;
-        private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
         private readonly GameplayJuiceService _gameplayJuiceService;
-        
-        private ExplodeAtPointAbilityConfig _explodeAtPointAbilityConfig;
+        private readonly PlantBuildingBuffService _plantBuildingBuffService;
+        private BuildingBuffCastAbilityConfig _buildingBuffCastAbilityConfig;
         
         public AbilitiesFactory(DIContainer container)
         {
@@ -46,14 +43,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _plantableObjectsFactory = container.Resolve<PlantableObjectsFactory>();
             _spellcoreProgressionService = container.Resolve<SpellcoreProgressionService>();
             _plantPlacementService = container.Resolve<PlantPlacementService>();
-            _sectorMembershipService = container.Resolve<SectorMembershipService>();
-            _sectorEnemyQueryService = container.Resolve<SectorEnemyQueryService>();
             _sectorRegistryService = container.Resolve<SectorRegistryService>();
-            _lmbFlavorToastService = container.Resolve<LmbFlavorToastService>();
             _lmbFrostProjectileService = container.Resolve<LmbFrostProjectileService>();
             _gameplayJuiceService = container.Resolve<GameplayJuiceService>();
-            
-            _explodeAtPointAbilityConfig = _configsProviderService.GetConfig<ExplodeAtPointAbilityConfig>();
+            _plantBuildingBuffService = container.Resolve<PlantBuildingBuffService>();
+
+            _buildingBuffCastAbilityConfig = _configsProviderService.GetConfig<BuildingBuffCastAbilityConfig>();
         }
 
         public void SetupAbilitiesForMainHero(Entity mainHero)
@@ -69,12 +64,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             Entity plantToxicAreaAbility = CreatePlantToxicAreaAbility(
                 mainHero, _configsProviderService.GetConfig<ToxicAreaConfig>());
             
-            Entity explodeAtPointAbility = CreateExplodeAtPointAbility(mainHero);
+            Entity leftClickAtPointAbility = CreateLeftClickAtPointAbility(mainHero);
             
             mapping[AbilityType.PlantMine] = plantMineAbility;
             mapping[AbilityType.PlantTurret] = plantTurretAbility;
             mapping[AbilityType.PlantToxicArea] = plantToxicAreaAbility;
-            mapping[AbilityType.ExplodeAtPoint] = explodeAtPointAbility;
+            mapping[AbilityType.LeftClickAtPoint] = leftClickAtPointAbility;
 
             mainHero.AbilityUserPlantAbilityPreference.Value = AbilityType.PlantMine;
             
@@ -82,7 +77,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _entitiesLifeContext.Add(plantMineAbility);
             _entitiesLifeContext.Add(plantTurretAbility); 
             _entitiesLifeContext.Add(plantToxicAreaAbility); 
-            _entitiesLifeContext.Add(explodeAtPointAbility);
+            _entitiesLifeContext.Add(leftClickAtPointAbility);
         }
         
         private Entity CreatePlantMineAbility(
@@ -160,7 +155,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             return entity;
         }
 
-        private Entity CreateExplodeAtPointAbility(Entity abilityOwner)
+        private Entity CreateLeftClickAtPointAbility(Entity abilityOwner)
         {
             Entity entity = CreateEmpty();
 
@@ -168,20 +163,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             
             entity
                 .AddAbilityOwner(new ReactiveVariable<Entity>(abilityOwner))
-                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.ExplodeAtPoint))
+                .AddAbilityTypeName(new ReactiveVariable<AbilityType>(AbilityType.LeftClickAtPoint))
                 .AddAbilityUseRequest()
-                .AddTeam(new ReactiveVariable<Teams>(ownerTeam))
-                .AddDealAreaImpactDamageRequest();
+                .AddTeam(new ReactiveVariable<Teams>(ownerTeam));
 
             entity
-                .AddSystem(new ExplodeAtPointSystem(
-                    _sectorMembershipService,
-                    _sectorEnemyQueryService,
+                .AddSystem(new BuildingBuffCastSystem(
                     _sectorRegistryService,
-                    _lmbFlavorToastService,
-                    _explodeAtPointAbilityConfig,
+                    _buildingBuffCastAbilityConfig,
                     _lmbFrostProjectileService,
-                    _gameplayJuiceService));
+                    _gameplayJuiceService,
+                    _plantBuildingBuffService))
+                .AddSystem(new BuildingBuffSystem(_plantBuildingBuffService));
             
             return entity;
         }

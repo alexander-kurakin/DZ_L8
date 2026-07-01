@@ -18,4 +18,6 @@ MonoBehaviour:
   - 3
   - 5
   - 5
+  _maxPathCount: 16
+  _survivalPathsPerWave: 1
   _starterFreeMines: 2

@@ -2,6 +2,8 @@
 using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
+using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
@@ -16,11 +18,13 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Mines;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpawnFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TowerIntegrityFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -58,9 +62,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             
             _monoEntitiesFactory.Create(entity, startPosition, config.PrefabPath);
 
+            TowerIntegrityConfig towerIntegrityConfig =
+                _container.Resolve<ConfigsProviderService>().GetConfig<TowerIntegrityConfig>();
+            float towerMaxHealth = towerIntegrityConfig.MaxHits;
+
             entity
-                .AddMaxHealth(new ReactiveVariable<float>(levelConfig.TowerMaxHealth))
-                .AddCurrentHealth(new ReactiveVariable<float>(levelConfig.TowerMaxHealth))
+                .AddMaxHealth(new ReactiveVariable<float>(towerMaxHealth))
+                .AddCurrentHealth(new ReactiveVariable<float>(towerMaxHealth))
                 .AddIsDead()
                 .AddInDeathProcess()
                 .AddDeathProcessInitialTime(new ReactiveVariable<float>(config.DeathProcessTime))
@@ -83,8 +91,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddMustSelfRelease(mustSelfRelease)
                 .AddCanTakeDamage(canTakeIncomingDamage);
 
+            entity.AddSystem(new TowerIntegrityTakeDamageSystem(
+                new TowerIntegrityLeakResolver(towerIntegrityConfig)));
+
             entity
-                .AddSystem(new TakeDamageSystem())
                 .AddSystem(new TowerTakeDamageScreenShakeSystem(_container.Resolve<GameplayJuiceService>()))
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
@@ -179,7 +189,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddMoveSpeed(new ReactiveVariable<float>(ResolveEnemyMoveSpeed(config.MoveSpeed)))
                 .AddIsMoving()
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
@@ -273,7 +283,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             entity
                 .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddMoveSpeed(new ReactiveVariable<float>(ResolveEnemyMoveSpeed(config.MoveSpeed)))
                 .AddIsMoving()
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
@@ -294,6 +304,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDamagePerTick(new ReactiveVariable<float>(config.DamagePerTick))
                 .AddDamageTimer()
                 .AddDragonEnrageStackCount(0)
+                .AddComponent(new FlyingEnemy())
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
                 .AddInSpawnProcess();
@@ -347,9 +358,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
             _monoEntitiesFactory.Create(entity, position, config.PrefabPath);
 
+            SectorGridConfig sectorGridConfig = _container.Resolve<ConfigsProviderService>().GetConfig<SectorGridConfig>();
+            float stopDistance = config.GetStopDistance(sectorGridConfig);
+
             entity
                 .AddMoveDirection()
-                .AddMoveSpeed(new ReactiveVariable<float>(config.MoveSpeed))
+                .AddMoveSpeed(new ReactiveVariable<float>(ResolveEnemyMoveSpeed(config.MoveSpeed)))
                 .AddIsMoving()
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(config.RotationSpeed))
@@ -362,8 +376,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddTakeDamageRequest()
                 .AddTakeDamageEvent()
                 .AddCurrentTarget()
-                .AddDistanceToTargetGoal(new ReactiveVariable<float>(config.DistanceToTargetGoal))
-                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(config.DistanceToTargetGoal))
+                .AddDistanceToTargetGoal(new ReactiveVariable<float>(stopDistance))
+                .AddDistanceToTargetCurrent(new ReactiveVariable<float>(stopDistance))
                 .AddDistanceToTargetReachedEvent()
                 .AddDistanceToTargetReached()
                 .AddExplosionDamage(new ReactiveVariable<float>(config.ExplosionDamage))
@@ -461,17 +475,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             Entity entity = CreateEmpty();
             
             _monoEntitiesFactory.Create(entity, position, mineConfig.PrefabPath);
-            
+
+            SpellcoreCombatConfig spellcoreCombatConfig =
+                _container.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>();
+
             entity
-                .AddAreaImpactDamage(new ReactiveVariable<float>(mineConfig.Damage))
+                .AddAreaImpactDamage(new ReactiveVariable<float>(spellcoreCombatConfig.MineDamagePerPulse))
                 .AddDealAreaImpactDamageRequest();
-                
-            entity
-                .AddSystem(new MineSectorDetonationSystem(
-                    _container.Resolve<SectorEnemyQueryService>(),
-                    _container.Resolve<PlantDamageApplicationService>(),
-                    _container.Resolve<GameplayJuiceService>(),
-                    mineConfig.ProcDelaySeconds));
+
+            entity.AddSystem(new MineFactoryPulseDetonationSystem(
+                _container.Resolve<SectorEnemyQueryService>(),
+                _container.Resolve<PlantDamageApplicationService>(),
+                _container.Resolve<GameplayJuiceService>(),
+                _container.Resolve<SectorRegistryService>(),
+                spellcoreCombatConfig,
+                _container.Resolve<PlantBuildingBuffJuiceService>()));
 
             return entity;
         }
@@ -515,10 +533,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new StartAttackSystem())
                 .AddSystem(new AttackProcessTimerSystem())
                 .AddSystem(new AttackDelayEndTriggerSystem())
-                .AddSystem(new PlantTurretInstantShootSystem(this, _container.Resolve<PlantDamageCounterService>()))
+                .AddSystem(new PlantTurretInstantShootSystem(
+                    this,
+                    _container.Resolve<SectorEnemyQueryService>(),
+                    _container.Resolve<PlantDamageApplicationService>(),
+                    _container.Resolve<PlantDamageCounterService>(),
+                    _container.Resolve<GameplayJuiceService>(),
+                    _container.Resolve<PlantBuildingBuffService>(),
+                    _container.Resolve<PlantBuildingBuffJuiceService>()))
                 .AddSystem(new EndAttackSystem())
                 .AddSystem(new AttackCooldownTimerSystem());
-                
+
+            entity.AddSystem(new TurretCombatTargetRefreshSystem(
+                _container.Resolve<SectorEnemyQueryService>()));
+
             return entity;
         }
         
@@ -532,13 +560,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddDamagePerTick(new ReactiveVariable<float>(toxicAreaConfig.DamagePerTick))
                 .AddDamageInterval(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval))
                 .AddDamageTimer(new ReactiveVariable<float>(toxicAreaConfig.DamageInterval));
+
+            SpellcoreCombatConfig spellcoreCombatConfig =
+                _container.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>();
+            float slowMoveSpeedFraction = spellcoreCombatConfig.ToxicSlowMoveSpeedFraction;
             
             entity
                 .AddSystem(new ToxicSectorCombatSystem(
                     _container.Resolve<SectorEnemyQueryService>(),
                     _container.Resolve<PlantDamageApplicationService>(),
                     _container.Resolve<PlantDamageCounterService>(),
-                    toxicAreaConfig.SlowMoveSpeedFraction,
+                    _container.Resolve<GameplayJuiceService>(),
+                    _container.Resolve<PlantBuildingBuffJuiceService>(),
+                    slowMoveSpeedFraction,
                     toxicAreaConfig.SlowAuraPrefab,
                     toxicAreaConfig.SlowAuraBaseScale,
                     toxicAreaConfig.SlowAuraLocalPositionOffset,
@@ -549,10 +583,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         
         public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, Entity owner)
         {
-            return CreateProjectile(position, direction, damage, 25f, owner);
+            return CreateProjectile(position, direction, damage, 25f, owner, TakeDamageVisualKind.Default);
         }
 
-        public Entity CreateProjectile(Vector3 position, Vector3 direction, float damage, float speed, Entity owner)
+        public Entity CreateProjectile(
+            Vector3 position,
+            Vector3 direction,
+            float damage,
+            float speed,
+            Entity owner,
+            TakeDamageVisualKind visualKind = TakeDamageVisualKind.Default)
         {
             Entity entity = CreateEmpty();
 
@@ -569,6 +609,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddContactCollidersBuffer(new Buffer<Collider>(64))
                 .AddContactEntitiesBuffer(new Buffer<Entity>(64))
                 .AddBodyContactDamage(new ReactiveVariable<float>(damage))
+                .AddComponent(new ContactDamageVisualKind { Value = visualKind })
+                .AddComponent(new ContactDamageOwner { Value = owner })
                 .AddDeathMask(Layers.EnviromentMask)
                 .AddIsTouchDeathMask()
                 .AddIsTouchAnotherTeam()
@@ -598,7 +640,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new RigidbodyRotationSystem())
                 .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
                 .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new DealDamageOnContactSystem(
+                    _container.Resolve<GameplayJuiceService>(),
+                    _container.Resolve<PlantBuildingBuffJuiceService>()))
                 .AddSystem(new DeathMaskTouchDetectorSystem())
                 .AddSystem(new AnotherTeamTouchDetectorSystem())
                 .AddSystem(new ProjectileOffScreenBoundsSystem(
@@ -614,86 +658,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             return entity;
         }
 
-        public Entity CreateBrotherStoneProjectile(
-            Vector3 startPosition,
-            Vector3 targetPosition,
-            Entity targetEntity,
-            float damage,
-            float speed,
-            Entity owner)
-        {
-            Entity entity = CreateEmpty();
-
-            _monoEntitiesFactory.Create(entity, startPosition, "Entities/Projectile");
-
-            TowerBrotherStoneThrowConfig stoneThrowConfig =
-                _container.Resolve<ConfigsProviderService>().GetConfig<TowerBrotherStoneThrowConfig>();
-
-            Vector3 direction = targetPosition - startPosition;
-            direction.Normalize();
-
-            BrotherStoneArcFlight arcFlight = new BrotherStoneArcFlight
-            {
-                StartPosition = startPosition,
-                TargetPosition = targetPosition,
-                TargetEntity = targetEntity,
-                Speed = speed,
-                TotalDistance = Vector3.Distance(startPosition, targetPosition),
-                TraveledTime = 0f,
-                IsCompleted = false,
-            };
-
-            entity
-                .AddComponent(arcFlight)
-                .AddMoveDirection(new ReactiveVariable<Vector3>(direction))
-                .AddMoveSpeed(new ReactiveVariable<float>(speed))
-                .AddIsMoving()
-                .AddRotationDirection(new ReactiveVariable<Vector3>(direction))
-                .AddRotationSpeed(new ReactiveVariable<float>(9999))
-                .AddIsDead()
-                .AddContactsDetectingMask(Layers.CharactersMask)
-                .AddContactCollidersBuffer(new Buffer<Collider>(64))
-                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
-                .AddBodyContactDamage(new ReactiveVariable<float>(damage))
-                .AddIsTouchAnotherTeam()
-                .AddTeam(new ReactiveVariable<Teams>(owner.Team.Value));
-
-            ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false));
-
-            ICompositeCondition canRotate = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value == false));
-
-            ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
-                .Add(new FuncCondition(() => entity.IsTouchAnotherTeam.Value))
-                .Add(new FuncCondition(() => arcFlight.IsCompleted));
-
-            ICompositeCondition mustSelfRelease = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsDead.Value));
-
-            entity
-                .AddCanMove(canMove)
-                .AddCanRotate(canRotate)
-                .AddMustDie(mustDie)
-                .AddMustSelfRelease(mustSelfRelease);
-
-            entity
-                .AddSystem(new BrotherStoneArcMovementSystem(stoneThrowConfig))
-                .AddSystem(new RigidbodyRotationSystem())
-                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
-                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
-                .AddSystem(new DealDamageOnContactSystem())
-                .AddSystem(new AnotherTeamTouchDetectorSystem())
-                .AddSystem(new BrotherStoneProjectileImpactVfxSystem())
-                .AddSystem(new DeathSystem())
-                .AddSystem(new DisableCollidersOnDeathSystem())
-                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
-
-            _entitiesLifeContext.Add(entity);
-
-            return entity;
-        }
-
         private Entity CreateEmpty() => new Entity();
+
+        private float ResolveEnemyMoveSpeed(float configMoveSpeed)
+        {
+            SpellcoreCombatConfig spellcoreCombatConfig =
+                _container.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>();
+
+            return configMoveSpeed * spellcoreCombatConfig.EnemyMoveSpeedScale;
+        }
     }
 }

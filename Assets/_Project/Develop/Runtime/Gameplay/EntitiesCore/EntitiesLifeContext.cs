@@ -16,6 +16,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         public void Add(Entity entity)
         {
+            if (_entities.Contains(entity))
+                return;
+
             _entities.Add(entity);
 
             entity.Initialize();

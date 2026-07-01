@@ -50,15 +50,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
         public void OnUpdate(float deltaTime)
         {
-            if (IsPlantPreviewActive() == false)
+            if (IsSellOrPlantPreviewPhase() == false)
             {
                 _plantPlacementPreviewService.ClearHoverCross();
+                _plantPlacementPreviewService.ClearHoverSellShovel();
                 return;
             }
 
             if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
             {
                 _plantPlacementPreviewService.ClearHoverCross();
+                _plantPlacementPreviewService.ClearHoverSellShovel();
                 return;
             }
 
@@ -69,24 +71,35 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                     out Vector3 planePoint) == false)
             {
                 _plantPlacementPreviewService.ClearHoverCross();
+                _plantPlacementPreviewService.ClearHoverSellShovel();
                 return;
             }
 
             SectorId hoveredSectorId = _sectorMembershipService.ResolveFromWorldPosition(planePoint);
-            _plantPlacementPreviewService.UpdateHoverCross(
+
+            _plantPlacementPreviewService.UpdateHoverSellShovel(
                 hoveredSectorId,
                 _sectorRegistryService,
-                _plantPlacementService,
-                _activeAbility.Value);
+                _plantPlacementService);
+
+            if (PlantPlacementService.IsPlantAbility(_activeAbility.Value))
+            {
+                _plantPlacementPreviewService.UpdateHoverCross(
+                    hoveredSectorId,
+                    _sectorRegistryService,
+                    _plantPlacementService,
+                    _activeAbility.Value);
+            }
+            else
+            {
+                _plantPlacementPreviewService.ClearHoverCross();
+            }
         }
 
-        private bool IsPlantPreviewActive()
+        private bool IsSellOrPlantPreviewPhase()
         {
-            AbilityType activeAbility = _activeAbility.Value;
-            bool isPreviewPhase = _gameplayPhase.Value == GameplayStates.Preparation
-                                  || _gameplayPhase.Value == GameplayStates.StageProcess;
-
-            return isPreviewPhase && PlantPlacementService.IsPlantAbility(activeAbility);
+            return _gameplayPhase.Value == GameplayStates.Preparation
+                   || _gameplayPhase.Value == GameplayStates.StageProcess;
         }
     }
 }

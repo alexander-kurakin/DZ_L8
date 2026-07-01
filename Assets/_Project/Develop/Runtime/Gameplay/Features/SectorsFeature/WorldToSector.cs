@@ -18,6 +18,62 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return new SectorId(belt, index);
         }
 
+        public static SectorId ResolveForFlyingEnemy(Vector3 worldPosition, Vector3 center, SectorGridConfig gridConfig)
+        {
+            SectorId sector = Resolve(worldPosition, center, gridConfig);
+
+            if (sector.Belt == SectorBelt.Spawn || sector.Belt == SectorBelt.Inner)
+                return sector;
+
+            return new SectorId(SectorBelt.Inner, sector.Index);
+        }
+
+        public static bool IsWorldPositionInSectorWedge(
+            Vector3 worldPosition,
+            Vector3 center,
+            SectorId sectorId,
+            SectorGridConfig gridConfig)
+        {
+            Vector3 offset = worldPosition - center;
+            offset.y = 0f;
+            float distance = offset.magnitude;
+
+            float innerRadius = GetBeltInnerRadius(sectorId.Belt, gridConfig);
+            float outerRadius = GetBeltOuterRadius(sectorId.Belt, gridConfig);
+
+            if (distance > outerRadius)
+                return false;
+
+            if (sectorId.Belt != SectorBelt.Inner && distance < innerRadius)
+                return false;
+
+            return IsWorldPositionOnPathIndex(worldPosition, center, sectorId.Index);
+        }
+
+        public static bool IsWorldPositionOnPathIndex(Vector3 worldPosition, Vector3 center, int pathIndex)
+        {
+            Vector3 offset = worldPosition - center;
+            offset.y = 0f;
+
+            float sectorWidthRadians = FULL_CIRCLE_RADIANS / SectorId.SectorsPerRing;
+            float wedgeMinAngle = pathIndex * sectorWidthRadians;
+            float wedgeMaxAngle = wedgeMinAngle + sectorWidthRadians;
+            float enemyAngle = Mathf.Atan2(offset.z, offset.x);
+
+            if (enemyAngle < 0f)
+                enemyAngle += FULL_CIRCLE_RADIANS;
+
+            return IsAngleInWedge(enemyAngle, wedgeMinAngle, wedgeMaxAngle);
+        }
+
+        private static bool IsAngleInWedge(float angle, float wedgeMinAngle, float wedgeMaxAngle)
+        {
+            if (wedgeMinAngle <= wedgeMaxAngle)
+                return angle >= wedgeMinAngle && angle < wedgeMaxAngle;
+
+            return angle >= wedgeMinAngle || angle < wedgeMaxAngle;
+        }
+
         public static int ResolveIndex(Vector3 flatOffsetFromCenter)
         {
             float angleRadians = Mathf.Atan2(flatOffsetFromCenter.z, flatOffsetFromCenter.x);
@@ -127,7 +183,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             }
         }
 
-        private static float GetBeltInnerRadius(SectorBelt belt, SectorGridConfig gridConfig)
+        public static float ResolveInboundBeltProgress(
+            Vector3 worldPosition,
+            Vector3 center,
+            SectorBelt belt,
+            SectorGridConfig gridConfig)
+        {
+            Vector3 offset = worldPosition - center;
+            offset.y = 0f;
+            float distance = offset.magnitude;
+            float outerRadius = GetBeltOuterRadius(belt, gridConfig);
+            float innerRadius = GetBeltInnerRadius(belt, gridConfig);
+            float depth = outerRadius - innerRadius;
+
+            if (depth <= 0f)
+                return 0f;
+
+            float progress = (outerRadius - distance) / depth;
+
+            return Mathf.Clamp01(progress);
+        }
+
+        public static float GetBeltInnerRadius(SectorBelt belt, SectorGridConfig gridConfig)
         {
             switch (belt)
             {
@@ -145,7 +222,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             }
         }
 
-        private static float GetBeltOuterRadius(SectorBelt belt, SectorGridConfig gridConfig)
+        public static float GetBeltOuterRadius(SectorBelt belt, SectorGridConfig gridConfig)
         {
             switch (belt)
             {

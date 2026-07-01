@@ -18,7 +18,9 @@ MonoBehaviour:
   <TowerCollectRadius>k__BackingField: 4
   <TowerCollectHeightOffset>k__BackingField: 3.5
   <TowerEatFraction>k__BackingField: 1
-  <PlantSellRefundFraction>k__BackingField: 0.35
+  <PlantSellRefundFraction>k__BackingField: 0.5
+  <PlantSellRefundNumberPrefab>k__BackingField: {fileID: 6074747914645113848, guid: e9c924ec8c0754e4bb78bccc382fae2a,
+    type: 3}
   <BailoutTowerHealthFraction>k__BackingField: 0.2
   <BailoutEssenceAmount>k__BackingField: 100
   <PickupGlowPrefab>k__BackingField: {fileID: 3938512323750667503, guid: 6b516d7175a80214e94d4e12d93f8478,

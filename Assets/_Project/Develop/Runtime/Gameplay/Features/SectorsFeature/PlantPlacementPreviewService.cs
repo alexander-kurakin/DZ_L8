@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using DG.Tweening;
@@ -20,9 +21,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private const int MARKER_SORTING_ORDER = 175;
         private const float HOVER_CROSS_APPEAR_DURATION_SECONDS = 0.18f;
         private const float HOVER_CROSS_SCALE_FROM = 0.55f;
+        private const float SELL_SHOVEL_HIT_RADIUS_FRACTION = 0.32f;
 
         private static readonly Color CHECK_COLOR = new Color(0.25f, 0.95f, 0.35f, 1f);
+        private static readonly Color TOXIC_OUTER_RECOMMENDED_COLOR = new Color(0.2f, 1f, 0.45f, 1f);
         private static readonly Color CROSS_COLOR = new Color(0.95f, 0.25f, 0.25f, 1f);
+        private static readonly Color SHOVEL_COLOR = new Color(0.85f, 0.62f, 0.18f, 1f);
 
         private static readonly SectorBelt[] PLANTABLE_BELTS =
         {
@@ -33,6 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
         private static Sprite _checkSprite;
         private static Sprite _crossSprite;
+        private static Sprite _shovelSprite;
 
         private readonly Dictionary<SectorId, GameObject> _markerBySectorId = new();
         private Transform _root;
@@ -42,6 +47,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private float _hoverCrossBaseScale = 1f;
         private SectorId? _hoveredSectorId;
         private Tween _hoverCrossTween;
+        private GameObject _hoverSellShovelMarker;
+        private Transform _hoverSellShovelVisual;
+        private SpriteRenderer _hoverSellShovelRenderer;
+        private float _hoverSellShovelBaseScale = 1f;
+        private SectorId? _hoveredSellSectorId;
+        private Tween _hoverSellShovelTween;
+
+        public bool HasSellHoverTarget => _hoveredSellSectorId.HasValue;
 
         public void Refresh(
             bool visible,
@@ -112,12 +125,77 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 return;
             }
 
-            if (_hoveredSectorId.HasValue && _hoveredSectorId.Value == hoveredSectorId)
+            ClearHoverCross();
+        }
+
+        public void UpdateHoverSellShovel(
+            SectorId hoveredSectorId,
+            SectorRegistryService registry,
+            PlantPlacementService plantPlacementService)
+        {
+            if (registry == null || registry.IsInitialized == false || plantPlacementService == null)
+            {
+                ClearHoverSellShovel();
+                return;
+            }
+
+            if (hoveredSectorId.Belt == SectorBelt.Spawn)
+            {
+                ClearHoverSellShovel();
+                return;
+            }
+
+            if (plantPlacementService.TryGetPlantAtSector(hoveredSectorId, out Entity plantEntity) == false
+                || plantEntity == null)
+            {
+                ClearHoverSellShovel();
+                return;
+            }
+
+            if (_hoveredSellSectorId.HasValue && _hoveredSellSectorId.Value == hoveredSectorId)
                 return;
 
-            _hoveredSectorId = hoveredSectorId;
+            _hoveredSellSectorId = hoveredSectorId;
             Vector3 markerPosition = GetMarkerPosition(registry, hoveredSectorId);
-            ShowHoverCross(markerPosition);
+            ShowHoverSellShovel(markerPosition);
+        }
+
+        public bool TryGetSellHoverSector(out SectorId sectorId)
+        {
+            if (_hoveredSellSectorId.HasValue)
+            {
+                sectorId = _hoveredSellSectorId.Value;
+                return true;
+            }
+
+            sectorId = default;
+            return false;
+        }
+
+        public bool IsPointerOverActiveSellShovel(Vector3 clickWorldPoint)
+        {
+            if (_hoverSellShovelMarker == null || _hoverSellShovelMarker.activeSelf == false)
+                return false;
+
+            if (_hoveredSellSectorId.HasValue == false)
+                return false;
+
+            Vector3 shovelPosition = _hoverSellShovelMarker.transform.position;
+            float deltaX = clickWorldPoint.x - shovelPosition.x;
+            float deltaZ = clickWorldPoint.z - shovelPosition.z;
+            float hitRadius = MARKER_WORLD_SIZE * SELL_SHOVEL_HIT_RADIUS_FRACTION;
+
+            return deltaX * deltaX + deltaZ * deltaZ <= hitRadius * hitRadius;
+        }
+
+        public void ClearHoverSellShovel()
+        {
+            _hoverSellShovelTween?.Kill();
+            _hoverSellShovelTween = null;
+            _hoveredSellSectorId = null;
+
+            if (_hoverSellShovelMarker != null)
+                _hoverSellShovelMarker.SetActive(false);
         }
 
         public void ClearHoverCross()
@@ -133,6 +211,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         public void ClearMarkers()
         {
             ClearHoverCross();
+            ClearHoverSellShovel();
 
             foreach (KeyValuePair<SectorId, GameObject> markerEntry in _markerBySectorId)
             {
@@ -183,7 +262,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
             Vector3 markerPosition = GetMarkerPosition(registry, sectorId);
             bool showCheck = previewState == PlantPlacementPreviewState.Allowed;
-            GameObject marker = CreatePlacementMarker(markerPosition, showCheck);
+            GameObject marker = CreatePlacementMarker(markerPosition, showCheck, abilityType, sectorId.Belt);
             marker.transform.SetParent(_root, false);
             _markerBySectorId[sectorId] = marker;
         }
@@ -197,6 +276,52 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 GetWedgeAngleFraction(sectorId.Belt),
                 GetBeltRadiusFraction(sectorId.Belt),
                 MARKER_GROUND_Y_OFFSET);
+        }
+
+        private void ShowHoverSellShovel(Vector3 markerPosition)
+        {
+            EnsureRoot();
+            EnsureHoverSellShovelMarker();
+            _hoverSellShovelMarker.transform.SetPositionAndRotation(markerPosition, Quaternion.Euler(90f, 0f, 0f));
+            _hoverSellShovelMarker.SetActive(true);
+
+            _hoverSellShovelTween?.Kill();
+            _hoverSellShovelVisual.localScale = Vector3.one * (_hoverSellShovelBaseScale * HOVER_CROSS_SCALE_FROM);
+
+            Color hiddenColor = SHOVEL_COLOR;
+            hiddenColor.a = 0f;
+            _hoverSellShovelRenderer.color = hiddenColor;
+
+            _hoverSellShovelTween = DOTween.Sequence()
+                .Append(_hoverSellShovelVisual
+                    .DOScale(Vector3.one * _hoverSellShovelBaseScale, HOVER_CROSS_APPEAR_DURATION_SECONDS)
+                    .SetEase(Ease.OutBack))
+                .Join(_hoverSellShovelRenderer
+                    .DOColor(SHOVEL_COLOR, HOVER_CROSS_APPEAR_DURATION_SECONDS)
+                    .SetEase(Ease.OutQuad))
+                .Play();
+        }
+
+        private void EnsureHoverSellShovelMarker()
+        {
+            if (_hoverSellShovelMarker != null)
+                return;
+
+            _hoverSellShovelMarker = new GameObject("PlantSellHoverShovel");
+            _hoverSellShovelMarker.transform.SetParent(_root, false);
+            _hoverSellShovelMarker.transform.SetPositionAndRotation(Vector3.zero, Quaternion.Euler(90f, 0f, 0f));
+
+            Sprite shovelSprite = GetOrCreateShovelSprite();
+            _hoverSellShovelBaseScale = GetScaleForWorldSize(shovelSprite, MARKER_WORLD_SIZE);
+            _hoverSellShovelVisual = CreateWorldSpriteChild(
+                _hoverSellShovelMarker.transform,
+                "Marker",
+                shovelSprite,
+                Vector3.zero,
+                MARKER_WORLD_SIZE,
+                SHOVEL_COLOR,
+                MARKER_SORTING_ORDER).transform;
+            _hoverSellShovelRenderer = _hoverSellShovelVisual.GetComponent<SpriteRenderer>();
         }
 
         private void ShowHoverCross(Vector3 markerPosition)
@@ -219,7 +344,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 .Join(_hoverCrossRenderer
                     .DOColor(CROSS_COLOR, HOVER_CROSS_APPEAR_DURATION_SECONDS)
                     .SetEase(Ease.OutQuad))
-                .SetUpdate(true)
                 .Play();
         }
 
@@ -270,25 +394,53 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             _root = rootObject.transform;
         }
 
-        private static GameObject CreatePlacementMarker(Vector3 worldPosition, bool showCheck)
+        private static GameObject CreatePlacementMarker(
+            Vector3 worldPosition,
+            bool showCheck,
+            AbilityType abilityType,
+            SectorBelt belt)
         {
             GameObject markerObject = new GameObject(showCheck ? "PlantPlacementAllowed" : "PlantPlacementDenied");
             markerObject.transform.SetPositionAndRotation(worldPosition, Quaternion.Euler(90f, 0f, 0f));
 
             Sprite markerSprite = showCheck ? GetOrCreateCheckSprite() : GetOrCreateCrossSprite();
-            Color markerColor = showCheck ? CHECK_COLOR : CROSS_COLOR;
+            Color markerColor = ResolveMarkerColor(showCheck, abilityType, belt);
+            float markerWorldSize = ResolveMarkerWorldSize(showCheck, abilityType, belt);
 
             CreateWorldSpriteChild(
                 markerObject.transform,
                 "Marker",
                 markerSprite,
                 Vector3.zero,
-                MARKER_WORLD_SIZE,
+                markerWorldSize,
                 markerColor,
                 MARKER_SORTING_ORDER,
                 showCheck ? CHECK_SPRITE_Z_ROTATION : 0f);
 
             return markerObject;
+        }
+
+        private static Color ResolveMarkerColor(bool showCheck, AbilityType abilityType, SectorBelt belt)
+        {
+            if (showCheck == false)
+                return CROSS_COLOR;
+
+            if (abilityType == AbilityType.PlantToxicArea && belt == SectorBelt.Outer)
+                return TOXIC_OUTER_RECOMMENDED_COLOR;
+
+            return CHECK_COLOR;
+        }
+
+        private static float ResolveMarkerWorldSize(bool showCheck, AbilityType abilityType, SectorBelt belt)
+        {
+            if (showCheck
+                && abilityType == AbilityType.PlantToxicArea
+                && belt == SectorBelt.Outer)
+            {
+                return MARKER_WORLD_SIZE * 1.15f;
+            }
+
+            return MARKER_WORLD_SIZE;
         }
 
         private static GameObject CreateWorldSpriteChild(
@@ -338,6 +490,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return _checkSprite;
         }
 
+        private static Sprite GetOrCreateShovelSprite()
+        {
+            if (_shovelSprite != null)
+                return _shovelSprite;
+
+            _shovelSprite = CreateLineSprite(
+                textureSize: 32,
+                pixelsPerUnit: 32f,
+                drawPixel: (int x, int y) => IsShovelPixel(x, y));
+            return _shovelSprite;
+        }
+
         private static Sprite GetOrCreateCrossSprite()
         {
             if (_crossSprite != null)
@@ -379,6 +543,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             bool longLeg = IsThickLine(x, y, 14, 8, 24, 22, 2);
 
             return shortLeg || longLeg;
+        }
+
+        private static bool IsShovelPixel(int x, int y)
+        {
+            bool handle = IsThickLine(x, y, 16, 24, 16, 10, 2);
+            bool blade = x >= 9 && x <= 23 && y >= 4 && y <= 11;
+            bool bladeTip = IsThickLine(x, y, 10, 4, 22, 4, 2);
+
+            return handle || blade || bladeTip;
         }
 
         private static bool IsCrossPixel(int x, int y)

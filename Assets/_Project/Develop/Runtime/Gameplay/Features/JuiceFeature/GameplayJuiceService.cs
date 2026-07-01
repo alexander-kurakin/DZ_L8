@@ -34,6 +34,47 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
             _screenShakeService.PlayMedium();
         }
 
+        public void PlayTurretShot()
+        {
+            _screenShakeService.PlaySmall();
+        }
+
+        private const float TURRET_HIT_PUNCH_SCALE = 1.08f;
+        private const float TURRET_HIT_PUNCH_DURATION_SECONDS = 0.08f;
+
+        public void PlayTurretHit(Entity target)
+        {
+            PlayHitPunch(target, TURRET_HIT_PUNCH_SCALE, TURRET_HIT_PUNCH_DURATION_SECONDS);
+        }
+
+        private const float TOXIC_TICK_PUNCH_SCALE = 1.04f;
+        private const float TOXIC_TICK_PUNCH_DURATION_SECONDS = 0.06f;
+
+        public void PlayToxicTick(Entity target)
+        {
+            PlayHitPunch(target, TOXIC_TICK_PUNCH_SCALE, TOXIC_TICK_PUNCH_DURATION_SECONDS);
+        }
+
+        private void PlayHitPunch(Entity target, float punchScale, float punchDurationSeconds)
+        {
+            if (target.TryGetTransform(out Transform targetTransform) == false)
+                return;
+
+            Vector3 baseScale = targetTransform.localScale;
+
+            targetTransform.DOKill();
+            targetTransform.localScale = baseScale;
+            targetTransform
+                .DOScale(baseScale * punchScale, punchDurationSeconds)
+                .SetEase(Ease.OutQuad)
+                .OnComplete(() =>
+                    targetTransform
+                        .DOScale(baseScale, punchDurationSeconds)
+                        .SetEase(Ease.InQuad)
+                        .Play())
+                .Play();
+        }
+
         public void PlayPathUnlockPulse(
             SectorBootstrap sectorBootstrap,
             SectorVisualConfig visualConfig,
@@ -67,12 +108,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
             dragonTransform
                 .DOScale(baseScale * _dragonEnrageConfig.EnragePunchScale * punchScale, punchDurationSeconds)
                 .SetEase(Ease.OutQuad)
-                .SetUpdate(true)
                 .OnComplete(() =>
                     dragonTransform
                         .DOScale(baseScale, punchDurationSeconds)
                         .SetEase(Ease.InQuad)
-                        .SetUpdate(true)
                         .Play())
                 .Play();
         }

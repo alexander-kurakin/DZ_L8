@@ -61,9 +61,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return brain;
         }
         
-        public StateMachineBrain CreateWalkingTowardsCursorBrain(Entity entity, IMouseInputService mouseInput)
+        public StateMachineBrain CreateWalkingTowardsCursorBrain(
+            Entity entity,
+            IMouseInputService mouseInput,
+            bool respectTowerWalkBounds = false)
         {
-            MovingTowardsCursorState state = new MovingTowardsCursorState(entity, mouseInput);
+            MovingTowardsCursorState state = new MovingTowardsCursorState(
+                entity,
+                mouseInput,
+                respectTowerWalkBounds);
             
             AIStateMachine stateMachine = new AIStateMachine();
             
@@ -209,6 +215,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
             brainHandle = new BrotherRandomWalkerBrainHandle(
                 stateMachine,
+                randomMovementState,
                 informativeIdleState,
                 movementTimer,
                 idleTimer);

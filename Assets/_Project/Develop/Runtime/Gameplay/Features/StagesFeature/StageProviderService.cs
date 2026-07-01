@@ -19,14 +19,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             "Configs/Gameplay/Stages/Intro5",
         };
 
+        private static readonly string SURVIVAL_WAVE_RESOURCE_PATH = "Configs/Gameplay/Stages/Intro5";
+
         private readonly ReactiveEvent _stageCompleted = new();
         private ReactiveVariable<int> _currentStageNumber = new();
         private ReactiveVariable<StageResults> _currentStageResult = new();
 
         private LevelConfig _levelConfig;
         private StagesFactory _stagesFactory;
+        private SurvivalWaveScalingService _survivalWaveScalingService;
 
         private IStage _currentStage;
+        private bool _survivalModeActive;
+        private ClearAllEnemiesStageConfig _survivalWaveTemplate;
         
         private List<Entity> _spawnedTemporaryEntities = new();
         private EntitiesLifeContext _entitiesLifeContext;
@@ -36,10 +41,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         public StageProviderService(
             LevelConfig levelConfig, 
             StagesFactory stagesFactory,
+            SurvivalWaveScalingService survivalWaveScalingService,
             EntitiesLifeContext entitiesLifeContext)
         {
             _levelConfig = levelConfig;
             _stagesFactory = stagesFactory;
+            _survivalWaveScalingService = survivalWaveScalingService;
             _entitiesLifeContext = entitiesLifeContext;
             ValidateStageConfigs();
         }
@@ -52,34 +59,78 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         {
             get
             {
-                int stageIndex = _currentStageNumber.Value - 1;
-                
-                if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
+                ClearAllEnemiesWaveRuntimeData waveData =
+                    GetWaveRuntimeDataForWave(_currentStageNumber.Value);
+
+                if (waveData == null)
                     return 0;
-                
-                if (_levelConfig.StageConfigs[stageIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig)
-                    return clearAllEnemiesStageConfig.EnemiesCount;
-                
-                return 0;
+
+                return waveData.TotalEnemiesCount;
             }
         }
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
+
+        public bool IsSurvivalModeActive => _survivalModeActive;
+
+        public void ActivateSurvivalMode()
+        {
+            if (_survivalModeActive)
+                return;
+
+            _survivalModeActive = true;
+            _survivalWaveTemplate = Resources.Load<ClearAllEnemiesStageConfig>(SURVIVAL_WAVE_RESOURCE_PATH);
+
+            if (_survivalWaveTemplate == null)
+            {
+                throw new InvalidOperationException(
+                    $"Survival wave config is missing at '{SURVIVAL_WAVE_RESOURCE_PATH}'.");
+            }
+        }
 
         public IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypesForWave(int waveNumber)
         {
             return GetWaveEnemyPreviewTypesAtIndex(waveNumber - 1);
         }
 
-        public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
+        public bool HasNextStage() => CurrentStageNumber.Value < StagesCount || _survivalModeActive;
 
-        public ClearAllEnemiesStageConfig GetClearAllEnemiesStageConfigForWave(int waveNumber)
+        public void ApplyDebugSimulatedCompletedWaves(int completedWaves)
         {
+            _currentStageNumber.Value = completedWaves;
+            _currentStageResult.Value = StageResults.Completed;
+        }
+
+        public ClearAllEnemiesWaveRuntimeData GetWaveRuntimeDataForWave(int waveNumber)
+        {
+            if (waveNumber > StagesCount && _survivalModeActive)
+            {
+                int survivalTier = _survivalWaveScalingService.GetSurvivalTierForWave(waveNumber, StagesCount);
+                return _survivalWaveScalingService.CreateScaledWaveData(_survivalWaveTemplate, survivalTier);
+            }
+
             int stageIndex = waveNumber - 1;
 
             if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
                 return null;
 
+            if (ResolveStageConfig(stageIndex) is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig == false)
+                return null;
+
+            return ClearAllEnemiesWaveRuntimeData.FromConfig(clearAllEnemiesStageConfig);
+        }
+
+        public ClearAllEnemiesStageConfig GetClearAllEnemiesStageConfigForWave(int waveNumber)
+        {
+            ClearAllEnemiesWaveRuntimeData waveData = GetWaveRuntimeDataForWave(waveNumber);
+
+            if (waveData == null)
+                return null;
+
+            if (waveNumber > StagesCount && _survivalModeActive)
+                return _survivalWaveTemplate;
+
+            int stageIndex = waveNumber - 1;
             return ResolveStageConfig(stageIndex) as ClearAllEnemiesStageConfig;
         }
 
@@ -94,8 +145,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _currentStageNumber.Value++;
             _currentStageResult.Value = StageResults.Uncompleted;
 
-            int stageIndex = _currentStageNumber.Value - 1;
-            _currentStage = _stagesFactory.Create(ResolveStageConfig(stageIndex));
+            ClearAllEnemiesWaveRuntimeData waveData = GetWaveRuntimeDataForWave(_currentStageNumber.Value);
+
+            if (waveData == null)
+                throw new InvalidOperationException($"Wave runtime data is missing for wave {_currentStageNumber.Value}.");
+
+            _currentStage = _stagesFactory.Create(waveData);
         }
         
         public void AddTemporaryEntity(Entity entity)
@@ -185,7 +240,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         private StageConfig ResolveStageConfig(int stageIndex)
         {
-            if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
+            if (stageIndex >= _levelConfig.StageConfigs.Count)
+            {
+                if (_survivalModeActive && _survivalWaveTemplate != null)
+                    return _survivalWaveTemplate;
+
+                throw new InvalidOperationException(
+                    $"Wave index {stageIndex} is out of range for level with {_levelConfig.StageConfigs.Count} stages.");
+            }
+
+            if (stageIndex < 0)
             {
                 throw new InvalidOperationException(
                     $"Wave index {stageIndex} is out of range for level with {_levelConfig.StageConfigs.Count} stages.");

@@ -1,3 +1,4 @@
+using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using UnityEditor.SceneManagement;
 using UnityEditor;
 
@@ -6,7 +7,8 @@ namespace Assets._Project.Develop.Editor
     [InitializeOnLoad]
     public static class EntryPointSceneAutoLoader
     {
-        private const string MenuPath = "PlayFromBootstrap/Enabled";
+        private const string PlayFromBootstrapMenuPath = "PlayFromBootstrap/Enabled";
+        private const string SimulateFourWaveCompletionMenuPath = "PlayFromBootstrap/Simulate 4 wave completion";
         private const string PlayFromBootstrapKey = "PlayFromBootstrapKey";
 
         static EntryPointSceneAutoLoader()
@@ -32,17 +34,33 @@ namespace Assets._Project.Develop.Editor
             }
         }
 
-        [MenuItem(MenuPath)]
-        private static void Toggle()
+        [MenuItem(PlayFromBootstrapMenuPath)]
+        private static void TogglePlayFromBootstrap()
         {
             bool result = EditorPrefs.GetBool(PlayFromBootstrapKey);
             EditorPrefs.SetBool(PlayFromBootstrapKey, !result);
         }
         
-        [MenuItem(MenuPath, true)]
-        private static bool ToggleValidate()
+        [MenuItem(PlayFromBootstrapMenuPath, true)]
+        private static bool TogglePlayFromBootstrapValidate()
         {
-            Menu.SetChecked(MenuPath, EditorPrefs.GetBool(PlayFromBootstrapKey));
+            Menu.SetChecked(PlayFromBootstrapMenuPath, EditorPrefs.GetBool(PlayFromBootstrapKey));
+            return true;
+        }
+
+        [MenuItem(SimulateFourWaveCompletionMenuPath)]
+        private static void ToggleSimulateFourWaveCompletion()
+        {
+            bool result = EditorPrefs.GetBool(GameplayEditorDebugPrefs.SimulateFourWaveCompletionKey);
+            EditorPrefs.SetBool(GameplayEditorDebugPrefs.SimulateFourWaveCompletionKey, result == false);
+        }
+
+        [MenuItem(SimulateFourWaveCompletionMenuPath, true)]
+        private static bool ToggleSimulateFourWaveCompletionValidate()
+        {
+            Menu.SetChecked(
+                SimulateFourWaveCompletionMenuPath,
+                EditorPrefs.GetBool(GameplayEditorDebugPrefs.SimulateFourWaveCompletionKey));
             return true;
         }
     }

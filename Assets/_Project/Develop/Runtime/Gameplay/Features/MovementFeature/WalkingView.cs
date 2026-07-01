@@ -18,9 +18,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
         private bool _hasIsCurrentlyIdle;
         private IReadOnlyVariable<bool> _isCurrentlyIdle;
-
-        private bool _hasStoneThrowing;
-        private ReactiveVariable<bool> _isStoneThrowing;
         
         private bool _hasGameplayPhase;
         private ReactiveVariable<GameplayStates> _gameplayPhase;
@@ -28,7 +25,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private IDisposable _isMovingChangedDisposable;
         private IDisposable _isCurrentlyIdleChangedDisposable;
         private IDisposable _gameplayPhaseChangedDisposable;
-        private IDisposable _isStoneThrowingChangedDisposable;
 
         private void OnValidate()
         {
@@ -46,17 +42,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
                 _isCurrentlyIdleChangedDisposable = isCurrentlyIdle.Subscribe(OnIsCurrentlyIdleChanged);
             }
 
-            _hasStoneThrowing = entity.TryGetBrotherStoneThrowing(out _isStoneThrowing);
-
             _hasGameplayPhase = entity.TryGetGameplayPhase(out _gameplayPhase);
 
             if (_hasGameplayPhase)
                 _gameplayPhaseChangedDisposable = _gameplayPhase.Subscribe(OnGameplayPhaseChanged);
 
             _isMovingChangedDisposable = _isMoving.Subscribe(OnIsMovingChanged);
-
-            if (_hasStoneThrowing)
-                _isStoneThrowingChangedDisposable = _isStoneThrowing.Subscribe(OnStoneThrowingChanged);
 
             UpdateWalkAnimator();
         }
@@ -68,29 +59,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isMovingChangedDisposable?.Dispose();
             _isCurrentlyIdleChangedDisposable?.Dispose();
             _gameplayPhaseChangedDisposable?.Dispose();
-            _isStoneThrowingChangedDisposable?.Dispose();
         }
 
         private void OnIsMovingChanged(bool oldIsMoving, bool isMoving) => UpdateWalkAnimator();
 
         private void OnIsCurrentlyIdleChanged(bool oldIsCurrentlyIdle, bool isCurrentlyIdle) => UpdateWalkAnimator();
-
-        private void OnStoneThrowingChanged(bool oldIsThrowing, bool isThrowing) => UpdateWalkAnimator();
         
         private void OnGameplayPhaseChanged(GameplayStates arg1, GameplayStates arg2) => UpdateWalkAnimator();
 
         private void UpdateWalkAnimator()
         {
-            bool isThrowingStone = _hasStoneThrowing && _isStoneThrowing.Value;
             bool isWalkablePhase = _hasGameplayPhase == false || _gameplayPhase.Value == GameplayStates.StageProcess;
-            bool shouldPlayWalkAnimation = ResolveShouldPlayWalkAnimation(isWalkablePhase, isThrowingStone);
+            bool shouldPlayWalkAnimation = ResolveShouldPlayWalkAnimation(isWalkablePhase);
 
             _animator.SetBool(IsMovingKey, shouldPlayWalkAnimation);
         }
 
-        private bool ResolveShouldPlayWalkAnimation(bool isWalkablePhase, bool isThrowingStone)
+        private bool ResolveShouldPlayWalkAnimation(bool isWalkablePhase)
         {
-            if (isWalkablePhase == false || isThrowingStone)
+            if (isWalkablePhase == false)
                 return false;
 
             if (_hasIsCurrentlyIdle)

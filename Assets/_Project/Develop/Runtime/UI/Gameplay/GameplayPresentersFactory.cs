@@ -7,10 +7,12 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Gameplay.States;
@@ -19,10 +21,15 @@ using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+using Assets._Project.Develop.Runtime.UI.Gameplay.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
+using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+using _Project.Develop.Runtime.UI.Gameplay.CombatTimeScale;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayTimeScale;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using UnityEngine;
 
@@ -39,7 +46,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _gameplayInputArgs = gameplayInputArgs;
         }
         
-        public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view, RewardsData rewardsData)
+        public WinPopupPresenter CreateWinPopupPresenter(WinPopupView view, WinPopupOpenArgs openArgs)
         {
             return new WinPopupPresenter(
                 _container.Resolve<ICoroutinesPerformer>(),
@@ -47,7 +54,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<IUISoundService>(),
                 _container.Resolve<IBackgroundMusicService>(),
-                rewardsData);
+                openArgs);
         }
 
         public DefeatPopupPresenter CreateDefeatPopupPresenter(DefeatPopupView view)
@@ -92,13 +99,23 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<SpellcoreProgressionService>());
         }
 
+        public GameplayStatsPresenter CreateGameplayStatsPresenter(IconTextListView view)
+        {
+            return new GameplayStatsPresenter(
+                view,
+                _container.Resolve<ViewsFactory>(),
+                _container.Resolve<RunEnemyKillCounterService>(),
+                _container.Resolve<ConfigsProviderService>().GetConfig<StatIconsConfig>());
+        }
+
         public StagePresenter CreateStagePresenter(IconTextView view)
         {
             return new StagePresenter(
                 view,
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<MainHeroHolderService>(),
-                _container.Resolve<SpellcoreProgressionService>());
+                _container.Resolve<SpellcoreProgressionService>(),
+                _container.Resolve<SurvivalFlowService>());
         }
 
         public WavePreviewPresenter CreateWavePreviewPresenter(WavePreviewView view)
@@ -125,11 +142,36 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 this);
         }
 
+        public PlantBuildingBuffCountdownPresenter CreatePlantBuildingBuffCountdownPresenter(
+            ReactiveVariable<float> remainingSeconds,
+            TextView view)
+        {
+            return new PlantBuildingBuffCountdownPresenter(remainingSeconds, view);
+        }
+
+        public PlantBuildingBuffTimersDisplayPresenter CreatePlantBuildingBuffTimersDisplayPresenter(
+            PlantBuildingBuffTimersDisplay view)
+        {
+            return new PlantBuildingBuffTimersDisplayPresenter(
+                _container.Resolve<PlantBuildingBuffService>(),
+                view,
+                _container.Resolve<ViewsFactory>(),
+                this);
+        }
+
         public LmbFlavorToastPresenter CreateLmbFlavorToastPresenter(Transform parent)
         {
             return new LmbFlavorToastPresenter(
                 _container.Resolve<LmbFlavorToastService>(),
                 parent);
+        }
+
+        public CombatTimeScalePresenter CreateCombatTimeScalePresenter(Transform parent)
+        {
+            return new CombatTimeScalePresenter(
+                _container.Resolve<ViewsFactory>(),
+                parent,
+                _container.Resolve<GameplayTimeScaleService>());
         }
     }
 }

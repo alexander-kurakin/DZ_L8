@@ -18,4 +18,4 @@ MonoBehaviour:
   <RotationSpeed>k__BackingField: 900
   <AttackProcessTime>k__BackingField: 0.5
   <AttackDelayTime>k__BackingField: 0.3
-  <AttackCooldown>k__BackingField: 0.1
+  <AttackCooldown>k__BackingField: 2.5

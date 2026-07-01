@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Systems;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -16,6 +17,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
         private readonly SectorEnemyQueryService _sectorEnemyQueryService;
         private readonly PlantDamageApplicationService _plantDamageApplicationService;
         private readonly PlantDamageCounterService _plantDamageCounterService;
+        private readonly GameplayJuiceService _gameplayJuiceService;
+        private readonly PlantBuildingBuffJuiceService _plantBuildingBuffJuiceService;
 
         private readonly List<Entity> _enemiesInSector = new();
         private readonly HashSet<Entity> _slowedEnemies = new();
@@ -37,6 +40,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             SectorEnemyQueryService sectorEnemyQueryService,
             PlantDamageApplicationService plantDamageApplicationService,
             PlantDamageCounterService plantDamageCounterService,
+            GameplayJuiceService gameplayJuiceService,
+            PlantBuildingBuffJuiceService plantBuildingBuffJuiceService,
             float slowMoveSpeedFraction,
             GameObject slowAuraPrefab,
             float slowAuraBaseScale,
@@ -46,6 +51,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             _sectorEnemyQueryService = sectorEnemyQueryService;
             _plantDamageApplicationService = plantDamageApplicationService;
             _plantDamageCounterService = plantDamageCounterService;
+            _gameplayJuiceService = gameplayJuiceService;
+            _plantBuildingBuffJuiceService = plantBuildingBuffJuiceService;
             _slowMoveSpeedFraction = slowMoveSpeedFraction;
             _slowAuraPrefab = slowAuraPrefab;
             _slowAuraBaseScale = slowAuraBaseScale;
@@ -77,11 +84,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
                 Entity enemy = _enemiesInSector[index];
                 enemiesInSectorThisTick.Add(enemy);
 
-                _plantDamageApplicationService.TryApplyDamage(
+                bool damageApplied = _plantDamageApplicationService.TryApplyDamage(
                     _toxicEntity,
                     enemy,
                     _damagePerTick.Value,
                     PlantDamageSource.Toxic);
+
+                if (damageApplied)
+                {
+                    _gameplayJuiceService.PlayToxicTick(enemy);
+
+                    if (_plantBuildingBuffJuiceService.IsBuffed(_toxicEntity))
+                        _plantBuildingBuffJuiceService.PlayBuffedToxicTick();
+                }
 
                 TryApplySlow(enemy);
             }
@@ -92,6 +107,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
 
         private void TryApplySlow(Entity enemy)
         {
+            if (enemy.HasComponent<FlyingEnemy>())
+                return;
+
             if (enemy.TryGetEnemyWavePreviewType(out WaveEnemyPreviewType previewType) == false)
                 return;
 

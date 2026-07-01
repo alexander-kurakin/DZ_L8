@@ -6,6 +6,7 @@ using _Project.Develop.Runtime.Meta.Features.Powerups;
 using _Project.Develop.Runtime.UI.Gameplay;
 using _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Juice;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
@@ -18,14 +19,17 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.Enemies;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayTimeScale;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.Gameplay.States;
-using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -44,7 +48,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         public static void Process(DIContainer container,  GameplayInputArgs inputArgs)
         {
             _inputArgs = inputArgs;
-            
+            container.RegisterAsSingle(_ => inputArgs);
+
             container.RegisterAsSingle(CreateEntitiesFactory);
 
             container.RegisterAsSingle(CreateEntitiesLifeContext);
@@ -61,7 +66,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreatePlantPlacementPreviewController).NonLazy();
             container.RegisterAsSingle(CreateWaveSpawnPlanService);
             container.RegisterAsSingle(CreatePlantPlacementService);
+            container.RegisterAsSingle(CreatePlantSellJuiceService);
+            container.RegisterAsSingle(CreatePlantSellService);
+            container.RegisterAsSingle(CreatePlantSellInputService);
             container.RegisterAsSingle(CreatePlantDamageCounterService);
+            container.RegisterAsSingle(CreateTankMineShieldService);
+            container.RegisterAsSingle(CreatePlantBuildingBuffService);
+            container.RegisterAsSingle(CreatePlantBuildingBuffJuiceService);
             container.RegisterAsSingle(CreateDragonEnrageService);
             container.RegisterAsSingle(CreateScreenShakeService);
             container.RegisterAsSingle(CreateGameplayJuiceService).NonLazy();
@@ -71,6 +82,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
             container.RegisterAsSingle(CreateRunEssenceService);
             container.RegisterAsSingle(CreateEssenceFeatureService).NonLazy();
+            container.RegisterAsSingle(CreateRunEnemyKillCounterService).NonLazy();
+            container.RegisterAsSingle(CreateGameplayTimeScaleService).NonLazy();
 
             container.RegisterAsSingle(CreateBrotherRandomWalkerBrainsRegistry);
             container.RegisterAsSingle(CreateBrainsFactory);
@@ -84,6 +97,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
             container.RegisterAsSingle(CreateStagesFactory);
             container.RegisterAsSingle(CreateStageProviderService);
+            container.RegisterAsSingle(CreateSurvivalWaveScalingService);
+            container.RegisterAsSingle(CreateSurvivalFlowService);
 
             container.RegisterAsSingle(CreatePreparationTriggerService);
 
@@ -196,6 +211,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new StageProviderService(
                 c.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(_inputArgs.LevelNumber),
                 c.Resolve<StagesFactory>(),
+                c.Resolve<SurvivalWaveScalingService>(),
                 c.Resolve<EntitiesLifeContext>());
         }
 
@@ -279,9 +295,56 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<EntitiesLifeContext>());
         }
 
+        private static PlantSellJuiceService CreatePlantSellJuiceService(DIContainer c)
+        {
+            return new PlantSellJuiceService(
+                c.Resolve<ConfigsProviderService>().GetConfig<EssenceConfig>());
+        }
+
+        private static PlantSellService CreatePlantSellService(DIContainer c)
+        {
+            return new PlantSellService(
+                c.Resolve<PlantPlacementService>(),
+                c.Resolve<SectorMembershipService>(),
+                c.Resolve<RunEssenceService>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<EssenceConfig>(),
+                c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<PlantSellJuiceService>());
+        }
+
+        private static PlantSellInputService CreatePlantSellInputService(DIContainer c)
+        {
+            return new PlantSellInputService(
+                c.Resolve<PlantPlacementPreviewService>(),
+                c.Resolve<PlantSellService>());
+        }
+
         private static PlantDamageCounterService CreatePlantDamageCounterService(DIContainer c)
         {
             return new PlantDamageCounterService();
+        }
+
+        private static TankMineShieldService CreateTankMineShieldService(DIContainer c)
+        {
+            return new TankMineShieldService();
+        }
+
+        private static PlantBuildingBuffService CreatePlantBuildingBuffService(DIContainer c)
+        {
+            return new PlantBuildingBuffService(
+                c.Resolve<PlantPlacementService>(),
+                c.Resolve<SectorMembershipService>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>(),
+                c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<RunEssenceService>());
+        }
+
+        private static PlantBuildingBuffJuiceService CreatePlantBuildingBuffJuiceService(DIContainer c)
+        {
+            return new PlantBuildingBuffJuiceService(
+                c.Resolve<PlantBuildingBuffService>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<BuildingBuffCastAbilityConfig>(),
+                c.Resolve<IGameSoundsService>());
         }
 
         private static DragonEnrageService CreateDragonEnrageService(DIContainer c)
@@ -307,8 +370,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             return new PlantDamageApplicationService(
                 c.Resolve<PlantDamageCounterService>(),
-                c.Resolve<DragonEnrageService>(),
-                c.Resolve<GameplayJuiceService>());
+                c.Resolve<TankMineShieldService>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>(),
+                c.Resolve<PlantBuildingBuffService>());
         }
 
         private static SpawnPathPreviewService CreateSpawnPathPreviewService(DIContainer c)
@@ -342,16 +406,28 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new WaveSpawnPlanService();
         }
 
+        private static SurvivalWaveScalingService CreateSurvivalWaveScalingService(DIContainer c)
+        {
+            return new SurvivalWaveScalingService();
+        }
+
+        private static SurvivalFlowService CreateSurvivalFlowService(DIContainer c)
+        {
+            return new SurvivalFlowService(c.Resolve<StageProviderService>());
+        }
+
         private static SpellcoreProgressionService CreateSpellcoreProgressionService(DIContainer c)
         {
             return new SpellcoreProgressionService(
                 c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreProgressionConfig>(),
                 c.Resolve<SectorRegistryService>(),
                 c.Resolve<StageProviderService>(),
+                c.Resolve<SurvivalFlowService>(),
                 c.Resolve<ConfigsProviderService>(),
                 c.Resolve<SpawnPathPreviewService>(),
                 c.Resolve<WaveSpawnPlanService>(),
-                c.Resolve<PathUnlockSequenceService>());
+                c.Resolve<PathUnlockSequenceService>(),
+                c.Resolve<ConfigsProviderService>().GetConfig<SpellcoreCombatConfig>());
         }
 
         private static RunEssenceService CreateRunEssenceService(DIContainer c)
@@ -368,6 +444,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<MainHeroHolderService>(),
                 c.Resolve<IMouseInputService>(),
                 c.Resolve<MouseRaycastService>());
+        }
+
+        private static RunEnemyKillCounterService CreateRunEnemyKillCounterService(DIContainer c)
+        {
+            return new RunEnemyKillCounterService(c.Resolve<EntitiesLifeContext>());
+        }
+
+        private static GameplayTimeScaleService CreateGameplayTimeScaleService(DIContainer c)
+        {
+            return new GameplayTimeScaleService();
         }
 
         private static MonoEntitiesFactory CreateMonoEntitiesFactory(DIContainer c)

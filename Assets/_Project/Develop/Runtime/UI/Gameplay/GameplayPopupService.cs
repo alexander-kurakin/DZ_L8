@@ -1,5 +1,6 @@
 using System;
 using Assets._Project.Develop.Runtime.Gameplay.States;
+using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
@@ -27,9 +28,20 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         
         public WinPopupPresenter OpenWinPopup(RewardsData rewardsData, Action closedCallback = null)
         {
+            WinPopupOpenArgs openArgs = new WinPopupOpenArgs
+            {
+                RewardsData = rewardsData,
+                Mode = WinPopupMode.Standard
+            };
+
+            return OpenWinPopup(openArgs, closedCallback);
+        }
+
+        public WinPopupPresenter OpenWinPopup(WinPopupOpenArgs openArgs, Action closedCallback = null)
+        {
             WinPopupView view = ViewsFactory.Create<WinPopupView>(ViewIDs.WinPopup, PopupLayer);
 
-            WinPopupPresenter popup = _gameplayPresentersFactory.CreateWinPopupPresenter(view, rewardsData);
+            WinPopupPresenter popup = _gameplayPresentersFactory.CreateWinPopupPresenter(view, openArgs);
 
             OnPopupCreated(popup, view, closedCallback);
 

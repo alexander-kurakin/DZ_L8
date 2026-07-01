@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
@@ -26,6 +28,56 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             foreach (Entity entity in _entitiesLifeContext.Entities)
             {
                 if (IsEnemyInSector(entity, sectorId) == false)
+                    continue;
+
+                results.Add(entity);
+            }
+        }
+
+        public void CollectEnemiesInMineSector(
+            SectorId sectorId,
+            Vector3 sectorCenter,
+            Vector3 mineWorldPosition,
+            SectorGridConfig gridConfig,
+            bool includeMineCellProximity,
+            List<Entity> results)
+        {
+            results.Clear();
+
+            float wedgeHalfArc = WorldToSector.GetSectorArcWidth(sectorId.Belt, gridConfig) * 0.5f;
+            float mineCellRadiusSqr = wedgeHalfArc * wedgeHalfArc;
+
+            foreach (Entity entity in _entitiesLifeContext.Entities)
+            {
+                if (IsEnemyAlive(entity) == false)
+                    continue;
+
+                if (entity.TryGetTransform(out Transform transform) == false)
+                    continue;
+
+                Vector3 enemyPosition = transform.position;
+                bool inWedge = WorldToSector.IsWorldPositionInSectorWedge(
+                    enemyPosition,
+                    sectorCenter,
+                    sectorId,
+                    gridConfig);
+
+                if (inWedge)
+                {
+                    results.Add(entity);
+                    continue;
+                }
+
+                if (includeMineCellProximity == false)
+                    continue;
+
+                Vector3 offsetFromMine = enemyPosition - mineWorldPosition;
+                offsetFromMine.y = 0f;
+
+                if (offsetFromMine.sqrMagnitude > mineCellRadiusSqr)
+                    continue;
+
+                if (WorldToSector.IsWorldPositionOnPathIndex(enemyPosition, sectorCenter, sectorId.Index) == false)
                     continue;
 
                 results.Add(entity);
@@ -107,6 +159,45 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             }
         }
 
+        public void CollectEnemiesOnPath(int pathIndex, List<Entity> results)
+        {
+            results.Clear();
+
+            foreach (Entity entity in _entitiesLifeContext.Entities)
+            {
+                if (IsEnemyAlive(entity) == false)
+                    continue;
+
+                SectorId enemySector = ResolveEnemySector(entity);
+
+                if (enemySector.Index != pathIndex)
+                    continue;
+
+                results.Add(entity);
+            }
+        }
+
+        public void CollectEnemiesOnPlantablePath(int pathIndex, List<Entity> results)
+        {
+            results.Clear();
+
+            foreach (Entity entity in _entitiesLifeContext.Entities)
+            {
+                if (IsEnemyAlive(entity) == false)
+                    continue;
+
+                SectorId enemySector = ResolveEnemySector(entity);
+
+                if (enemySector.Index != pathIndex)
+                    continue;
+
+                if (IsPlantableBelt(enemySector.Belt) == false)
+                    continue;
+
+                results.Add(entity);
+            }
+        }
+
         public void CollectEnemiesOnBeltAtPathIndices(SectorBelt belt, int centerPathIndex, List<Entity> results)
         {
             results.Clear();
@@ -146,6 +237,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return wrappedIndex;
         }
 
+        private static bool IsPlantableBelt(SectorBelt belt)
+        {
+            return belt == SectorBelt.Inner
+                   || belt == SectorBelt.Middle
+                   || belt == SectorBelt.Outer;
+        }
+
         private bool IsEnemyInSector(Entity entity, SectorId sectorId)
         {
             if (IsEnemyAlive(entity) == false)
@@ -157,13 +255,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
 
         private SectorId ResolveEnemySector(Entity entity)
         {
-            if (entity.TryGetTransform(out Transform transform))
-                return _sectorMembershipService.ResolveFromWorldPosition(transform.position);
-
             if (entity.TryGetCurrentSector(out ReactiveVariable<SectorId> currentSector))
                 return currentSector.Value;
 
-            return default;
+            if (entity.TryGetTransform(out Transform transform) == false)
+                return default;
+
+            if (entity.HasComponent<FlyingEnemy>())
+                return _sectorMembershipService.ResolveFlyingEnemyFromWorldPosition(transform.position);
+
+            return _sectorMembershipService.ResolveFromWorldPosition(transform.position);
         }
 
         private static bool IsEnemyAlive(Entity entity)

@@ -121,7 +121,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 .SetEase(Ease.OutQuad));
             revealSequence.OnKill(() => ApplyFill(unlockedFill));
             revealSequence.OnComplete(() => ApplyFill(unlockedFill));
-            revealSequence.SetUpdate(true);
 
             _unlockRevealTween = revealSequence.Play();
         }

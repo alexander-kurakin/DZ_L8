@@ -17,7 +17,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         [SerializeField] private Animator _animator;
         
         private ReactiveVariable<bool> _isCurrentlyIdle;
-        private ReactiveVariable<bool> _isStoneThrowing;
         private IDisposable _isCurrentlyIdleDisposable;
         
         private void OnValidate() => _animator ??= GetComponent<Animator>();
@@ -25,16 +24,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
         protected override void OnEntityStartedWork(Entity entity)
         {
             _isCurrentlyIdle = entity.IsCurrentlyIdle;
-            _isStoneThrowing = entity.BrotherStoneThrowing;
             _isCurrentlyIdleDisposable = _isCurrentlyIdle.Subscribe(OnIsCurrentIdleChanged);
         }
         
         private void OnIsCurrentIdleChanged(bool prevIdle, bool newIdle)
         {
             if (newIdle == false || prevIdle)
-                return;
-
-            if (_isStoneThrowing.Value)
                 return;
             
             _animator.SetInteger(IdleVariantKey, Random.Range(0, IdleVariantCount));

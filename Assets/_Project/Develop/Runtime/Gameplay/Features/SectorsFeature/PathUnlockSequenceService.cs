@@ -76,7 +76,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             });
 
             revealSequence.OnComplete(OnSequenceCompleted);
-            revealSequence.SetUpdate(true);
 
             _activeSequenceTween = revealSequence.Play();
         }

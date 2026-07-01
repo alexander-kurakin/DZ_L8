@@ -9,7 +9,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
             switch (source)
             {
                 case PlantDamageSource.Mine:
-                    return 1f;
+                    switch (enemyType)
+                    {
+                        case WaveEnemyPreviewType.Dragon:
+                            return 0f;
+
+                        default:
+                            return 1f;
+                    }
 
                 case PlantDamageSource.Toxic:
                     switch (enemyType)
@@ -30,7 +37,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantCombatFeature
                     switch (enemyType)
                     {
                         case WaveEnemyPreviewType.Cat:
-                            return 1f;
+                            return 0.5f;
 
                         case WaveEnemyPreviewType.Tank:
                             return 0.5f;

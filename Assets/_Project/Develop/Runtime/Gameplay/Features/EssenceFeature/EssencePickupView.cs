@@ -54,15 +54,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (_remainingHoverLockSeconds > 0f)
                 return;
 
-            CanAcceptHover = true;
-            _sphereCollider.enabled = true;
+            ActivateHoverReady();
+        }
 
-            _hoverPopScaleTween?.Kill();
-            _hoverPopScaleTween = _visualRoot
-                .DOScale(Vector3.one * GetHoverScale(), _essenceConfig.PickupHoverReadyGrowDurationSeconds)
-                .SetEase(Ease.OutCubic)
-                .SetUpdate(true)
-                .Play();
+        public void ForceActivateHover()
+        {
+            ActivateHoverReady();
         }
 
         public void StartVacuuming()
@@ -85,7 +82,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
                 .Append(_visualRoot
                     .DOScale(Vector3.one * hoverScale, _essenceConfig.PickupVacuumSettleDurationSeconds)
                     .SetEase(Ease.OutCubic))
-                .SetUpdate(true)
                 .Play();
         }
 
@@ -143,6 +139,26 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
         private float GetVacuumPulseScale()
         {
             return _essenceConfig.PickupGlowGroundScale * _essenceConfig.PickupVacuumPulseScaleFactor;
+        }
+
+        private void ActivateHoverReady()
+        {
+            if (CanAcceptHover)
+                return;
+
+            CanAcceptHover = true;
+            _remainingHoverLockSeconds = 0f;
+            _sphereCollider.enabled = true;
+            PlayHoverReadyPop();
+        }
+
+        private void PlayHoverReadyPop()
+        {
+            _hoverPopScaleTween?.Kill();
+            _hoverPopScaleTween = _visualRoot
+                .DOScale(Vector3.one * GetHoverScale(), _essenceConfig.PickupHoverReadyGrowDurationSeconds)
+                .SetEase(Ease.OutCubic)
+                .Play();
         }
 
         private void ConfigureCollider()

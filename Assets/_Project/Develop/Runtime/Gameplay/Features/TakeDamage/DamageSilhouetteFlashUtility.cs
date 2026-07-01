@@ -73,7 +73,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
                     RECOVER_DURATION_SECONDS).SetEase(Ease.OutQuad));
             flashSequence.OnKill(() => FinishFlash(root, playback));
             flashSequence.OnComplete(() => FinishFlash(root, playback));
-            flashSequence.SetUpdate(true);
 
             playback.Tween = flashSequence.Play();
             ActiveFlashes[root] = playback;

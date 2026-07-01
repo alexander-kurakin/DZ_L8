@@ -12,4 +12,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
     {
         public SectorId Value;
     }
+
+    public class PlantedEssenceCost : IEntityComponent
+    {
+        public int Value;
+    }
 }

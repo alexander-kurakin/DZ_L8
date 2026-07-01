@@ -1,6 +1,8 @@
-﻿using System;
+using System;
 using _Project.Develop.Runtime.Gameplay.Features.Input;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using _Project.Develop.Runtime.Gameplay.Features.LeftClickAbilityPreview;
+using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -10,13 +12,19 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
-using _Project.Develop.Runtime.Gameplay.Features.ExplosionAbilityPreview;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
+using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
 using UnityEngine;
 
@@ -32,6 +40,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly SectorRegistryService _sectorRegistryService;
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
         private readonly EssenceFeatureService _essenceFeatureService;
+        private readonly PlantBuildingBuffService _plantBuildingBuffService;
+        private readonly PlantSellInputService _plantSellInputService;
+        private readonly SurvivalFlowService _survivalFlowService;
+        private readonly GameplayPopupService _gameplayPopupService;
+        private readonly WalletService _walletService;
+        private readonly PlayerDataProvider _playerDataProvider;
+        private readonly SceneSwitcherService _sceneSwitcherService;
+        private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly int _levelGoldReward;
+
         private IMouseInputService _mouseInputService;
         private MouseRaycastService _mouseRaycastService;
         private MouseOverUIService _mouseOverUIService;
@@ -50,7 +68,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             SpellcoreProgressionService spellcoreProgressionService,
             SectorRegistryService sectorRegistryService,
             LmbFrostProjectileService lmbFrostProjectileService,
-            EssenceFeatureService essenceFeatureService)
+            EssenceFeatureService essenceFeatureService,
+            PlantBuildingBuffService plantBuildingBuffService,
+            PlantSellInputService plantSellInputService,
+            SurvivalFlowService survivalFlowService,
+            GameplayPopupService gameplayPopupService,
+            WalletService walletService,
+            PlayerDataProvider playerDataProvider,
+            SceneSwitcherService sceneSwitcherService,
+            ICoroutinesPerformer coroutinesPerformer,
+            int levelGoldReward)
         {
             _preparationTriggerService = preparationTriggerService;
             _contactTriggerConfig = configsProviderService.GetConfig<ContactTriggerConfig>();
@@ -64,6 +91,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _sectorRegistryService = sectorRegistryService;
             _lmbFrostProjectileService = lmbFrostProjectileService;
             _essenceFeatureService = essenceFeatureService;
+            _plantBuildingBuffService = plantBuildingBuffService;
+            _plantSellInputService = plantSellInputService;
+            _survivalFlowService = survivalFlowService;
+            _gameplayPopupService = gameplayPopupService;
+            _walletService = walletService;
+            _playerDataProvider = playerDataProvider;
+            _sceneSwitcherService = sceneSwitcherService;
+            _coroutinesPerformer = coroutinesPerformer;
+            _levelGoldReward = levelGoldReward;
         }
 
         public override void Enter()
@@ -80,7 +116,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
             _mainHero.AbilityUserActiveAbility.Value = _spellcoreProgressionService.HasAnyPlantAbilityUnlocked()
                 ? _mainHero.AbilityUserPlantAbilityPreference.Value
-                : AbilityType.ExplodeAtPoint;
+                : AbilityType.LeftClickAtPoint;
 
             _spellcoreProgressionService.OnPreparationEntered();
 
@@ -88,21 +124,102 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _mainHeroHolderService.MainHero,
                 _spellcoreProgressionService.CompletedWaves);
 
+            _essenceFeatureService.ActivateAutoHoverForAllPickupsOnPreparation();
+
             _lmbFrostProjectileService.ClearQueuedProjectileLaunch();
+            _plantBuildingBuffService.ClearForNewRun();
 
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.Preparation);
+
+            TryShowSurvivalPopup();
         }
 
         public void Update(float deltaTime)
         {
+            if (_survivalFlowService.IsSurvivalOfferPending || _survivalFlowService.IsSurvivalMilestonePending)
+                return;
+
             _preparationTriggerService.Update(deltaTime);
+
+            if (_preparationTriggerService.PrepareTriggerClicked.Value)
+                return;
 
             if (_mouseOverUIService.IsPointerOverUI(_mouseInputService.PointerScreenPosition))
                 return;
 
             if (MouseClickedOnPlacementSurface(out Vector3 hitPoint))
+            {
+                if (_plantSellInputService.TryHandleSellClick(hitPoint))
+                    return;
+
                 _mainHero.AbilityUserAllAbilities[_mainHero.AbilityUserActiveAbility.Value]
                     .AbilityUseRequest.Invoke(hitPoint);
+            }
+        }
+
+        private void TryShowSurvivalPopup()
+        {
+            if (_survivalFlowService.IsSurvivalOfferPending)
+            {
+                int goldReward = _levelGoldReward;
+
+                if (_survivalFlowService.TryConsumeCampaignCompletionGoldGrant())
+                    GrantGoldReward(goldReward);
+
+                WinPopupOpenArgs openArgs = new WinPopupOpenArgs
+                {
+                    Mode = WinPopupMode.SurvivalOffer,
+                    RewardsData = new RewardsData { RewardGold = goldReward },
+                    OnContinue = OnEnterSurvivalModeClicked,
+                    OnSecondary = SwitchToMainMenu
+                };
+
+                _gameplayPopupService.OpenWinPopup(openArgs);
+                return;
+            }
+
+            if (_survivalFlowService.IsSurvivalMilestonePending)
+            {
+                int goldReward = SurvivalFlowService.SURVIVAL_MILESTONE_BONUS_GOLD;
+
+                if (_survivalFlowService.TryConsumeMilestoneGoldGrant())
+                    GrantGoldReward(goldReward);
+
+                WinPopupOpenArgs openArgs = new WinPopupOpenArgs
+                {
+                    Mode = WinPopupMode.SurvivalMilestone,
+                    RewardsData = new RewardsData { RewardGold = goldReward },
+                    OnContinue = OnContinueSurvivalAfterMilestone,
+                    OnSecondary = SwitchToMainMenu
+                };
+
+                _gameplayPopupService.OpenWinPopup(openArgs);
+            }
+        }
+
+        private void OnEnterSurvivalModeClicked()
+        {
+            _survivalFlowService.EnterSurvivalMode();
+            _spellcoreProgressionService.OnSurvivalModeEntered();
+        }
+
+        private void OnContinueSurvivalAfterMilestone()
+        {
+            _survivalFlowService.ClearSurvivalMilestonePending();
+        }
+
+        private void SwitchToMainMenu()
+        {
+            _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu));
+        }
+
+        private void GrantGoldReward(int goldAmount)
+        {
+            if (goldAmount <= 0)
+                return;
+
+            _walletService.Add(CurrencyTypes.Gold, goldAmount);
+            _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
         }
 
         private bool MouseClickedOnPlacementSurface(out Vector3 hitPoint)

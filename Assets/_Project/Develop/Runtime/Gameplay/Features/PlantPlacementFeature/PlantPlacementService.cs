@@ -99,6 +99,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             PlacementChanged?.Invoke();
         }
 
+        public bool TryGetPlantAtSector(SectorId sectorId, out Entity plantEntity)
+        {
+            foreach (KeyValuePair<Entity, SectorId> entry in _sectorByPlantEntity)
+            {
+                if (entry.Value == sectorId)
+                {
+                    plantEntity = entry.Key;
+                    return true;
+                }
+            }
+
+            plantEntity = default;
+            return false;
+        }
+
         public void ClearForNewRun()
         {
             _occupiedSectors.Clear();
@@ -107,12 +122,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
 
         private static bool IsPlantableBelt(SectorBelt belt) => belt != SectorBelt.Spawn;
 
-        private static bool IsBeltAllowedForAbility(AbilityType abilityType, SectorBelt belt)
+        private bool IsBeltAllowedForAbility(AbilityType abilityType, SectorBelt belt)
         {
             switch (abilityType)
             {
                 case AbilityType.PlantToxicArea:
-                    return belt == SectorBelt.Outer || belt == SectorBelt.Middle;
+                    return belt == SectorBelt.Outer;
 
                 case AbilityType.PlantMine:
                 case AbilityType.PlantTurret:

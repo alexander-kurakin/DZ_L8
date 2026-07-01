@@ -23,25 +23,4 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker
     {
         public ReactiveEvent<Vector3> Value;
     }
-
-    public class BrotherStoneThrowEvent : IEntityComponent
-    {
-        public ReactiveEvent<Entity> Value;
-    }
-
-    public class BrotherStoneThrowing : IEntityComponent
-    {
-        public ReactiveVariable<bool> Value;
-    }
-
-    public class BrotherStoneArcFlight : IEntityComponent
-    {
-        public Vector3 StartPosition;
-        public Vector3 TargetPosition;
-        public Entity TargetEntity;
-        public float Speed;
-        public float TotalDistance;
-        public float TraveledTime;
-        public bool IsCompleted;
-    }
 }

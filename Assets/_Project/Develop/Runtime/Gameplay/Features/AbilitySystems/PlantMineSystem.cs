@@ -57,20 +57,25 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
 
             if (_spellcoreProgressionService.TrySpendFreeMine())
             {
-                PlantAtSector(plantPosition, sectorId);
+                PlantAtSector(plantPosition, sectorId, 0);
                 return;
             }
 
             if (_runEssenceService.Enough(_purchasableEntityConfig.CostInEssence)) 
             {
-                _runEssenceService.Spend(_purchasableEntityConfig.CostInEssence);
-                PlantAtSector(plantPosition, sectorId);
+                int essenceCost = _purchasableEntityConfig.CostInEssence;
+                _runEssenceService.Spend(essenceCost);
+                PlantAtSector(plantPosition, sectorId, essenceCost);
             }            
         }
 
-        private void PlantAtSector(Vector3 plantPosition, SectorId sectorId)
+        private void PlantAtSector(Vector3 plantPosition, SectorId sectorId, int plantedEssenceCost)
         {
-            Entity plantEntity = _plantableObjectsFactory.Create(plantPosition, _purchasableEntityConfig, sectorId);
+            Entity plantEntity = _plantableObjectsFactory.Create(
+                plantPosition,
+                _purchasableEntityConfig,
+                sectorId,
+                plantedEssenceCost);
             _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
         }
 

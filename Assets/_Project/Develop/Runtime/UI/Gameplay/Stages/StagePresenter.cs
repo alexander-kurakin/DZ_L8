@@ -15,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
         private readonly StageProviderService _stageProviderService;
         private readonly MainHeroHolderService _mainHeroHolderService;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
+        private readonly SurvivalFlowService _survivalFlowService;
 
         private IDisposable _currentStageNumberChangedDisposable;
         private IDisposable _currentStageResultChangedDisposable;
@@ -25,12 +26,14 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
             IconTextView view,
             StageProviderService stageProviderService,
             MainHeroHolderService mainHeroHolderService,
-            SpellcoreProgressionService spellcoreProgressionService)
+            SpellcoreProgressionService spellcoreProgressionService,
+            SurvivalFlowService survivalFlowService)
         {
             _view = view;
             _stageProviderService = stageProviderService;
             _mainHeroHolderService = mainHeroHolderService;
             _spellcoreProgressionService = spellcoreProgressionService;
+            _survivalFlowService = survivalFlowService;
         }
 
         public void Initialize()
@@ -77,7 +80,11 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
                 ? _spellcoreProgressionService.CompletedWaves
                 : _stageProviderService.CurrentStageNumber.Value;
 
-            _view.SetText($"{displayWave} / {_stageProviderService.StagesCount}");
+            int stagesCount = _stageProviderService.StagesCount;
+            string stagesSuffix = _survivalFlowService.ShouldShowSurvivalPlusSuffix(displayWave, stagesCount)
+                ? $"{stagesCount}+"
+                : stagesCount.ToString();
+            _view.SetText($"{displayWave} / {stagesSuffix}");
         }
 
         private bool IsPreparationPhase()

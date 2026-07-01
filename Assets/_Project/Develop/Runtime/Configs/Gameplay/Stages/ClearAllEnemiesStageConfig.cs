@@ -30,9 +30,12 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Stages
     [Serializable]
     public class SpawnGroupConfig
     {
+        public const int UNSET_PATH_INDEX = -1;
+
         public List<EnemyItemConfig> EnemyItems;
         public float MinTimeBetweenSpawns;
         public float MaxTimeBetweenSpawns;
         public float PauseAfterGroup;
+        public int PathIndex = UNSET_PATH_INDEX;
     }
 }

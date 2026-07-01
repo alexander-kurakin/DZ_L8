@@ -2,7 +2,7 @@
 
 **Ветка:** `Spellcore_v3` (от `master`)  
 **Status:** утверждённое направление — **ва-банк**, legacy combat не дожимаем  
-**Связь:** [[factory-feel]] · [[00-one-pager]] · [[pillars]] · [[balance]]
+**Связь:** [[factory-feel]] · [[00-one-pager]] · [[pillars]] · [[balance]] · **[[balance-v3]]**
 
 ---
 
@@ -76,12 +76,8 @@
 | Brother как DPS в балансе | Убрать из [[balance]] v3 |
 | Tower `MaxHealth` 2000 leak-DPS | → **Integrity hits** |
 | Turret N±1 arc only | → path-wide + air priority |
-| `WaveSpawnPlanService` random shuffle | → **фикс-план** или таймлайн |
+| `WaveSpawnPlanService` random shuffle | **Done** — `PathIndex` + round-robin |
 | `balance-budgets` Slack 0.8 на W5 | Пересчитать под factory, не под «горящую жопу» |
-
-### 3.3 Флаг миграции (код)
-
-`CombatModel.Legacy` vs `CombatModel.FactoryV3` в bootstrap — чтобы `master` не ломать до merge, на v3 всегда FactoryV3.
 
 ---
 
@@ -91,10 +87,35 @@
 
 **Цель:** в бою урон врагам только от plants; v2 DPS не участвует.
 
-- [ ] `CombatModel` / feature flag в `GameplayContextRegistrations`
-- [ ] Отключить brother stone throw + impact VFX chain
-- [ ] LMB: убрать `TryTakeDamage` по врагам (заглушка или no-op)
-- [ ] Док: `balance-v3.md` — черновик чисел (отдельно от legacy `balance.md`)
+- [x] `CombatModel` / feature flag в `GameplayContextRegistrations`
+- [x] Отключить brother stone throw + impact VFX chain
+- [x] LMB: убрать `TryTakeDamage` по врагам (заглушка или no-op)
+- [x] Док: `balance-v3.md` — черновик чисел (отдельно от legacy `balance.md`)
+
+**Done (сверх чеклиста):**
+
+- [x] `FactoryV3CombatConfig` + `.asset`, регистрация в `ResourcesConfigsLoader`
+- [x] Mine v3: `MineFactoryPulseDetonationSystem`, `MineFactoryPulseTimingUtility`, `MineFactoryPulseBehaviorUtility` — см. **Mine pulse rules** ниже
+- [x] `CollectEnemiesInMineSector` — клин по геометрии + proximity на M/I (не outer)
+- [x] Кошка: `StopAtInnerBeltAnchor` → стоп на inner-якоре (как танк на middle)
+- [x] Enemy move speed scale **×0.7** в `EntitiesFactory.ResolveEnemyMoveSpeed`
+- [x] `SpellcoreProgressionService` v3: mine W1 + **1 free mine**, turret W2+, toxic W3+
+- [x] `StageProcessState` / prep: default ability **mine**, не LMB в FactoryV3
+- [x] `Intro1` — медленнее spawns
+- [x] `TurretPathTargetSelector` — plantable path O/M/I only (без Spawn), приоритет dragon; legacy `TurretSectorArcTargetSelector` только для Legacy
+- [x] `CombatModelService` + FactoryV3 flag в bootstrap
+
+**Mine pulse rules (FactoryV3, playtest iter):**
+
+| Враг | Пояс мины | Тики |
+| ---- | --------- | ---- |
+| Танк | **Outer** | 3 × **прогресс** прохода клина (33 / 66 / 92%) |
+| Танк | **Middle** (финальный) | **вход** → **стоп на якоре** → **3-й по таймеру** после стопа |
+| Кошка | **Outer / Middle** | 3 × прогресс (полный проход) |
+| Кошка | **Inner** (финальный) | вход → стоп на inner-якоре → 3-й по таймеру |
+| Любой | выход / смерть в секторе | недоставленные пульсы **добиваются** (flush) |
+
+Код: `UsesStopBeltMinePattern` (tank+middle, cat+inner); `IsFullCrossingPulseReady` — только progress; `IsStopBeltPulseReady` — pulse0 entry, pulse1 `DistanceToTargetReached`, pulse2 timer.
 
 **Gate:** playtest Intro1 — котов убивает только mine.
 
@@ -104,10 +125,19 @@
 
 **Цель:** ~200 ударов, дискретный leak.
 
-- [ ] `TowerIntegrityConfig`: max hits, вес удара cat / tank shot / dragon tick
-- [ ] UI: счётчик integrity (не HP bar 2000)
-- [ ] Leak: кот взрыв, танк с Middle, дракон beam → −N hits
-- [ ] Win/lose без изменения условий one-pager
+- [x] `TowerIntegrityConfig`: max hits, вес удара cat / tank shot / dragon tick
+- [x] UI: счётчик integrity (не HP bar 2000)
+- [x] HUD: вместо Win/Loss — один `IconTextView` со счётчиком убитых врагов за забег
+- [x] Leak: кот взрыв, танк с Middle, дракон beam → −N hits
+- [x] Win/lose без изменения условий one-pager (`MainHero.IsDead` при integrity 0)
+
+**Done (сверх чеклиста):**
+
+- [x] `TowerIntegrityTakeDamageSystem` + `TowerIntegrityLeakResolver`; `TakeDamageInfo.Source` для маршрутизации leak
+- [x] Tower в FactoryV3: integrity вместо HP 2000 (`MainHeroFactory`)
+- [x] `EntityHealthPresenter` — `current/max` hits для MainHero в FactoryV3
+- [x] `RunEnemyKillCounterService` + `GameplayStatsPresenter` → `StatsListView.prefab` (`StatsView`, `ChildAlignment: 5` справа)
+- [x] Main menu Win/Loss через `GameStatsPresenter` — без изменений
 
 **Gate:** комбо leak не сносит башню за &lt;15 с без игнора.
 
@@ -117,10 +147,10 @@
 
 **Цель:** одна mine на W1; танк требует две.
 
-- [ ] Tank **shield**: первая mine proc сильно режется (конфиг / `PlantDamageCounterService`)
-- [ ] `Intro1` composition: только коты, 1 path, медленный подход
-- [ ] `Intro2`: 1 tank per SpawnGroup, 2 mines teach
-- [ ] ↓ MoveSpeed глобально; ↑ паузы между группами
+- [x] Tank **shield**: 1-й mine pulse на танка ×0.15 (`TankMineShieldService` + `FactoryV3CombatConfig._tankFirstMinePulseDamageMultiplier`)
+- [x] `Intro1` composition: только коты (5), 1 path (progression), spawn 6–8 с, pause 4
+- [x] `Intro2`: 3 кота → пауза → **1 tank** per wave (teach 2 mines)
+- [x] Move speed ×0.7 (Epic 1 `FactoryV3CombatConfig`); Intro spawn/pause замедлены в `.asset`
 
 **Gate:** W1 одна mine; W2 две mines на одном пути — без брата/LMB.
 
@@ -130,10 +160,19 @@
 
 **Цель:** дракон умирает только от турели.
 
-- [ ] Dragon: immune mine/toxic damage; пролет по поясам (логика пояса / flying flag)
-- [ ] `PlantTurretTargetingSystem`: весь path, priority dragon; 50% ground если нет air
-- [ ] `Intro3` под teach
-- [ ] Juice: выстрел турели, hit feedback
+- [x] Dragon: immune mine/toxic damage; пролет по поясам (`FlyingEnemy` + sector belt → Inner)
+- [x] `TurretPathTargetSelector` (PlantTurret targeting): весь path O/M/I, priority dragon; 50% ground dmg (cat/tank ×0.5)
+- [x] `Intro3` под teach (3 cats → 1 dragon)
+- [x] Juice: выстрел турели (screen shake), hit feedback (scale punch + `TakeDamageVisualKind.Turret`)
+
+**Done (сверх чеклиста):**
+
+- [x] `PlantDamageCounterService` — mine/dragon ×0; turret dragon ×1, ground ×0.5
+- [x] `WorldToSector.ResolveForFlyingEnemy` + `SectorMembershipSystem` — O/M → Inner для летающих
+- [x] `PlantDamageApplicationService` — mine enrage только Legacy (не FactoryV3)
+- [x] `DealDamageOnContactSystem` + `GameplayJuiceService.PlayTurretHit`
+- [x] **Same-cell / dragon priority (playtest):** `TurretCombatTargetRefreshSystem` (цель каждый кадр); `PlantTurretInstantShootSystem` — direct dmg на клетке, projectile в дракона если танк на клетке; `TurretTargetPriority`
+- [x] ECS update **до** AI brains (`GameplayBootstrap`) — турель успевает развернуться на дракона
 
 **Gate:** W3 без турели на спице с драконом — проигрыш integrity, не «добей руками».
 
@@ -143,9 +182,10 @@
 
 **Цель:** Outer slow, не драконы; визуальные тики.
 
-- [ ] Toxic: сильный slow; dragon immune
-- [ ] Предпочтение O в teach copy / preview
-- [ ] `Intro4` pacing как W4 «нормальная» из playtest
+- [x] Toxic: slow **−50%** speed в FactoryV3 (`FactoryV3CombatConfig.ToxicSlowMoveSpeedFraction`); dragon immune (×0 dmg, no slow, `FlyingEnemy`)
+- [x] FactoryV3: toxic только **Outer** (`PlantPlacementService`); preview — ярче/крупнее маркер на O
+- [x] `Intro4` pacing v3: spawn 5–8 с, паузы 4–6, без dragon (ground teach)
+- [x] Juice: `TakeDamageVisualKind.Toxic`, `PlayToxicTick` scale punch на тик
 
 **Gate:** коты/танки заметно медлят на O; дракон — нет.
 
@@ -155,10 +195,14 @@
 
 **Цель:** макс. 2 бафа, +50% plant damage, 60 с.
 
-- [ ] `BuildingBuffSystem`: ray/sector pick **plant entity**, не enemy
-- [ ] VFX reuse frost orbs на постройке
-- [ ] UI: индикатор бафа на слоте / мире
-- [ ] CD LMB без изменения (5 с) — редкое решение «куда усилить»
+- [x] `PlantBuildingBuffService` + `BuildingBuffSystem`: клик LMB → plant в секторе (`TryGetPlantAtSector`), не enemy
+- [x] VFX: frost orbs на постройке на время бафа (reuse `FrostTargetOrbsPrefab`)
+- [x] Урон: `PlantDamageApplicationService` + `PlantTurretInstantShootSystem` × `BuildingBuffDamageMultiplier` (1.5)
+- [x] Лимит **2** активных; повторный клик по той же постройке — refresh 60 с; CD LMB **5 с** без изменений
+- [x] Essence **10** за apply/refresh (`BuildingBuffEssenceCost`); без essence баф не накладывается
+- [x] Таймер бафа над постройкой (`PlantBuildingBuffTimersDisplayPresenter` + prefab)
+- [x] Juice: punch + delayed crunch mine/turret/toxic; LMB landing без enemy impact
+- [x] UI ability bar: отдельный индикатор бафа — **stub** (мир = orbs + таймер над plant; bar — post-v3)
 
 **Gate:** баф на плотной группе меняет исход; без перестановки каждые 5 с.
 
@@ -168,9 +212,9 @@
 
 **Цель:** медленный ремонт, idle прерывает.
 
-- [ ] `TowerBrotherRepairSystem`: +integrity / interval
-- [ ] Прерывание idle-циклом (`BrotherRandomWalker` / emote)
-- [ ] Убрать stone throw view из prefab pipeline
+- [x] `TowerBrotherRepairSystem`: +integrity / interval (`FactoryV3CombatConfig`: 1 hit / 6 с, радиус 18)
+- [x] Прерывание idle-циклом (`IsCurrentlyIdle` → таймер сбрасывается, ремонт не тикает)
+- [x] Stone throw **off** в FactoryV3 (`AllowsPlayerPassiveEnemyDamage`); prefab без throw view
 
 **Gate:** брат чувствуется «живым», не спасает от полного игнора.
 
@@ -180,10 +224,16 @@
 
 **Цель:** доверие к пути, не shuffle; W5 — шоу, не кабачок.
 
-- [ ] Убрать random shuffle; фикс или timeline в превью
-- [ ] `Intro5` v3: сериальные пакеты, 5 paths, без tank+dragon в одной группе
-- [ ] Опционально: time scale 1×/2×/pause в бою
-- [ ] Опционально: timeline UI stub
+- [x] Убрать random shuffle; `PathIndex` на `SpawnGroupConfig` + round-robin fallback
+- [x] `Intro5` v3: 10 сериальных пакетов, 5 paths, factory pacing 5–8 с, без tank+dragon в одной группе
+- [x] Time scale UI: Pause / 1× / 3× между wave preview и kill counter (`GameplayTimeScaleService`, `CombatTimeScaleView`)
+- [x] `GameplayBootstrap.OnDestroy` → `Time.timeScale = 1`
+
+**Done (сверх чеклиста):**
+
+- [x] `CombatTimeScalePresenter` + DI + `GameplayScreenView.prefab` wiring
+- [x] Wave preview и spawn используют один детерминированный план
+- [x] Пауза: геймплейные DOTween без `SetUpdate(true)`; `DOTween.PauseAll`/`PlayAll` в `GameplayTimeScaleService` — отложенные колбэки не «протекают» на паузе
 
 **Gate:** шкала factory-feel на W5 ≤ 3; победа без «кабачка».
 
@@ -194,6 +244,7 @@
 - [ ] `balance-v3.md` синхрон с .asset
 - [ ] Обновить [[00-one-pager]] rules под v3 (LMB buff, no brother DPS)
 - [ ] Meetup build checklist
+- [ ] **End-of-run beat:** победа/поражение → сразу `WinState`/`DefeatState` → попап → главное меню; нет паузы/момента «завершения» на сцене. Целевое: задержка, камера, fade или короткий beat до попапа — **ближе к balance playtests**, не блокер эпиков 3–8.
 
 ---
 
@@ -212,7 +263,6 @@
 | Риск | Митигация |
 | ---- | --------- |
 | Снова 40 итераций без fun | Gate после **каждого** epic, не копить |
-| Два combat model в коде | Flag + v3 branch only until merge |
 | Meetup сырой | Epic 1–3 = минимальный демо «factory exists» |
 | «Садистское шоу» без juice | Epic 4–5 parallel juice tasks |
 
@@ -231,8 +281,8 @@
 
 ## 8. Следующий шаг
 
-**Epic 1** — ветка `Spellcore_v3`, flag `CombatModel.FactoryV3`, отключить brother stone + LMB enemy damage.
+**Epic 9** — balance pass, one-pager, meetup checklist, end-of-run beat.
 
 ---
 
-*Legacy: `master` @ Epic 8. Дизайн-обоснование: [[factory-feel]].*
+*`Spellcore_v3` @ Epic 8 done. Дизайн-обоснование: [[factory-feel]].*

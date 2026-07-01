@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5756793533834964380}
   - component: {fileID: 8019474452488614063}
   m_Layer: 5
-  m_Name: StatsListView
+  m_Name: StatsView
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -36,7 +36,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 837.48047, y: -97.75702}
-  m_SizeDelta: {x: -1674.9609, y: 195.5138}
+  m_SizeDelta: {x: -1674.9609, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &7538671466334454439
 MonoBehaviour:
@@ -55,7 +55,7 @@ MonoBehaviour:
     m_Right: 0
     m_Top: 0
     m_Bottom: 0
-  m_ChildAlignment: 4
+  m_ChildAlignment: 5
   m_Spacing: 20
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 1
