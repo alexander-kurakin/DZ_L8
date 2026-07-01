@@ -45,6 +45,8 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             container.RegisterAsSingle(CreatePlayerDataProvider);
 
+            container.RegisterAsSingle(CreatePersistedGoldRewardService);
+
             container.RegisterAsSingle(CreateProjectPresentersFactory);
 
             container.RegisterAsSingle(CreateViewsFactory);
@@ -140,6 +142,14 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             }
 
             return new WalletService(currencies, c.Resolve<PlayerDataProvider>());
+        }
+
+        private static PersistedGoldRewardService CreatePersistedGoldRewardService(DIContainer c)
+        {
+            return new PersistedGoldRewardService(
+                c.Resolve<WalletService>(),
+                c.Resolve<PlayerDataProvider>(),
+                c.Resolve<ICoroutinesPerformer>());
         }
 
         private static SceneSwitcherService CreateSceneSwitcherService(DIContainer c)

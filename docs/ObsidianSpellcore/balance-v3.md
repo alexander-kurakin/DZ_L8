@@ -78,8 +78,8 @@ HUD kill counter: один `IconTextView` — убитые враги с нач�
 | **Mine** | Damage | 150 | W1: **1 mine = все коты пути** | 3 |
 | | Proc delay | 0.25с | без изменений | — |
 | | Tank shield | — | 1-й pulse **×0.15** (Epic 3) | 3 |
-| **Toxic** | DoT / slow | 35/tick, −33% speed | **−50%** slow, **Outer only**, дракон immune | 5 ✓ |
-| **Turret** | Damage / interval | 100 / ~0.9с | path-wide **O/M/I** на своей спице, приоритет air; **×0.5** cat/tank | 4 ✓ |
+| **Toxic** | DoT / slow | 35/tick, **1.0 с** | **35/tick, 2.5 с**; **−50%** slow, **Outer only**, дракон immune; **без** hit stun | 5 ✓ |
+| **Turret** | Damage / interval | 100 / ~0.9с | path-wide **O/M/I**; **×0.5** cat/tank; hit juice см. §4.1 | 4 ✓ |
 | **LMB** | — | cooldown 5с | баф +50% plant (`BuildingBuffDamageMultiplier` 1.5), 60 с, max 2 | 6 ✓ |
 
 ### Plant costs (Essence)
@@ -94,7 +94,20 @@ HUD kill counter: один `IconTextView` — убитые враги с нач�
 | ----- | ---- | ----------- | ---------- | ---------- |
 | Cat | Inner | 325 | **↓ глобально** (Epic 3) | конвейер, не мини-босс |
 | Tank | Middle | 500 | **↓** | щит mine: нужна **2-я** mine на пути (Epic 3) |
-| Dragon | Inner | 550 | 6 | **FlyingEnemy**: sector O/M → Inner; mine/toxic **×0**; только турель (Epic 4 ✓) |
+| Dragon | Inner | 550 | 6 | **FlyingEnemy**; beam **30**/tick, interval **2 с**; mine/toxic **×0**; только турель (Epic 4 ✓) |
+
+### 4.1 Enemy hit juice (impact hits only)
+
+Mine / turret / projectile — **не** toxic DoT.
+
+| Параметр | Значение | Код / asset |
+| -------- | -------- | ----------- |
+| Gameplay stun | **0.12–0.22 с** (от урона, ref **50**) | `EnemyHitReactionSystem`, `EnemyHitStunRemainingTime` (было `EnemyHitStunSkipFrames`) |
+| Блокирует | `CanMove` + `CanRotate` → walk anim off | `EntitiesFactory` inline, без helper-методов |
+| Отброс | к `EnemySpawnOrigin`, XZ **0.22–0.5**, Y **0.18–0.4** | `EnemyHitJuiceUtility` (был `EnemyHitKnockbackUtility` на корне) |
+| Scale punch | **1.08–1.16×** на Animator child | `TakeDamageView` |
+| Toxic DoT | hit stun **off**; только slow + flash + `PlayToxicTick` | `TakeDamageVisualKind.Toxic` |
+| Turret shot shake | **0.12** strength, 0.12 с (выстрел, не попадание) | `GameplayVfxConfig` |
 
 ---
 
@@ -140,6 +153,26 @@ Composition/timing — переписываются в эпиках 3, 5, 8. **I
 
 ---
 
+## 9. Survival playtest slice (Epic 8+)
+
+| Параметр | Значение | Код / примечание |
+| -------- | -------- | ---------------- |
+| Offer после кампании | W5 complete → prep popup | `SurvivalFlowService.OnNormalCampaignCompleted` |
+| Milestone волны | **10, 15, 20…** (каждые 5 `completedWaves` после W5) | `SurvivalWaveScalingService.IsSurvivalMilestoneCompletedWave` |
+| Milestone gold | **+2000** | `SurvivalFlowService.SURVIVAL_MILESTONE_BONUS_GOLD` |
+| Campaign completion gold | level reward (из `LevelConfig`) | `PreparationState` + `TryConsumeCampaignCompletionGoldGrant` |
+| Gold persistence | wallet + save | survival: `AddGoldAndPersist`; финальный win: `AddGold` + `EndGameState.SaveAllData` |
+| Survival wave template | **Intro5** runtime copy | `StageProviderService` → `SurvivalWaveScalingService` |
+| Tier | `(waveNumber − stagesCount − 1) / 5` | waves 6–10 tier 0, 11–15 tier 1, … |
+| Tier: enemy count | **+30%** / tier | `ENEMY_COUNT_BONUS_PER_TIER` |
+| Tier: spawn interval | **×0.9** / tier (min 0.25 с) | `SPAWN_INTERVAL_SCALE_PER_TIER` |
+| Tier: group pause | **×0.85** / tier (min 0.5 с) | `GROUP_PAUSE_SCALE_PER_TIER` |
+| Survival paths | **+1** path / survival wave (до max 16) | `SpellcoreProgressionConfig._survivalPathsPerWave` |
+| Spawn paths survival | `PathIndex = −1` → round-robin все открытые | `SurvivalWaveScalingService.CreateScaledWaveData` |
+| Wave path rotation | слот сдвигается по `(waveNumber − 1) % pathCount` | `WaveSpawnPlanService.ResolvePathIndex` |
+
+---
+
 ## Changelog
 
 | Дата | Эпик | Изменение |
@@ -151,3 +184,5 @@ Composition/timing — переписываются в эпиках 3, 5, 8. **I
 | 2026-07-01 | 1+ | Mine stop-belt vs full-crossing rules; cat `StopAtInnerBeltAnchor` |
 | 2026-07-01 | 6+ | LMB essence cost, buff timer UI, building buff juice |
 | 2026-07-01 | 7 | Brother repair: config + `TowerBrotherRepairSystem` (draft) |
+| 2026-06-30 | 4–5 | Enemy hit juice: stun + `EnemyHitJuiceUtility`; toxic/beam tick **2.5 / 2 с**; toxic без hitstop |
+| 2026-06-30 | 8+ | Survival playtest slice: flow/popups, tier scaling, path rotation, `PersistedGoldRewardService`, sell-shovel hit radius; enemy hit juice iter (SkipFrames → RemainingTime → Animator child) |

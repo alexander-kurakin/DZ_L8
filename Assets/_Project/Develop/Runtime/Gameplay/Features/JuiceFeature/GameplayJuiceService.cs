@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using DG.Tweening;
 using UnityEngine;
 
@@ -39,12 +40,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
             _screenShakeService.PlaySmall();
         }
 
-        private const float TURRET_HIT_PUNCH_SCALE = 1.08f;
-        private const float TURRET_HIT_PUNCH_DURATION_SECONDS = 0.08f;
-
         public void PlayTurretHit(Entity target)
         {
-            PlayHitPunch(target, TURRET_HIT_PUNCH_SCALE, TURRET_HIT_PUNCH_DURATION_SECONDS);
         }
 
         private const float TOXIC_TICK_PUNCH_SCALE = 1.04f;
@@ -60,17 +57,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature
             if (target.TryGetTransform(out Transform targetTransform) == false)
                 return;
 
-            Vector3 baseScale = targetTransform.localScale;
+            Transform visualTransform = EnemyHitJuiceUtility.ResolveVisualTransform(targetTransform);
+            Vector3 baseScale = visualTransform.localScale;
 
-            targetTransform.DOKill();
-            targetTransform.localScale = baseScale;
-            targetTransform
+            visualTransform.DOKill();
+            visualTransform.localScale = baseScale;
+            visualTransform
                 .DOScale(baseScale * punchScale, punchDurationSeconds)
                 .SetEase(Ease.OutQuad)
+                .SetUpdate(true)
                 .OnComplete(() =>
-                    targetTransform
+                    visualTransform
                         .DOScale(baseScale, punchDurationSeconds)
                         .SetEase(Ease.InQuad)
+                        .SetUpdate(true)
                         .Play())
                 .Play();
         }

@@ -24,9 +24,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
 
         private ReactiveEvent<TakeDamageInfo> _damageEvent;
         private IDisposable _damageEventDisposable;
+        private Entity _entity;
 
         protected override void OnEntityStartedWork(Entity entity)
         {
+            _entity = entity;
             _damageEvent = entity.TakeDamageEvent;
             _damageEventDisposable = _damageEvent.Subscribe(OnDamageTaken);
             _damageNumberPrefab.SetScale(7f);
@@ -43,6 +45,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage
 
             _damageNumberPrefab.Spawn(_effectSpawnPoint.position, damageInfo.Damage);
             DamageSilhouetteFlashUtility.PlayOnTransform(transform, damageInfo.Damage);
+
+            if (_entity.TryGetEnemySpawnOrigin(out Vector3 spawnOrigin))
+            {
+                EnemyHitJuiceUtility.PlayOnTransform(transform, spawnOrigin, damageInfo.Damage, damageInfo.VisualKind);
+            }
+
             GameSoundsService.PlayOneShot(_impactSoundToPlay, _localAudioSource);
         }
 

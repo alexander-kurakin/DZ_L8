@@ -220,16 +220,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddInstantAttackDamage(new ReactiveVariable<float>(config.InstantDamage))
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
-                .AddInSpawnProcess();
+                .AddInSpawnProcess()
+                .AddEnemySpawnOrigin(position)
+                .AddEnemyHitStunRemainingTime(new ReactiveVariable<float>(0f));
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
-                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false));
+                .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
@@ -259,6 +263,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new EnemyHitReactionSystem())
                 .AddSystem(new TakeDamageSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
@@ -307,17 +312,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddComponent(new FlyingEnemy())
                 .AddSpawnInitialTime(new ReactiveVariable<float>(config.SpawnProcessTime))
                 .AddSpawnCurrentTime()
-                .AddInSpawnProcess();
+                .AddInSpawnProcess()
+                .AddEnemySpawnOrigin(position)
+                .AddEnemyHitStunRemainingTime(new ReactiveVariable<float>(0f));
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
@@ -341,6 +350,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new EnemyHitReactionSystem())
                 .AddSystem(new TakeDamageSystem())
                 .AddSystem(new DeathSystem())
                 .AddSystem(new DisableCollidersOnDeathSystem())
@@ -393,17 +403,21 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddStartExplosionEvent()
                 .AddExplosionCurrentTime()
                 .AddHideExplosionSourceEvent()
-                .AddHideExplosionSourceDelayTime(new ReactiveVariable<float>(config.HideExplosionSourceDelayTime));
+                .AddHideExplosionSourceDelayTime(new ReactiveVariable<float>(config.HideExplosionSourceDelayTime))
+                .AddEnemySpawnOrigin(position)
+                .AddEnemyHitStunRemainingTime(new ReactiveVariable<float>(0f));
             
             ICompositeCondition canMove = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition canRotate = new CompositeCondition()
                 .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
-                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false));
+                .Add(new FuncCondition(() => entity.DistanceToTargetReached.Value == false))
+                .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
 
             ICompositeCondition mustDie = new CompositeCondition(LogicOperations.Or)
                 .Add(new FuncCondition(() => entity.CurrentHealth.Value <= 0));
@@ -433,6 +447,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddSystem(new SpawnProcessTimerSystem())
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
+                .AddSystem(new EnemyHitReactionSystem())
                 .AddSystem(new TakeDamageSystem())
                 .AddSystem(new DistanceDetectorSystem())
                 .AddSystem(new StartDetonationSequence())

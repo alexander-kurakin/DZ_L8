@@ -136,6 +136,49 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemySpawnOrigin EnemySpawnOriginC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemySpawnOrigin>();
+
+		public UnityEngine.Vector3 EnemySpawnOrigin => EnemySpawnOriginC.Value;
+
+		public bool TryGetEnemySpawnOrigin(out UnityEngine.Vector3 value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemySpawnOrigin component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Vector3);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEnemySpawnOrigin(UnityEngine.Vector3 value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemySpawnOrigin() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemyHitStunRemainingTime EnemyHitStunRemainingTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemyHitStunRemainingTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> EnemyHitStunRemainingTime => EnemyHitStunRemainingTimeC.Value;
+
+		public bool TryGetEnemyHitStunRemainingTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemyHitStunRemainingTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEnemyHitStunRemainingTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemyHitStunRemainingTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEnemyHitStunRemainingTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.EnemyHitStunRemainingTime() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageRequest TakeDamageRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageRequest>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage.TakeDamageInfo> TakeDamageRequest => TakeDamageRequestC.Value;

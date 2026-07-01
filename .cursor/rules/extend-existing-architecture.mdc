@@ -1,0 +1,59 @@
+---
+description: Сначала расширять текущую архитектуру и копировать существующие шаблоны — не придумывать своё
+alwaysApply: true
+---
+
+# Расширяй архитектуру, не изобретай
+
+Перед любой правкой в `Assets/_Project/`:
+
+1. **Найди эталон** — ближайшую фичу/фабрику/систему с тем же типом задачи.
+2. **Скопируй структуру** — порядок `.Add...()`, `ICompositeCondition`, регистрация систем, view, конфиг.
+3. **Добавь минимум** — только то, чего нет в шаблоне. Новый файл/класс — последний вариант.
+
+## Запрещено без явной необходимости
+
+- Хелперы на 1–2 строки (`AddXCondition`, `SetupY`) вместо inline-кода в фабрике.
+- Свои абстракции, если рядом уже есть рабочий паттерн.
+- Параллельный пайплайн вместо подключения к существующему (`WinState`, `TakeDamageSystem`, `EntitiesFactory`).
+
+## ECS / фабрики — эталон
+
+Смотри `EntitiesFactory`, `MovementFeature`, `TakeDamage`, `SpawnFeature`.
+
+```csharp
+// ❌ BAD — вынос ради одной строки
+private static void AddEnemyHitStunCanMoveCondition(CompositeCondition canMove, Entity entity)
+{
+    canMove.Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
+}
+
+// ✅ GOOD — как у снарядов, башен, врагов
+entity
+    .AddInSpawnProcess()
+    .AddEnemySpawnOrigin(position)
+    .AddEnemyHitStunRemainingTime(new ReactiveVariable<float>(0f));
+
+ICompositeCondition canMove = new CompositeCondition()
+    .Add(new FuncCondition(() => entity.IsDead.Value == false))
+    .Add(new FuncCondition(() => entity.InSpawnProcess.Value == false))
+    .Add(new FuncCondition(() => entity.EnemyHitStunRemainingTime.Value <= 0f));
+
+entity
+    .AddCanMove(canMove)
+    .AddCanRotate(canRotate);
+```
+
+## Фичи
+
+- Компоненты — в `*FeatureComponents.cs` или `*Components.cs` той же фичи.
+- Системы — по образцу соседней системы в той же папке.
+- Juice / VFX — утилиты как `DamageSilhouetteFlashUtility`, не отдельный слой.
+- DI / регистрация — по образцу `GameplayContextRegistrations`, `ProjectContextRegistrations`.
+
+## Чеклист перед коммитом
+
+- [ ] Открыл и прочитал похожий существующий код?
+- [ ] Новая структура совпадает с шаблоном проекта?
+- [ ] Нет лишних хелперов/файлов, которые можно было вписать inline?
+- [ ] Не дублирую то, что уже есть в другой фиче?

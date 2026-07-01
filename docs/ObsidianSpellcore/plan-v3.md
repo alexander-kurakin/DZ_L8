@@ -163,16 +163,44 @@
 - [x] Dragon: immune mine/toxic damage; пролет по поясам (`FlyingEnemy` + sector belt → Inner)
 - [x] `TurretPathTargetSelector` (PlantTurret targeting): весь path O/M/I, priority dragon; 50% ground dmg (cat/tank ×0.5)
 - [x] `Intro3` под teach (3 cats → 1 dragon)
-- [x] Juice: выстрел турели (screen shake), hit feedback (scale punch + `TakeDamageVisualKind.Turret`)
+- [x] Juice: выстрел турели (screen shake), hit feedback — см. **Enemy hit juice** ниже
 
 **Done (сверх чеклиста):**
 
 - [x] `PlantDamageCounterService` — mine/dragon ×0; turret dragon ×1, ground ×0.5
 - [x] `WorldToSector.ResolveForFlyingEnemy` + `SectorMembershipSystem` — O/M → Inner для летающих
 - [x] `PlantDamageApplicationService` — mine enrage только Legacy (не FactoryV3)
-- [x] `DealDamageOnContactSystem` + `GameplayJuiceService.PlayTurretHit`
+- [x] `DealDamageOnContactSystem` + `GameplayJuiceService.PlayTurretHit` (stub — juice в `TakeDamageView`)
 - [x] **Same-cell / dragon priority (playtest):** `TurretCombatTargetRefreshSystem` (цель каждый кадр); `PlantTurretInstantShootSystem` — direct dmg на клетке, projectile в дракона если танк на клетке; `TurretTargetPriority`
 - [x] ECS update **до** AI brains (`GameplayBootstrap`) — турель успевает развернуться на дракона
+
+**Enemy hit juice (Epic 4–5 playtest, 2026-06-30):**
+
+Gameplay + визуал при ударе по врагу (mine / turret / projectile; **не** toxic DoT):
+
+| Слой | Что | Код |
+| ---- | --- | --- |
+| **Gameplay** | Стан движения + поворота **0.12–0.22 с** (от урона); `CanMove` + `CanRotate` | `EnemyHitReactionSystem`, `EnemyHitStunRemainingTime` |
+| **Spawn** | Точка спавна для направления отброса | `EnemySpawnOrigin` в `EntitiesFactory` (все 3 типа врагов) |
+| **Визуал** | Scale + position punch на **child с Animator** (не rigidbody-корень); отброс к спавну + Y; сила от урона | `EnemyHitJuiceUtility` → `TakeDamageView` (рядом с `DamageSilhouetteFlashUtility`) |
+| **Исключение** | `TakeDamageVisualKind.Toxic` — **без** стана и punch (только slow + flash + `PlayToxicTick` scale) | иначе котов в луже «залипало» от hitstop каждый тик |
+
+**Итерации (playtest thread, до финала):**
+
+| Версия | Проблема | Решение |
+| ------ | -------- | ------- |
+| v1 | `EnemyHitStunSkipFrames` (int) — ~1 кадр, не видно | → время в секундах |
+| v2 | `EnemyHitKnockbackUtility` на rigidbody-корне; только `canMove` | отброс гасился `velocity` + `FreezePositionY` |
+| v3 | — | `EnemyHitStunRemainingTime` **0.12–0.22 с**; `canMove` **и** `canRotate` inline в `EntitiesFactory` |
+| v4 | `PlayTurretHit` → `DOKill()` корня; дубль scale | juice только в `TakeDamageView` → **`EnemyHitJuiceUtility`** на **child с Animator** |
+| — | Хелперы `AddEnemyHitStunCanMoveCondition` | убраны; эталон — `.cursor/rules/extend-existing-architecture.mdc` |
+| — | Новые `IEntityComponent` без API | ручной патч `EntityAPI.cs`; после добавления компонента — **Tools → GenerateEntityAPI** |
+
+**Playtest-фиксы (почему не было видно):**
+
+- `PlayTurretHit` делал `DOKill()` на корне → убивал position-tween до первого кадра; дубль scale убран — juice только из `TakeDamageView`.
+- Твин на rigidbody-корне перебивался `velocity` + `FreezePositionY`; punch перенесён на визуальный child.
+- Screen shake на **выстрел** (`PlayTurretShot`, 0.12) заметнее punch на модели — разные слои juice.
 
 **Gate:** W3 без турели на спице с драконом — проигрыш integrity, не «добей руками».
 
@@ -185,7 +213,13 @@
 - [x] Toxic: slow **−50%** speed в FactoryV3 (`FactoryV3CombatConfig.ToxicSlowMoveSpeedFraction`); dragon immune (×0 dmg, no slow, `FlyingEnemy`)
 - [x] FactoryV3: toxic только **Outer** (`PlantPlacementService`); preview — ярче/крупнее маркер на O
 - [x] `Intro4` pacing v3: spawn 5–8 с, паузы 4–6, без dragon (ground teach)
-- [x] Juice: `TakeDamageVisualKind.Toxic`, `PlayToxicTick` scale punch на тик
+- [x] Juice: `TakeDamageVisualKind.Toxic`, `PlayToxicTick` scale punch на тик (на **visual child**, без `DOKill` корня)
+
+**Done (сверх чеклиста):**
+
+- [x] Toxic DoT interval **2.5 с** (`ToxicAreaConfig.asset`; было 1 с) — реже тики, меньше визуального шума
+- [x] Dragon beam interval **2 с** (`Dragon.asset`; было 1 с) — leak integrity реже, читаемее
+- [x] Toxic **не** триггерит enemy hit stun / knockback (см. Epic 4 **Enemy hit juice**)
 
 **Gate:** коты/танки заметно медлят на O; дракон — нет.
 
@@ -239,6 +273,42 @@
 
 ---
 
+### Epic 8+ — Survival playtest slice
+
+**Цель:** после W5 — опциональный endless survival для стенда; золото в кошелёк; spawn по всем открытым путям (6+).
+
+**Survival flow:**
+
+- [x] `SurvivalFlowService` — offer после W5 (`OnNormalCampaignCompleted`); milestone каждые **5** завершённых волн после кампании (**10, 15, 20…**); `ShouldBlockAutomaticWin`; `EnterSurvivalMode`; `TryConsumeCampaignCompletionGoldGrant` / `TryConsumeMilestoneGoldGrant` (+**2000** gold на milestone)
+- [x] `SurvivalWaveScalingService` — runtime-копия **Intro5**; tier `(wave − stagesCount − 1) / 5`; `PathIndex = UNSET (−1)` → round-robin по **всем** открытым путям
+- [x] `StageProviderService` — `ActivateSurvivalMode`, `HasNextStage` в survival, `GetWaveRuntimeDataForWave` → scaled runtime data
+- [x] `WinPopupMode` / `WinPopupOpenArgs` / `WinPopupView` (DefeatPopup-style serialized primary/secondary buttons) / `WinPopupPresenter`
+- [x] `PreparationState.TryShowSurvivalPopup` on **Enter** — campaign gold + milestone via `PersistedGoldRewardService.AddGoldAndPersist`; блок prep-триггера и кликов по арене пока попап открыт
+- [x] `GameplayStatesFactory` — условие `ShouldBlockAutomaticWin == false` на переход в `WinState`
+- [x] `SpellcoreProgressionService` — hooks на `OnWaveCompleted`; `OnSurvivalModeEntered` → `ApplyPathsForWave` + path unlock reveal (`GetPathCountForWave`: **+1 path / survival wave**, до `MaxPathCount`); `IsNextWaveStartBlocked` на время reveal
+- [x] `StagePresenter` — счётчик волн `displayWave / 5+` (`ShouldShowSurvivalPlusSuffix`)
+
+**Gold persistence:**
+
+- [x] `PersistedGoldRewardService` — `AddGold` / `AddGoldAndPersist` → `WalletService` + `PlayerDataProvider.SaveAsync`
+- [x] `WinState` — `AddGold`; persist через `EndGameState.SaveAllData` при финальном win
+- [x] Survival popups в `PreparationState` — `AddGoldAndPersist` (игрок остаётся в run)
+- [x] `ProjectContextRegistrations` (project) + `GameplayStatesFactory` (gameplay resolve)
+
+**Survival path mixing:**
+
+- [x] `WaveSpawnPlanService.ResolvePathIndex` — `PathIndex` в конфиге = **слот**; `(slot + waveRotation) % открытых путей`; `waveRotation = (waveNumber − 1) % pathCount`
+- [x] `SpellcoreProgressionService` — `BuildForWave(..., UpcomingWaveNumber)` для preview и spawn plan
+- [x] `ClearAllEnemiesStage` — `TryGetPlannedPathIndexForGroup` вместо random fallback
+
+**Prep UX:**
+
+- [x] `PlantPlacementPreviewService` — sell только по hit на иконку лопаты (`SELL_SHOVEL_HIT_RADIUS_FRACTION` **0.32**), не весь сектор; фикс конфликта с prep-trigger / LMB
+
+**Gate:** W5 → offer → survival wave 6+; враги на путях 6+; milestone popup + gold; выход в main menu без потери начисленного gold.
+
+---
+
 ### Epic 9 — Balance pass & docs
 
 - [ ] `balance-v3.md` синхрон с .asset
@@ -250,8 +320,8 @@
 
 ## 5. Вне scope v3 (явно)
 
-- Survival post-W5 (после полировки W4–W5)
-- Meta progression / coins
+- ~~Survival post-W5~~ → **partial playtest slice DONE** (Epic 8+): endless waves, tier scaling, popups; без полного survival-дизайна / баланса
+- Meta progression / coins — **частично:** `PersistedGoldRewardService` для run rewards; полный meta loop — out
 - Новые типы врагов
 - 6-й path на W5 (держим 5 как в iter 3.7 обсуждении, если не переиграем)
 - Полный таймлайн UI как King is Watching (stub достаточно для demo)
@@ -279,10 +349,16 @@
 
 ---
 
-## 8. Следующий шаг
+## 8. Dev workflow (не gameplay epic)
 
-**Epic 9** — balance pass, one-pager, meetup checklist, end-of-run beat.
+- [x] `.cursor/rules/extend-existing-architecture.mdc` (**alwaysApply**) — перед правкой в `Assets/_Project/`: найти эталон (`EntitiesFactory`, соседняя фича), копировать структуру, без хелперов на 1–2 строки и параллельных пайплайнов
 
 ---
 
-*`Spellcore_v3` @ Epic 8 done. Дизайн-обоснование: [[factory-feel]].*
+## 9. Следующий шаг
+
+**Epic 9** — balance pass, one-pager, meetup checklist, end-of-run beat; survival tier numbers — playtest в [[balance-v3]].
+
+---
+
+*`Spellcore_v3` @ Epic 8+ survival playtest slice done. Gold persist, path rotation, sell-shovel UX, enemy hit juice iter — 2026-06-30. Дизайн-обоснование: [[factory-feel]].*

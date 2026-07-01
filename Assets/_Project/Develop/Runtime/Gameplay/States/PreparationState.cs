@@ -22,7 +22,6 @@ using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
-using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.StateMachineCore;
@@ -44,8 +43,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly PlantSellInputService _plantSellInputService;
         private readonly SurvivalFlowService _survivalFlowService;
         private readonly GameplayPopupService _gameplayPopupService;
-        private readonly WalletService _walletService;
-        private readonly PlayerDataProvider _playerDataProvider;
+        private readonly PersistedGoldRewardService _goldRewardService;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
         private readonly int _levelGoldReward;
@@ -73,8 +71,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             PlantSellInputService plantSellInputService,
             SurvivalFlowService survivalFlowService,
             GameplayPopupService gameplayPopupService,
-            WalletService walletService,
-            PlayerDataProvider playerDataProvider,
+            PersistedGoldRewardService goldRewardService,
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
             int levelGoldReward)
@@ -95,8 +92,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _plantSellInputService = plantSellInputService;
             _survivalFlowService = survivalFlowService;
             _gameplayPopupService = gameplayPopupService;
-            _walletService = walletService;
-            _playerDataProvider = playerDataProvider;
+            _goldRewardService = goldRewardService;
             _sceneSwitcherService = sceneSwitcherService;
             _coroutinesPerformer = coroutinesPerformer;
             _levelGoldReward = levelGoldReward;
@@ -164,7 +160,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 int goldReward = _levelGoldReward;
 
                 if (_survivalFlowService.TryConsumeCampaignCompletionGoldGrant())
-                    GrantGoldReward(goldReward);
+                    _goldRewardService.AddGoldAndPersist(goldReward);
 
                 WinPopupOpenArgs openArgs = new WinPopupOpenArgs
                 {
@@ -183,7 +179,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 int goldReward = SurvivalFlowService.SURVIVAL_MILESTONE_BONUS_GOLD;
 
                 if (_survivalFlowService.TryConsumeMilestoneGoldGrant())
-                    GrantGoldReward(goldReward);
+                    _goldRewardService.AddGoldAndPersist(goldReward);
 
                 WinPopupOpenArgs openArgs = new WinPopupOpenArgs
                 {
@@ -211,15 +207,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private void SwitchToMainMenu()
         {
             _coroutinesPerformer.StartPerform(_sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu));
-        }
-
-        private void GrantGoldReward(int goldAmount)
-        {
-            if (goldAmount <= 0)
-                return;
-
-            _walletService.Add(CurrencyTypes.Gold, goldAmount);
-            _coroutinesPerformer.StartPerform(_playerDataProvider.SaveAsync());
         }
 
         private bool MouseClickedOnPlacementSurface(out Vector3 hitPoint)

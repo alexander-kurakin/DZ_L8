@@ -81,6 +81,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 hoveredSectorId,
                 _sectorRegistryService,
                 _plantPlacementService);
+            _plantPlacementPreviewService.UpdateActiveSellShovelPointerHighlight(planePoint);
 
             if (PlantPlacementService.IsPlantAbility(_activeAbility.Value))
             {

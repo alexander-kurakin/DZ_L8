@@ -11,7 +11,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 {
     public class WinState : EndGameState
     {
-        private readonly WalletService _walletService;
+        private readonly PersistedGoldRewardService _goldRewardService;
         private readonly GameplayPopupService _popupService;
         
         private readonly int _rewardGold;
@@ -22,12 +22,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
             StatsService statsService,
-            WalletService walletService,
-            GameplayPopupService  popupService,
+            PersistedGoldRewardService goldRewardService,
+            GameplayPopupService popupService,
             IMouseInputService mouseInputService,
             int rewardGold) : base(inputService, playerDataProvider, sceneSwitcherService, coroutinesPerformer, statsService, mouseInputService)
         {
-            _walletService = walletService;
+            _goldRewardService = goldRewardService;
             _rewardGold = rewardGold;
             _popupService = popupService;
         }
@@ -36,13 +36,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         {
             Stats.RecordWin();
             
-            RewardsData rewardsData = new RewardsData();
-
-            if (_rewardGold > 0)
+            RewardsData rewardsData = new RewardsData
             {
-                _walletService.Add(CurrencyTypes.Gold, _rewardGold);
-                rewardsData.RewardGold = _rewardGold;
-            }
+                RewardGold = _goldRewardService.AddGold(_rewardGold)
+            };
             
             _popupService.OpenWinPopup(rewardsData);
         }

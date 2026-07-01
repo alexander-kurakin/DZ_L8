@@ -22,11 +22,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private const float HOVER_CROSS_APPEAR_DURATION_SECONDS = 0.18f;
         private const float HOVER_CROSS_SCALE_FROM = 0.55f;
         private const float SELL_SHOVEL_HIT_RADIUS_FRACTION = 0.32f;
+        private const float SHOVEL_OUTLINE_WORLD_SIZE = MARKER_WORLD_SIZE * 0.88f;
+        private const int SHOVEL_OUTLINE_SORTING_ORDER = MARKER_SORTING_ORDER - 1;
 
         private static readonly Color CHECK_COLOR = new Color(0.25f, 0.95f, 0.35f, 1f);
         private static readonly Color TOXIC_OUTER_RECOMMENDED_COLOR = new Color(0.2f, 1f, 0.45f, 1f);
         private static readonly Color CROSS_COLOR = new Color(0.95f, 0.25f, 0.25f, 1f);
         private static readonly Color SHOVEL_COLOR = new Color(0.85f, 0.62f, 0.18f, 1f);
+        private static readonly Color SHOVEL_OUTLINE_IDLE_COLOR = new Color(1f, 1f, 1f, 0.35f);
+        private static readonly Color SHOVEL_OUTLINE_HOVER_COLOR = new Color(1f, 1f, 1f, 1f);
 
         private static readonly SectorBelt[] PLANTABLE_BELTS =
         {
@@ -38,6 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private static Sprite _checkSprite;
         private static Sprite _crossSprite;
         private static Sprite _shovelSprite;
+        private static Sprite _rectOutlineSprite;
 
         private readonly Dictionary<SectorId, GameObject> _markerBySectorId = new();
         private Transform _root;
@@ -50,6 +55,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         private GameObject _hoverSellShovelMarker;
         private Transform _hoverSellShovelVisual;
         private SpriteRenderer _hoverSellShovelRenderer;
+        private SpriteRenderer _hoverSellShovelOutlineRenderer;
         private float _hoverSellShovelBaseScale = 1f;
         private SectorId? _hoveredSellSectorId;
         private Tween _hoverSellShovelTween;
@@ -188,6 +194,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return deltaX * deltaX + deltaZ * deltaZ <= hitRadius * hitRadius;
         }
 
+        public void UpdateActiveSellShovelPointerHighlight(Vector3 planeWorldPoint)
+        {
+            if (_hoverSellShovelMarker == null || _hoverSellShovelMarker.activeSelf == false)
+                return;
+
+            if (_hoverSellShovelOutlineRenderer == null)
+                return;
+
+            bool isPointerOverShovel = IsPointerOverActiveSellShovel(planeWorldPoint);
+            _hoverSellShovelOutlineRenderer.color = isPointerOverShovel
+                ? SHOVEL_OUTLINE_HOVER_COLOR
+                : SHOVEL_OUTLINE_IDLE_COLOR;
+        }
+
         public void ClearHoverSellShovel()
         {
             _hoverSellShovelTween?.Kill();
@@ -292,6 +312,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             hiddenColor.a = 0f;
             _hoverSellShovelRenderer.color = hiddenColor;
 
+            if (_hoverSellShovelOutlineRenderer != null)
+                _hoverSellShovelOutlineRenderer.color = SHOVEL_OUTLINE_IDLE_COLOR;
+
             _hoverSellShovelTween = DOTween.Sequence()
                 .Append(_hoverSellShovelVisual
                     .DOScale(Vector3.one * _hoverSellShovelBaseScale, HOVER_CROSS_APPEAR_DURATION_SECONDS)
@@ -310,6 +333,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             _hoverSellShovelMarker = new GameObject("PlantSellHoverShovel");
             _hoverSellShovelMarker.transform.SetParent(_root, false);
             _hoverSellShovelMarker.transform.SetPositionAndRotation(Vector3.zero, Quaternion.Euler(90f, 0f, 0f));
+
+            Sprite outlineSprite = GetOrCreateRectOutlineSprite();
+            GameObject outlineObject = CreateWorldSpriteChild(
+                _hoverSellShovelMarker.transform,
+                "Outline",
+                outlineSprite,
+                Vector3.zero,
+                SHOVEL_OUTLINE_WORLD_SIZE,
+                SHOVEL_OUTLINE_IDLE_COLOR,
+                SHOVEL_OUTLINE_SORTING_ORDER);
+            _hoverSellShovelOutlineRenderer = outlineObject.GetComponent<SpriteRenderer>();
 
             Sprite shovelSprite = GetOrCreateShovelSprite();
             _hoverSellShovelBaseScale = GetScaleForWorldSize(shovelSprite, MARKER_WORLD_SIZE);
@@ -502,6 +536,18 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             return _shovelSprite;
         }
 
+        private static Sprite GetOrCreateRectOutlineSprite()
+        {
+            if (_rectOutlineSprite != null)
+                return _rectOutlineSprite;
+
+            _rectOutlineSprite = CreateLineSprite(
+                textureSize: 32,
+                pixelsPerUnit: 32f,
+                drawPixel: (int x, int y) => IsRectOutlinePixel(x, y, borderThickness: 2));
+            return _rectOutlineSprite;
+        }
+
         private static Sprite GetOrCreateCrossSprite()
         {
             if (_crossSprite != null)
@@ -552,6 +598,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             bool bladeTip = IsThickLine(x, y, 10, 4, 22, 4, 2);
 
             return handle || blade || bladeTip;
+        }
+
+        private static bool IsRectOutlinePixel(int x, int y, int borderThickness)
+        {
+            const int textureSize = 32;
+            int innerMin = borderThickness;
+            int innerMax = textureSize - 1 - borderThickness;
+            bool inOuterRect = x >= 0 && x < textureSize && y >= 0 && y < textureSize;
+            bool inInnerHole = x > innerMin && x < innerMax && y > innerMin && y < innerMax;
+
+            return inOuterRect && inInnerHole == false;
         }
 
         private static bool IsCrossPixel(int x, int y)

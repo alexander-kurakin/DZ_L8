@@ -58,8 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<PlantSellInputService>(),
                 _container.Resolve<SurvivalFlowService>(),
                 _container.Resolve<GameplayPopupService>(),
-                _container.Resolve<WalletService>(),
-                _container.Resolve<PlayerDataProvider>(),
+                _container.Resolve<PersistedGoldRewardService>(),
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 levelGoldReward);
@@ -82,7 +81,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
                 _container.Resolve<StatsService>(),
-                _container.Resolve<WalletService>(),
+                _container.Resolve<PersistedGoldRewardService>(),
                 _container.Resolve<GameplayPopupService>(),
                 _container.Resolve<IMouseInputService>(),
                 _container.Resolve<ConfigsProviderService>().GetConfig<LevelsListConfig>().GetBy(inputArgs.LevelNumber).GoldReward
