@@ -3,7 +3,6 @@ using Assets._Project.Develop.Runtime.Gameplay.States;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using UnityEngine;
 
 namespace _Project.Develop.Runtime.UI.Gameplay

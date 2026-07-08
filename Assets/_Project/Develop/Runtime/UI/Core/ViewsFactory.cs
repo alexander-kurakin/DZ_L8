@@ -18,13 +18,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.GameplayScreen, "UI/Gameplay/GameplayScreenView" },
             {ViewIDs.WinPopup, "UI/Gameplay/ResultPopup/WinPopup" },
             {ViewIDs.DefeatPopup, "UI/Gameplay/ResultPopup/DefeatPopup" },
-            {ViewIDs.SimpleHealthBar, "UI/Gameplay/HealthBars/SimpleHealthBar" },
-            {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/HeroHealthBar" },
-            {ViewIDs.BuildingBuffTimerTextView, "UI/Gameplay/PlantBuildingBuff/BuildingBuffTimerTextView" },
             {ViewIDs.AbilitySlot, "UI/Gameplay/Abilities/AbilitySlotView" },
-            {ViewIDs.ShopPopup, "UI/MainMenu/Shop/ShopPopup" },
-            {ViewIDs.SelectableAbilityView, "UI/AbilitySelectPopup/SelectionAbilityView"},
-            {ViewIDs.CombatTimeScaleView, "UI/Gameplay/CombatTimeScale/CombatTimeScaleView"},
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

@@ -5,7 +5,7 @@ using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-namespace _Project.Develop.Runtime.Configs.Utilities.Audio
+namespace Assets._Project.Develop.Runtime.Configs.Utilities.Audio
 {
         [CreateAssetMenu(
             menuName = "Configs/Utilities/Audio/NewGameSoundsConfig",

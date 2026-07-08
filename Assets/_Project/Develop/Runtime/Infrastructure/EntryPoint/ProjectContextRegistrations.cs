@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
@@ -16,10 +15,10 @@ using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using Assets._Project.Develop.Runtime.Utilities.Timer;
 using System;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
+using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -30,94 +29,70 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
         public static void Process(DIContainer container)
         {
             container.RegisterAsSingle<ICoroutinesPerformer>(CreateCoroutinesPerformer);
-
             container.RegisterAsSingle(CreateConfigsProviderService);
-
             container.RegisterAsSingle(CreateResourcesAssetsLoader);
-
             container.RegisterAsSingle(CreateSceneLoaderService);
-
             container.RegisterAsSingle(CreateSceneSwitcherService);
-
             container.RegisterAsSingle<ILoadingScreen>(CreateLoadingScreen);
-
             container.RegisterAsSingle(CreateWalletService).NonLazy();
-
             container.RegisterAsSingle(CreatePlayerDataProvider);
-
             container.RegisterAsSingle(CreatePersistedGoldRewardService);
-
             container.RegisterAsSingle(CreateProjectPresentersFactory);
-
             container.RegisterAsSingle(CreateViewsFactory);
-
             container.RegisterAsSingle(CreateTimerService);
-
             container.RegisterAsSingle<ISaveLoadSerivce>(CreateSaveLoadService);
-            
             container.RegisterAsSingle(CreateStatsService).NonLazy();
-            
-            container.RegisterAsSingle(CreatePowerupService).NonLazy();
-            
             container.RegisterAsSingle(CreateAudioHub).NonLazy();
-            
             container.RegisterAsSingle<IBackgroundMusicService>(CreateBackgroundMusicService);
-            
             container.RegisterAsSingle<IUISoundService>(CreateUISoundsService);
         }
-        
-        private static AudioHub CreateAudioHub(DIContainer c)
+
+        private static AudioHub CreateAudioHub(DIContainer container)
         {
-            ResourcesAssetsLoader resources = c.Resolve<ResourcesAssetsLoader>();
+            ResourcesAssetsLoader resources = container.Resolve<ResourcesAssetsLoader>();
             AudioHub prefab = resources.Load<AudioHub>("Utilities/AudioHub");
-            
             return Object.Instantiate(prefab);
         }
-        
-        private static IBackgroundMusicService CreateBackgroundMusicService(DIContainer c)
+
+        private static IBackgroundMusicService CreateBackgroundMusicService(DIContainer container)
         {
-            AudioHub audioHub = c.Resolve<AudioHub>();
-            BackgroundMusicConfig config = c.Resolve<ConfigsProviderService>()
+            AudioHub audioHub = container.Resolve<AudioHub>();
+            BackgroundMusicConfig config = container.Resolve<ConfigsProviderService>()
                 .GetConfig<BackgroundMusicConfig>();
-            
+
             return new BackgroundMusicService(audioHub.BackgroundMusicSource, config);
         }
-        
-        private static IUISoundService CreateUISoundsService(DIContainer c)
+
+        private static IUISoundService CreateUISoundsService(DIContainer container)
         {
-            AudioHub audioHub = c.Resolve<AudioHub>();
-            UISoundsConfig config = c.Resolve<ConfigsProviderService>()
+            AudioHub audioHub = container.Resolve<AudioHub>();
+            UISoundsConfig config = container.Resolve<ConfigsProviderService>()
                 .GetConfig<UISoundsConfig>();
-            
+
             return new UISoundService(audioHub.UISoundsSource, config);
         }
 
-        private static TimerServiceFactory CreateTimerService(DIContainer c)
-            => new TimerServiceFactory(c);
+        private static TimerServiceFactory CreateTimerService(DIContainer container)
+            => new TimerServiceFactory(container);
 
-        private static ViewsFactory CreateViewsFactory(DIContainer c)
-            => new ViewsFactory(c.Resolve<ResourcesAssetsLoader>());
+        private static ViewsFactory CreateViewsFactory(DIContainer container)
+            => new ViewsFactory(container.Resolve<ResourcesAssetsLoader>());
 
-        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer c)
-            => new ProjectPresentersFactory(c);
-        
-        private static PowerupService CreatePowerupService(DIContainer c)
+        private static ProjectPresentersFactory CreateProjectPresentersFactory(DIContainer container)
+            => new ProjectPresentersFactory(container);
+
+        private static StatsService CreateStatsService(DIContainer container)
         {
-            return new PowerupService(c.Resolve<PlayerDataProvider>());
-        }
-        
-        private static StatsService CreateStatsService(DIContainer c)
-        {
-            ReactiveVariable<int> wins =  new();
+            ReactiveVariable<int> wins = new();
             ReactiveVariable<int> losses = new();
 
-            return new StatsService(wins, losses, c.Resolve<PlayerDataProvider>());
+            return new StatsService(wins, losses, container.Resolve<PlayerDataProvider>());
         }
 
-        private static PlayerDataProvider CreatePlayerDataProvider(DIContainer c)
-            => new PlayerDataProvider(c.Resolve<ISaveLoadSerivce>(), c.Resolve<ConfigsProviderService>());
+        private static PlayerDataProvider CreatePlayerDataProvider(DIContainer container)
+            => new PlayerDataProvider(container.Resolve<ISaveLoadSerivce>(), container.Resolve<ConfigsProviderService>());
 
-        private static SaveLoadService CreateSaveLoadService(DIContainer c)
+        private static SaveLoadService CreateSaveLoadService(DIContainer container)
         {
             IDataSerializer dataSerializer = new JsonSerializer();
             IDataKeysStorage dataKeysStorage = new MapDataKeysStorage();
@@ -129,7 +104,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             return new SaveLoadService(dataSerializer, dataKeysStorage, dataRepository);
         }
 
-        private static WalletService CreateWalletService(DIContainer c)
+        private static WalletService CreateWalletService(DIContainer container)
         {
             Dictionary<CurrencyTypes, ReactiveVariable<int>> currencies = new();
 
@@ -141,41 +116,39 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
                 currencies[currencyType] = new ReactiveVariable<int>();
             }
 
-            return new WalletService(currencies, c.Resolve<PlayerDataProvider>());
+            return new WalletService(currencies, container.Resolve<PlayerDataProvider>());
         }
 
-        private static PersistedGoldRewardService CreatePersistedGoldRewardService(DIContainer c)
+        private static PersistedGoldRewardService CreatePersistedGoldRewardService(DIContainer container)
         {
             return new PersistedGoldRewardService(
-                c.Resolve<WalletService>(),
-                c.Resolve<PlayerDataProvider>(),
-                c.Resolve<ICoroutinesPerformer>());
+                container.Resolve<WalletService>(),
+                container.Resolve<PlayerDataProvider>(),
+                container.Resolve<ICoroutinesPerformer>());
         }
 
-        private static SceneSwitcherService CreateSceneSwitcherService(DIContainer c)
+        private static SceneSwitcherService CreateSceneSwitcherService(DIContainer container)
             => new SceneSwitcherService(
-                c.Resolve<SceneLoaderService>(),
-                c.Resolve<ILoadingScreen>(),
-                c);
+                container.Resolve<SceneLoaderService>(),
+                container.Resolve<ILoadingScreen>(),
+                container);
 
-        private static SceneLoaderService CreateSceneLoaderService(DIContainer c)
+        private static SceneLoaderService CreateSceneLoaderService(DIContainer container)
             => new SceneLoaderService();
 
-        private static ConfigsProviderService CreateConfigsProviderService(DIContainer c)
+        private static ConfigsProviderService CreateConfigsProviderService(DIContainer container)
         {
-            ResourcesAssetsLoader resourcesAssetsLoader = c.Resolve<ResourcesAssetsLoader>();
-
+            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
             ResourcesConfigsLoader resourcesConfigsLoader = new ResourcesConfigsLoader(resourcesAssetsLoader);
-
             return new ConfigsProviderService(resourcesConfigsLoader);
         }
 
-        private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer c)
+        private static ResourcesAssetsLoader CreateResourcesAssetsLoader(DIContainer container)
             => new ResourcesAssetsLoader();
 
-        private static CoroutinesPerformer CreateCoroutinesPerformer(DIContainer c)
+        private static CoroutinesPerformer CreateCoroutinesPerformer(DIContainer container)
         {
-            ResourcesAssetsLoader resourcesAssetsLoader = c.Resolve<ResourcesAssetsLoader>();
+            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
 
             CoroutinesPerformer coroutinesPerformerPrefab = resourcesAssetsLoader
                 .Load<CoroutinesPerformer>("Utilities/CoroutinesPerformer");
@@ -183,9 +156,9 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             return Object.Instantiate(coroutinesPerformerPrefab);
         }
 
-        private static StandardLoadingScreen CreateLoadingScreen(DIContainer c)
+        private static StandardLoadingScreen CreateLoadingScreen(DIContainer container)
         {
-            ResourcesAssetsLoader resourcesAssetsLoader = c.Resolve<ResourcesAssetsLoader>();
+            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
 
             StandardLoadingScreen standardLoadingScreenPrefab = resourcesAssetsLoader
                 .Load<StandardLoadingScreen>("Utilities/StandardLoadingScreen");

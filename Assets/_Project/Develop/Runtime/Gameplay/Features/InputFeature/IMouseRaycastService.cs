@@ -1,7 +1,7 @@
 using UnityEngine;
 using Vector2 = UnityEngine.Vector2;
 
-namespace _Project.Develop.Runtime.Gameplay.Features.Input
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public interface IMouseRaycastService
     {

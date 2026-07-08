@@ -1,6 +1,5 @@
 ﻿using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Meta.Features.Powerups;
 
 namespace Assets._Project.Develop.Runtime.Utilities.DataManagment
 {
@@ -9,7 +8,5 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment
         public Dictionary<CurrencyTypes, int> WalletData;
         public int Wins;
         public int Losses;
-        public Dictionary<string, PowerupSaveData> PowerupsData;
-        
     }
 }

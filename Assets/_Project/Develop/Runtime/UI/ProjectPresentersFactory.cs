@@ -1,20 +1,16 @@
 ﻿using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileModifiers;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Wallet;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
-using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 
 namespace Assets._Project.Develop.Runtime.UI
 {
@@ -38,7 +34,7 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ConfigsProviderService>().GetConfig<CurrencyIconsConfig>(),
                 view);
         }
-        
+
         public SingleGameStatPresenter CreateSingleGameStatPresenter(
             IconTextView view,
             IReadOnlyVariable<int> stat,
@@ -50,27 +46,17 @@ namespace Assets._Project.Develop.Runtime.UI
                 _container.Resolve<ConfigsProviderService>().GetConfig<StatIconsConfig>(),
                 view);
         }
-        
-        public SingleAbilityPresenter CreateSingleAbilityPresenter(
+
+        public ModifierSlotPresenter CreateModifierSlotPresenter(
             AbilitySlotView view,
-            AbilityType abilityType,
-            Entity mainHero)
+            ModifierType modifierType,
+            Entity playerEntity)
         {
-            return new SingleAbilityPresenter(
-                abilityType,
+            return new ModifierSlotPresenter(
+                modifierType,
                 _container.Resolve<ConfigsProviderService>(),
                 view,
-                mainHero);
-        }
-
-        public LmbAbilitySlotPresenter CreateLmbAbilitySlotPresenter(
-            AbilitySlotView view,
-            Entity mainHero)
-        {
-            return new LmbAbilitySlotPresenter(
-                _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
-                view,
-                mainHero);
+                playerEntity);
         }
 
         public WalletPresenter CreateWalletPresenter(IconTextListView view)
@@ -89,11 +75,6 @@ namespace Assets._Project.Develop.Runtime.UI
                 this,
                 _container.Resolve<ViewsFactory>(),
                 view);
-        }
-
-        public CharacterPreviewPresenter CreateCharacterPreviewPresenter()
-        {
-            return new CharacterPreviewPresenter(_container.Resolve<SceneLoaderService>(), _container.Resolve<ICoroutinesPerformer>());
         }
     }
 }

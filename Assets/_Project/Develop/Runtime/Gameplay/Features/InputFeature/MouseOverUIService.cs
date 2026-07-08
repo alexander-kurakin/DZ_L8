@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace _Project.Develop.Runtime.Gameplay.Features.InputFeature
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public class MouseOverUIService
     {

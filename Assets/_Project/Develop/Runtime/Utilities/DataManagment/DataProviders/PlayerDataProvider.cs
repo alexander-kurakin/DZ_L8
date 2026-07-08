@@ -4,8 +4,6 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Meta.Features.Powerups;
-using Assets._Project.Develop.Runtime.Configs.Meta.NewPowerups;
 
 namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
 {
@@ -14,7 +12,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
         private readonly ConfigsProviderService _configsProviderService;
 
         public PlayerDataProvider(
-            ISaveLoadSerivce saveLoadService, 
+            ISaveLoadSerivce saveLoadService,
             ConfigsProviderService configsProviderService) : base(saveLoadService)
         {
             _configsProviderService = configsProviderService;
@@ -25,7 +23,6 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
             return new PlayerData()
             {
                 WalletData = InitWalletData(),
-                PowerupsData = InitPowerupData(),
             };
         }
 
@@ -44,18 +41,6 @@ namespace Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders
             }
 
             return walletData;
-        }
-        
-        private Dictionary<string, PowerupSaveData> InitPowerupData()
-        {
-            Dictionary<string, PowerupSaveData> powerupData = new();
-            
-            PowerupConfigsContainer powerupConfigsContainer = _configsProviderService.GetConfig<PowerupConfigsContainer>();
-
-            foreach (PowerupConfig powerupConfig in powerupConfigsContainer.PowerupConfigs)
-                powerupData[powerupConfig.ID] = new PowerupSaveData { Level = 1, Unlocked = false}; 
-
-            return powerupData;
         }
     }
 }

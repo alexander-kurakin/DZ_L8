@@ -40,14 +40,10 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
         {
             base.Initialize();
 
-            if (_openArgs.Mode == WinPopupMode.Standard)
-                _view.SetTitle(TITLE_NAME);
-            else
-                _view.SetMode(_openArgs.Mode);
-
+            _view.SetTitle(TITLE_NAME);
+            _view.SetMode(WinPopupMode.Standard);
             _view.SetGoldReward(_openArgs.RewardsData.RewardGold);
             _view.ContinueClicked += OnContinueClicked;
-            _view.SecondaryClicked += OnSecondaryClicked;
 
             _backgroundMusicService.Stop();
             _uiSoundService.Play(UISoundIDs.PopupOpen);
@@ -56,24 +52,19 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
         protected override void OnPreShow()
         {
             base.OnPreShow();
-
             _uiSoundService.Play(UISoundIDs.WinFanfare);
         }
 
         protected override void OnPreHide()
         {
             base.OnPreHide();
-
             _view.ContinueClicked -= OnContinueClicked;
-            _view.SecondaryClicked -= OnSecondaryClicked;
         }
 
         public override void Dispose()
         {
             base.Dispose();
-
             _view.ContinueClicked -= OnContinueClicked;
-            _view.SecondaryClicked -= OnSecondaryClicked;
         }
 
         private void OnContinueClicked()
@@ -81,19 +72,6 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups
             if (_openArgs.OnContinue != null)
             {
                 _openArgs.OnContinue.Invoke();
-                OnCloseRequest();
-                return;
-            }
-
-            _coroutinesPerformer.StartPerform(_sceneSwitcher.ProcessSwitchTo(Scenes.MainMenu));
-            OnCloseRequest();
-        }
-
-        private void OnSecondaryClicked()
-        {
-            if (_openArgs.OnSecondary != null)
-            {
-                _openArgs.OnSecondary.Invoke();
                 OnCloseRequest();
                 return;
             }

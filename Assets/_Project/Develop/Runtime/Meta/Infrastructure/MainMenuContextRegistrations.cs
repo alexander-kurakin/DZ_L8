@@ -1,10 +1,11 @@
-﻿using _Project.Develop.Runtime.Meta.Features.Powerups;
-using Assets._Project.Develop.Runtime.Infrastructure.DI;
+﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.MainMenu;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
-using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
+using Assets._Project.Develop.Runtime.Utilities.CoroutinesManagment;
+using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
@@ -16,21 +17,11 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             container.RegisterAsSingle(CreateMainMenuUIRoot).NonLazy();
             container.RegisterAsSingle(CreateMainMenuPresentersFactory);
             container.RegisterAsSingle(CreateMainMenuScreenPresenter).NonLazy();
-            container.RegisterAsSingle(CreateMainMenuPopupService);
-        }
-        
-        private static MainMenuPopupService CreateMainMenuPopupService(DIContainer c)
-        {
-            return new MainMenuPopupService(
-                c.Resolve<ViewsFactory>(),
-                c.Resolve<ProjectPresentersFactory>(),
-                c.Resolve<MainMenuPresentersFactory>(),
-                c.Resolve<MainMenuUIRoot>());
         }
 
-        private static MainMenuUIRoot CreateMainMenuUIRoot(DIContainer c)
+        private static MainMenuUIRoot CreateMainMenuUIRoot(DIContainer container)
         {
-            ResourcesAssetsLoader resourcesAssetsLoader = c.Resolve<ResourcesAssetsLoader>();
+            ResourcesAssetsLoader resourcesAssetsLoader = container.Resolve<ResourcesAssetsLoader>();
 
             MainMenuUIRoot mainMenuUIRootPrefab = resourcesAssetsLoader
                 .Load<MainMenuUIRoot>("UI/MainMenu/MainMenuUIRoot");
@@ -38,23 +29,24 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             return Object.Instantiate(mainMenuUIRootPrefab);
         }
 
-        private static MainMenuPresentersFactory CreateMainMenuPresentersFactory(DIContainer c)
+        private static MainMenuPresentersFactory CreateMainMenuPresentersFactory(DIContainer container)
         {
-            return new MainMenuPresentersFactory(c);
+            return new MainMenuPresentersFactory(container);
         }
 
-        private static MainMenuScreenPresenter CreateMainMenuScreenPresenter(DIContainer c)
+        private static MainMenuScreenPresenter CreateMainMenuScreenPresenter(DIContainer container)
         {
-            MainMenuUIRoot uiRoot = c.Resolve<MainMenuUIRoot>();
+            MainMenuUIRoot uiRoot = container.Resolve<MainMenuUIRoot>();
 
-            MainMenuScreenView view = c
+            MainMenuScreenView view = container
                 .Resolve<ViewsFactory>()
                 .Create<MainMenuScreenView>(ViewIDs.MainMenuScreen, uiRoot.HUDLayer);
 
-            MainMenuScreenPresenter presenter = c
+            MainMenuScreenPresenter presenter = container
                 .Resolve<MainMenuPresentersFactory>()
                 .CreateMainMenuScreen(view);
 
+            presenter.Initialize();
             return presenter;
         }
     }

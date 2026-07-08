@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace _Project.Develop.Runtime.Gameplay.Features.Input
+namespace Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature
 {
     public class MouseRaycastService : IMouseRaycastService
     {

@@ -1,5 +1,4 @@
 ﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using UnityEditor.Animations;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Common

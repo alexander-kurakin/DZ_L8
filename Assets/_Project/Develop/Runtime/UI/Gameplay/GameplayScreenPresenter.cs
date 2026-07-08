@@ -1,151 +1,149 @@
-using System;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
+
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
-using _Project.Develop.Runtime.UI.Gameplay.CombatTimeScale;
+
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
-using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
-using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
-using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
+
+using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
+
 using Assets._Project.Develop.Runtime.UI;
+
 using Assets._Project.Develop.Runtime.UI.Core;
-using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
+
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
+
 using Assets._Project.Develop.Runtime.UI.Stats;
-using _Project.Develop.Runtime.UI.Gameplay.Essence;
-using Assets._Project.Develop.Runtime.UI.Gameplay.PlantBuildingBuff;
-using UnityEngine;
+
+
 
 namespace _Project.Develop.Runtime.UI.Gameplay
+
 {
+
     public class GameplayScreenPresenter : IPresenter
+
     {
-        //logic
-        private readonly ProjectPresentersFactory _projectPresentersFactory;
 
         private readonly GameplayPresentersFactory _gameplayPresentersFactory;
-        //view
+
         private readonly GameplayScreenView _screen;
-        
+
+        private readonly PlayerModifiersHolderService _playerModifiersHolderService;
+
+
+
         private readonly List<IPresenter> _childPresenters = new();
-        
-        private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
-        private PlantBuildingBuffTimersDisplayPresenter _plantBuildingBuffTimersDisplayPresenter;
 
-        private MainHeroHolderService _mainHeroHolderService;
-        private SpellcoreProgressionService _spellcoreProgressionService;
-        private AbilityListPresenter _abilityListPresenter;
 
-        private IDisposable _mainHeroRegisteredDisposable;
-        private IDisposable _gameplayStateChangedDisposable;
+
+        private ModifierListPresenter _modifierListPresenter;
+
+
+
+        private System.IDisposable _playerRegisteredDisposable;
+
         private bool _isInitialized;
 
+
+
         public GameplayScreenPresenter(
-            ProjectPresentersFactory projectPresentersFactory,
+
             GameplayScreenView screen,
+
             GameplayPresentersFactory gameplayPresentersFactory,
-            MainHeroHolderService mainHeroHolderService,
-            SpellcoreProgressionService spellcoreProgressionService)
+
+            PlayerModifiersHolderService playerModifiersHolderService)
+
         {
-            _projectPresentersFactory = projectPresentersFactory;
+
             _screen = screen;
+
             _gameplayPresentersFactory = gameplayPresentersFactory;
-            _mainHeroHolderService = mainHeroHolderService;
-            _spellcoreProgressionService = spellcoreProgressionService;
+
+            _playerModifiersHolderService = playerModifiersHolderService;
+
         }
 
+
+
         public void Initialize()
+
         {
+
             if (_isInitialized)
+
                 return;
+
+
 
             _isInitialized = true;
 
-            CreateCurrencyHud();
+
+
             CreateStatsView();
             CreateStageNumber();
-            CreateWavePreview();
-            CreateCombatTimeScale();
-            CreateEntitiesHealthDisplay();
-            CreatePlantBuildingBuffTimersDisplay();
-            
-            _mainHeroRegisteredDisposable = _mainHeroHolderService.HeroRegistred.Subscribe(OnMainHeroRegistered);
 
-            if (_mainHeroHolderService.MainHero != null)
-                OnMainHeroRegistered(_mainHeroHolderService.MainHero);
-            
+            _playerRegisteredDisposable = _playerModifiersHolderService.HeroRegistred.Subscribe(OnPlayerRegistered);
+
+
+
+            if (_playerModifiersHolderService.PlayerEntity != null)
+
+                OnPlayerRegistered(_playerModifiersHolderService.PlayerEntity);
+
+
+
             foreach (IPresenter presenter in _childPresenters)
-            {
+
                 presenter.Initialize();
-            }
+
         }
 
-        private void OnMainHeroRegistered(Entity mainHero)
+
+
+        private void OnPlayerRegistered(Entity playerEntity)
+
         {
-            CreateAbitities(mainHero);
-            
-            _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
-            _spellcoreProgressionService.Changed += OnProgressionChanged;
-            UpdateAbilityBarVisibility(mainHero.GameplayPhase.Value);
+
+            CreateModifiers(playerEntity);
+
         }
 
-        private void OnProgressionChanged()
-        {
-            if (_mainHeroHolderService.MainHero == null)
-                return;
 
-            UpdateAbilityBarVisibility(_mainHeroHolderService.MainHero.GameplayPhase.Value);
-        }
-
-        private void OnGameplayStateChanged(GameplayStates oldState, GameplayStates newState)
-        {
-            UpdateAbilityBarVisibility(newState);
-        }
-
-        private void UpdateAbilityBarVisibility(GameplayStates gameplayState)
-        {
-            if (_abilityListPresenter == null)
-                return;
-
-            if (_spellcoreProgressionService.HasAnyPlantAbilityUnlocked())
-                _abilityListPresenter.ShowAll();
-            else
-                _abilityListPresenter.HideAll();
-        }
 
         public void Dispose()
+
         {
+
             foreach (IPresenter presenter in _childPresenters)
+
                 presenter.Dispose();
 
-            _childPresenters.Clear();
-            
-            _mainHeroRegisteredDisposable?.Dispose();
-            _gameplayStateChangedDisposable?.Dispose();
-            _spellcoreProgressionService.Changed -= OnProgressionChanged;
-        }
-        
-        public void LateUpdate()
-        {
-            _entitiesHealthDisplayPresenter.LateUpdate();
-            _plantBuildingBuffTimersDisplayPresenter?.LateUpdate();
-        }
-        
-        private void CreateCurrencyHud()
-        {
-            GameplayCurrencyHudPresenter currencyHudPresenter =
-                _gameplayPresentersFactory.CreateGameplayCurrencyHudPresenter(_screen.WalletIconTextListView);
 
-            _childPresenters.Add(currencyHudPresenter);
+
+            _childPresenters.Clear();
+
+            _playerRegisteredDisposable?.Dispose();
+
         }
-        
+
+
+
         private void CreateStatsView()
+
         {
+
             GameplayStatsPresenter gameplayStatsPresenter =
+
                 _gameplayPresentersFactory.CreateGameplayStatsPresenter(_screen.StatsIconTextListView);
 
+
+
             _childPresenters.Add(gameplayStatsPresenter);
+
         }
+
+
 
         private void CreateStageNumber()
         {
@@ -153,46 +151,19 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             _childPresenters.Add(stagePresenter);
         }
 
-        private void CreateWavePreview()
-        {
-            WavePreviewPresenter wavePreviewPresenter =
-                _gameplayPresentersFactory.CreateWavePreviewPresenter(_screen.WavePreviewView);
+        private void CreateModifiers(Entity playerEntity)
 
-            _childPresenters.Add(wavePreviewPresenter);
+        {
+
+            _modifierListPresenter = _gameplayPresentersFactory.CreateModifierListPresenter(_screen.AbilitiesView, playerEntity);
+
+            _modifierListPresenter.Initialize();
+
+            _childPresenters.Add(_modifierListPresenter);
+
         }
 
-        private void CreateCombatTimeScale()
-        {
-            CombatTimeScalePresenter combatTimeScalePresenter =
-                _gameplayPresentersFactory.CreateCombatTimeScalePresenter(_screen.transform);
-
-            _childPresenters.Add(combatTimeScalePresenter);
-        }
-
-        private void CreateAbitities(Entity mainHero)
-        {
-            _abilityListPresenter = _gameplayPresentersFactory.CreateAbilityListPresenter(_screen.AbilitiesView, mainHero);
-            
-            _abilityListPresenter.Initialize();
-            _childPresenters.Add(_abilityListPresenter); 
-        }
-
-        private void CreateEntitiesHealthDisplay()
-        {
-            _entitiesHealthDisplayPresenter = _gameplayPresentersFactory.CreateEntitiesHealthDisplayPresenter(_screen.EntitiesHealthDisplay);
-
-            _childPresenters.Add(_entitiesHealthDisplayPresenter);
-        }
-
-        private void CreatePlantBuildingBuffTimersDisplay()
-        {
-            if (_screen.PlantBuildingBuffTimersDisplay == null)
-                return;
-
-            _plantBuildingBuffTimersDisplayPresenter =
-                _gameplayPresentersFactory.CreatePlantBuildingBuffTimersDisplayPresenter(_screen.PlantBuildingBuffTimersDisplay);
-
-            _childPresenters.Add(_plantBuildingBuffTimersDisplayPresenter);
-        }
     }
+
 }
+

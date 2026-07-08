@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets._Project.Develop.Runtime.Utilities.Reactive;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
@@ -35,20 +34,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             {
                 _entities.Remove(entity);
                 entity.Dispose();
-                ClearReferences(entity);
                 Released?.Invoke(entity);
             }
 
             _releaseRequests.Clear();
-        }
-
-        private void ClearReferences(Entity entity)
-        {
-            for (int i = 0; i < _entities.Count; i++)
-            {
-                if(_entities[i].TryGetCurrentTarget(out ReactiveVariable<Entity> target) && target.Value == entity)
-                    target.Value = null;
-            }
         }
 
         public void Release(Entity entity)

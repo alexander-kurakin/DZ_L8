@@ -4,49 +4,30 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class StageProviderService : IDisposable
     {
-        private static readonly string[] STAGE_CONFIG_RESOURCE_PATHS =
-        {
-            "Configs/Gameplay/Stages/Intro1",
-            "Configs/Gameplay/Stages/Intro2",
-            "Configs/Gameplay/Stages/Intro3",
-            "Configs/Gameplay/Stages/Intro4",
-            "Configs/Gameplay/Stages/Intro5",
-        };
-
-        private static readonly string SURVIVAL_WAVE_RESOURCE_PATH = "Configs/Gameplay/Stages/Intro5";
-
         private readonly ReactiveEvent _stageCompleted = new();
-        private ReactiveVariable<int> _currentStageNumber = new();
-        private ReactiveVariable<StageResults> _currentStageResult = new();
+        private readonly ReactiveVariable<int> _currentStageNumber = new();
+        private readonly ReactiveVariable<StageResults> _currentStageResult = new();
 
-        private LevelConfig _levelConfig;
-        private StagesFactory _stagesFactory;
-        private SurvivalWaveScalingService _survivalWaveScalingService;
+        private readonly LevelConfig _levelConfig;
+        private readonly StagesFactory _stagesFactory;
+        private readonly EntitiesLifeContext _entitiesLifeContext;
 
         private IStage _currentStage;
-        private bool _survivalModeActive;
-        private ClearAllEnemiesStageConfig _survivalWaveTemplate;
-        
-        private List<Entity> _spawnedTemporaryEntities = new();
-        private EntitiesLifeContext _entitiesLifeContext;
-
+        private readonly List<Entity> _spawnedTemporaryEntities = new();
         private IDisposable _stageEndedDisposable;
 
         public StageProviderService(
-            LevelConfig levelConfig, 
+            LevelConfig levelConfig,
             StagesFactory stagesFactory,
-            SurvivalWaveScalingService survivalWaveScalingService,
             EntitiesLifeContext entitiesLifeContext)
         {
             _levelConfig = levelConfig;
             _stagesFactory = stagesFactory;
-            _survivalWaveScalingService = survivalWaveScalingService;
             _entitiesLifeContext = entitiesLifeContext;
             ValidateStageConfigs();
         }
@@ -54,7 +35,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
         public IReadOnlyVariable<int> CurrentStageNumber => _currentStageNumber;
         public IReadOnlyVariable<StageResults> CurrentStageResult => _currentStageResult;
         public IReadOnlyEvent StageCompleted => _stageCompleted;
-        
+
         public int CurrentStageEnemiesCount
         {
             get
@@ -71,29 +52,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public int StagesCount => _levelConfig.StageConfigs.Count;
 
-        public bool IsSurvivalModeActive => _survivalModeActive;
-
-        public void ActivateSurvivalMode()
-        {
-            if (_survivalModeActive)
-                return;
-
-            _survivalModeActive = true;
-            _survivalWaveTemplate = Resources.Load<ClearAllEnemiesStageConfig>(SURVIVAL_WAVE_RESOURCE_PATH);
-
-            if (_survivalWaveTemplate == null)
-            {
-                throw new InvalidOperationException(
-                    $"Survival wave config is missing at '{SURVIVAL_WAVE_RESOURCE_PATH}'.");
-            }
-        }
-
-        public IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypesForWave(int waveNumber)
-        {
-            return GetWaveEnemyPreviewTypesAtIndex(waveNumber - 1);
-        }
-
-        public bool HasNextStage() => CurrentStageNumber.Value < StagesCount || _survivalModeActive;
+        public bool HasNextStage() => CurrentStageNumber.Value < StagesCount;
 
         public void ApplyDebugSimulatedCompletedWaves(int completedWaves)
         {
@@ -103,12 +62,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
         public ClearAllEnemiesWaveRuntimeData GetWaveRuntimeDataForWave(int waveNumber)
         {
-            if (waveNumber > StagesCount && _survivalModeActive)
-            {
-                int survivalTier = _survivalWaveScalingService.GetSurvivalTierForWave(waveNumber, StagesCount);
-                return _survivalWaveScalingService.CreateScaledWaveData(_survivalWaveTemplate, survivalTier);
-            }
-
             int stageIndex = waveNumber - 1;
 
             if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
@@ -118,20 +71,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 return null;
 
             return ClearAllEnemiesWaveRuntimeData.FromConfig(clearAllEnemiesStageConfig);
-        }
-
-        public ClearAllEnemiesStageConfig GetClearAllEnemiesStageConfigForWave(int waveNumber)
-        {
-            ClearAllEnemiesWaveRuntimeData waveData = GetWaveRuntimeDataForWave(waveNumber);
-
-            if (waveData == null)
-                return null;
-
-            if (waveNumber > StagesCount && _survivalModeActive)
-                return _survivalWaveTemplate;
-
-            int stageIndex = waveNumber - 1;
-            return ResolveStageConfig(stageIndex) as ClearAllEnemiesStageConfig;
         }
 
         public void SwitchToNext()
@@ -152,32 +91,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             _currentStage = _stagesFactory.Create(waveData);
         }
-        
+
         public void AddTemporaryEntity(Entity entity)
         {
-            if (entity != null && !_spawnedTemporaryEntities.Contains(entity))
+            if (entity != null && _spawnedTemporaryEntities.Contains(entity) == false)
                 _spawnedTemporaryEntities.Add(entity);
-        }
-
-        private void ClearTemporaryEntities()
-        {
-            foreach (Entity entity in _spawnedTemporaryEntities)
-                _entitiesLifeContext.Release(entity);
-            
-            _spawnedTemporaryEntities.Clear();
         }
 
         public void StartCurrent()
         {
             _stageEndedDisposable = _currentStage.Completed.Subscribe(OnStageCompleted);
             _currentStage.Start();
-        }
-
-        private void OnStageCompleted()
-        {
-            _currentStageResult.Value = StageResults.Completed;
-            ClearTemporaryEntities();
-            _stageCompleted.Invoke();
         }
 
         public void UpdateCurrent(float deltaTime) => _currentStage.Update(deltaTime);
@@ -190,29 +114,19 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
             _stageEndedDisposable?.Dispose();
         }
 
-        private IReadOnlyList<WaveEnemyPreviewType> GetWaveEnemyPreviewTypesAtIndex(int stageConfigIndex)
+        private void OnStageCompleted()
         {
-            if (stageConfigIndex < 0 || stageConfigIndex >= _levelConfig.StageConfigs.Count)
-                return Array.Empty<WaveEnemyPreviewType>();
+            _currentStageResult.Value = StageResults.Completed;
+            ClearTemporaryEntities();
+            _stageCompleted.Invoke();
+        }
 
-            if (_levelConfig.StageConfigs[stageConfigIndex] is ClearAllEnemiesStageConfig clearAllEnemiesStageConfig == false)
-                return Array.Empty<WaveEnemyPreviewType>();
+        private void ClearTemporaryEntities()
+        {
+            foreach (Entity entity in _spawnedTemporaryEntities)
+                _entitiesLifeContext.Release(entity);
 
-            List<WaveEnemyPreviewType> previewTypes = new();
-            HashSet<WaveEnemyPreviewType> seenPreviewTypes = new();
-
-            foreach (SpawnGroupConfig spawnGroup in clearAllEnemiesStageConfig.SpawnGroups)
-            {
-                foreach (EnemyItemConfig enemyItem in spawnGroup.EnemyItems)
-                {
-                    WaveEnemyPreviewType previewType = WaveEnemyPreviewResolver.Resolve(enemyItem.EnemyConfig);
-
-                    if (seenPreviewTypes.Add(previewType))
-                        previewTypes.Add(previewType);
-                }
-            }
-
-            return previewTypes;
+            _spawnedTemporaryEntities.Clear();
         }
 
         private void ValidateStageConfigs()
@@ -222,34 +136,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
                 if (_levelConfig.StageConfigs[stageIndex] != null)
                     continue;
 
-                if (stageIndex >= STAGE_CONFIG_RESOURCE_PATHS.Length)
-                {
-                    throw new InvalidOperationException(
-                        $"Stage config for wave {stageIndex + 1} is missing in LevelConfig.");
-                }
-
-                StageConfig fallbackStageConfig = Resources.Load<StageConfig>(STAGE_CONFIG_RESOURCE_PATHS[stageIndex]);
-
-                if (fallbackStageConfig == null)
-                {
-                    throw new InvalidOperationException(
-                        $"Stage config for wave {stageIndex + 1} is missing at '{STAGE_CONFIG_RESOURCE_PATHS[stageIndex]}'.");
-                }
+                throw new InvalidOperationException(
+                    $"Stage config for wave {stageIndex + 1} is missing in LevelConfig.");
             }
         }
 
         private StageConfig ResolveStageConfig(int stageIndex)
         {
-            if (stageIndex >= _levelConfig.StageConfigs.Count)
-            {
-                if (_survivalModeActive && _survivalWaveTemplate != null)
-                    return _survivalWaveTemplate;
-
-                throw new InvalidOperationException(
-                    $"Wave index {stageIndex} is out of range for level with {_levelConfig.StageConfigs.Count} stages.");
-            }
-
-            if (stageIndex < 0)
+            if (stageIndex < 0 || stageIndex >= _levelConfig.StageConfigs.Count)
             {
                 throw new InvalidOperationException(
                     $"Wave index {stageIndex} is out of range for level with {_levelConfig.StageConfigs.Count} stages.");
@@ -257,24 +151,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 
             StageConfig stageConfig = _levelConfig.StageConfigs[stageIndex];
 
-            if (stageConfig != null)
-                return stageConfig;
-
-            if (stageIndex >= STAGE_CONFIG_RESOURCE_PATHS.Length)
+            if (stageConfig == null)
             {
                 throw new InvalidOperationException(
                     $"Stage config for wave {stageIndex + 1} is missing in LevelConfig.");
             }
 
-            StageConfig fallbackStageConfig = Resources.Load<StageConfig>(STAGE_CONFIG_RESOURCE_PATHS[stageIndex]);
-
-            if (fallbackStageConfig == null)
-            {
-                throw new InvalidOperationException(
-                    $"Stage config for wave {stageIndex + 1} is missing at '{STAGE_CONFIG_RESOURCE_PATHS[stageIndex]}'.");
-            }
-
-            return fallbackStageConfig;
+            return stageConfig;
         }
     }
 }
