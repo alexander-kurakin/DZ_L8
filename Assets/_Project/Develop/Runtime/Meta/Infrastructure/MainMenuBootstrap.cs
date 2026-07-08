@@ -22,7 +22,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override IEnumerator Initialize()
         {
-            Debug.Log("Инициализация сцены меню");
+            Debug.Log("Initializing menu scene");
 
             _backgroundMusicService = _container.Resolve<IBackgroundMusicService>();
 
@@ -31,7 +31,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
 
         public override void Run()
         {
-            Debug.Log("Старт сцены меню");
+            Debug.Log("Starting menu scene");
             _backgroundMusicService.Play(BackgroundMusicTrackIDs.MainMenu);
         }
     }

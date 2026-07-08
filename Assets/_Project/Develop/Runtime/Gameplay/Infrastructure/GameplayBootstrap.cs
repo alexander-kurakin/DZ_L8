@@ -9,6 +9,8 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.SceneManagment;
 using System;
 using System.Collections;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
@@ -20,6 +22,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private GameplayStatesContext _gameplayStatesContext;
         private EntitiesLifeContext _entitiesLifeContext;
+        private AIBrainsContext _aiBrainsContext;
         private GameplayScreenPresenter _screenPresenter;
         private RunEnemyKillCounterService _runEnemyKillCounterService;
         private WaveProgressService _waveProgressService;
@@ -37,18 +40,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override IEnumerator Initialize()
         {
-            Debug.Log($"Вы попали на уровень {_inputArgs.LevelNumber}");
-            Debug.Log("Инициализация геймплейной сцены");
+            Debug.Log($"You have entered level {_inputArgs.LevelNumber}");
+            Debug.Log("Initializing gameplay scene");
 
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _gameplayStatesContext = _container.Resolve<GameplayStatesContext>();
+            _aiBrainsContext =  _container.Resolve<AIBrainsContext>();
 
             _waveProgressService = _container.Resolve<WaveProgressService>();
             _waveProgressService.InitializeForRun();
 
             _runEnemyKillCounterService = _container.Resolve<RunEnemyKillCounterService>();
             _runEnemyKillCounterService.InitializeForRun();
-
+            
+            _container.Resolve<MainHeroFactory>().Create();
             _container.Resolve<PlayerModifiersHolderService>().Create();
 
             _screenPresenter = _container.Resolve<GameplayScreenPresenter>();
@@ -58,7 +63,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         public override void Run()
         {
-            Debug.Log("Старт геймплейной сцены");
+            Debug.Log("Starting gameplay scene");
             _gameplayStatesContext.Run();
         }
 
@@ -66,6 +71,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         {
             _entitiesLifeContext?.Update(Time.deltaTime);
             _gameplayStatesContext?.Update(Time.deltaTime);
+            _aiBrainsContext?.Update(Time.deltaTime);
         }
 
         private void OnDestroy()

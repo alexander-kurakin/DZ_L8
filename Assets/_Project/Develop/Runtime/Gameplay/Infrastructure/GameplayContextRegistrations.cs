@@ -7,7 +7,9 @@ using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
 using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileModifiers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter;
@@ -57,6 +59,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
             container.RegisterAsSingle(CreateGameplayPopupService);
             container.RegisterAsSingle<IGameSoundsService>(CreateGameSoundsService);
+            
+            container.RegisterAsSingle(CreateMainHeroFactory);
+            container.RegisterAsSingle(CreateAIBrainsContext);
+            container.RegisterAsSingle(CreateBrainsFactory);
+            
+            container.RegisterAsSingle(CreateMainHeroHolderService).NonLazy();
+        }
+        
+        private static AIBrainsContext CreateAIBrainsContext(DIContainer c)
+        {
+            return new AIBrainsContext();
+        }
+        
+        private static BrainsFactory CreateBrainsFactory(DIContainer c)
+        {
+            return new BrainsFactory(c);
+        }
+        
+        private static MainHeroFactory CreateMainHeroFactory(DIContainer c)
+        {
+            return new MainHeroFactory(c, _inputArgs.LevelNumber);
+        }
+        
+        private static MainHeroHolderService CreateMainHeroHolderService(DIContainer c)
+        {
+            return new MainHeroHolderService(c.Resolve<EntitiesLifeContext>());
         }
 
         private static WaveProgressService CreateWaveProgressService(DIContainer container)
@@ -117,6 +145,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new MouseInput();
         }
 
+        private static DesktopInput CreateDesktopInput(DIContainer container)
+        {
+            return new DesktopInput();
+        }
+
         private static GameplayStatesContext CreateGameplayStatesContext(DIContainer container)
         {
             return new GameplayStatesContext(container.Resolve<GameplayStatesFactory>().CreateGameplayStateMachine(_inputArgs));
@@ -143,11 +176,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
         private static StagesFactory CreateStagesFactory(DIContainer container)
         {
             return new StagesFactory(container);
-        }
-
-        private static DesktopInput CreateDesktopInput(DIContainer container)
-        {
-            return new DesktopInput();
         }
 
         private static CollidersRegistryService CreateCollidersRegistryService(DIContainer container)

@@ -10,7 +10,6 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         [field: SerializeField] public IconTextListView WalletIconTextListView { get; private set; }
         [field: SerializeField] public IconTextListView StatsIconTextListView { get; private set; }
         [field: SerializeField] public IconTextView StageNumberView { get; private set; }
-        [field: SerializeField] public AbilitySlotListView AbilitiesView { get; private set; }
     }
 }
 

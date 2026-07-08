@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c546553bd86083642a56dd7e3acf89bd, type: 3}
   m_Name: HeroConfig
   m_EditorClassIdentifier: 
-  <PrefabPath>k__BackingField: Entities/Tower
+  <PrefabPath>k__BackingField: Entities/Hero
   <DeathProcessTime>k__BackingField: 1
-  <StartPosition>k__BackingField: {x: 0, y: 0, z: 0}
+  <StartPosition>k__BackingField: {x: 49.9, y: 3.3, z: -9.57}

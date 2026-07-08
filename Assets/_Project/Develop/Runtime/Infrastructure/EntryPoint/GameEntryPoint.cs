@@ -14,11 +14,11 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
     {
         private void Awake()
         {
-            Debug.Log("Старт проекта, сетап настроек");
+            Debug.Log("Starting project, settings setup");
 
             SetupAppSettings();
 
-            Debug.Log("Процесс регистрации сервисов всего проекта");
+            Debug.Log("Project-wide services registration process");
 
             DIContainer projectContainer = new DIContainer();
 
@@ -43,7 +43,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             loadingScreen.Show();
             
-            Debug.Log("Начинается инициализация сервисов");
+            Debug.Log("Starting services initialization");
 
             yield return container.Resolve<ConfigsProviderService>().LoadAsync();
 
@@ -58,7 +58,7 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
 
             yield return new WaitForSeconds(1f);
 
-            Debug.Log("Завершается инициализация сервисов");
+            Debug.Log("Finishing services initialization");
 
             //MainMenu
             yield return sceneSwitcherService.ProcessSwitchTo(Scenes.MainMenu);
