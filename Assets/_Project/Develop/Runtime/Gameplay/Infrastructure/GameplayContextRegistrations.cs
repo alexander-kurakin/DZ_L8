@@ -162,7 +162,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static PreparationTriggerService CreatePreparationTriggerService(DIContainer container)
         {
-            return new PreparationTriggerService(container.Resolve<IMouseInputService>());
+            return new PreparationTriggerService();
         }
 
         private static StageProviderService CreateStageProviderService(DIContainer container)

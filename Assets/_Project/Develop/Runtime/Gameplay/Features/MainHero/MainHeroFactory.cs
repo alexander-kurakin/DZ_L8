@@ -51,7 +51,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddIsMoving()
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(450))
-                .AddIsMainHero();
+                .AddIsMainHero()
+                .AddCurrentProjectile()
+                .AddIsProjectileInHand();
 
             ApplyCameraAlignedStartRotation(entity);
             
@@ -68,6 +70,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             entity
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem());
+
+            CreateHeldProjectile(entity);
 
             _entitiesLifeContext.Add(entity);
             
@@ -90,6 +94,22 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 return;
 
             entity.RotationDirection.Value = cameraForward.normalized;
+        }
+
+        private void CreateHeldProjectile(Entity heroEntity)
+        {
+            Transform shootingPoint = heroEntity.ShootingPoint;
+            Entity projectileEntity = _entitiesFactory.CreateProjectile(shootingPoint.position, heroEntity);
+            Transform projectileTransform = projectileEntity.Transform;
+
+            projectileTransform.SetParent(shootingPoint, worldPositionStays: false);
+            projectileTransform.localPosition = Vector3.zero;
+            projectileTransform.localRotation = Quaternion.identity;
+
+            heroEntity.CurrentProjectile.Value = projectileEntity;
+            heroEntity.IsProjectileInHand.Value = true;
+
+            _entitiesLifeContext.Add(projectileEntity);
         }
     }
 }

@@ -1,11 +1,7 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
-using Assets._Project.Develop.Runtime.Utilities.Conditions;
-using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
-using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
@@ -27,12 +23,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
         }
         
-         public Entity CreateMainHero(HeroConfig config)
+        public Entity CreateMainHero(HeroConfig config)
         {
             Entity entity = CreateEmpty();
             Vector3 startPosition = config.StartPosition;
             
             _monoEntitiesFactory.Create(entity, startPosition, config.PrefabPath);
+
+            return entity;
+        }
+
+        public Entity CreateProjectile(Vector3 position, Entity owner)
+        {
+            Entity entity = CreateEmpty();
+
+            _monoEntitiesFactory.Create(entity, position, "Entities/Projectile");
+
+            entity
+                .AddProjectileOwner(owner);
 
             return entity;
         }

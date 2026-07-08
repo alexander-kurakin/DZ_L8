@@ -9,6 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 9043109701271700054}
+  - component: {fileID: 8245192837461528391}
   m_Layer: 0
   m_Name: ShootingPoint
   m_TagString: Untagged
@@ -25,12 +26,25 @@ Transform:
   m_GameObject: {fileID: 1467836867236591227}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.605}
+  m_LocalPosition: {x: 1.149, y: 0.2134, z: -0.013}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 6724348300233272864}
+  m_Father: {fileID: 8956283377054770528}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &8245192837461528391
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1467836867236591227}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 32dd65a425b64cb59811d11a41a77455, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _shootingPoint: {fileID: 9043109701271700054}
 --- !u!1 &5119566124578779435
 GameObject:
   m_ObjectHideFlags: 0
@@ -69,6 +83,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 6724348300233272864}
+  - {fileID: 9043109701271700054}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &5255222462196548003
@@ -228,6 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 08eb8b0e47e413440826d4700043ecda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _transform: {fileID: 8956283377054770528}
 --- !u!1 &9144452394789600763
 GameObject:
   m_ObjectHideFlags: 0
@@ -259,8 +275,7 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.18, z: 0}
   m_LocalScale: {x: 0.2, y: 0.2, z: 1.76}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 9043109701271700054}
+  m_Children: []
   m_Father: {fileID: 8956283377054770528}
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &2862725943044725690
