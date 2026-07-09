@@ -2,6 +2,123 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
 	public partial class Entity
 	{
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsChargingThrow IsChargingThrowC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsChargingThrow>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsChargingThrow => IsChargingThrowC.Value;
+
+		public bool TryGetIsChargingThrow(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsChargingThrow component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsChargingThrow()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsChargingThrow() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsChargingThrow(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsChargingThrow() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowChargePower ThrowChargePowerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowChargePower>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ThrowChargePower => ThrowChargePowerC.Value;
+
+		public bool TryGetThrowChargePower(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowChargePower component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowChargePower()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowChargePower() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowChargePower(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowChargePower() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanChargeThrow CanChargeThrowC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanChargeThrow>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanChargeThrow => CanChargeThrowC.Value;
+
+		public bool TryGetCanChargeThrow(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanChargeThrow component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanChargeThrow(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanChargeThrow() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanReleaseThrow CanReleaseThrowC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanReleaseThrow>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition CanReleaseThrow => CanReleaseThrowC.Value;
+
+		public bool TryGetCanReleaseThrow(out Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanReleaseThrow component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddCanReleaseThrow(Assets._Project.Develop.Runtime.Utilities.Conditions.ICompositeCondition value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.CanReleaseThrow() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleased ThrowReleasedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleased>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleaseData> ThrowReleased => ThrowReleasedC.Value;
+
+		public bool TryGetThrowReleased(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleaseData> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleased component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleaseData>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowReleased()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleased() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleaseData>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowReleased(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleaseData> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowReleased() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowTrajectoryPreview ThrowTrajectoryPreviewC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowTrajectoryPreview>();
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowTrajectoryPreview(System.Collections.Generic.List<Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<UnityEngine.Vector3>> trajectoryPoints,Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> isVisible)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowTrajectoryPreview() {TrajectoryPoints = trajectoryPoints, IsVisible = isVisible}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter.RunEnemyKillMarker RunEnemyKillMarkerC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter.RunEnemyKillMarker>();
 
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddRunEnemyKillMarker(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> isDead)
@@ -151,6 +268,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddProjectileOwner(Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileOwner() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.HasCollided HasCollidedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.HasCollided>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> HasCollided => HasCollidedC.Value;
+
+		public bool TryGetHasCollided(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.HasCollided component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHasCollided()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.HasCollided() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddHasCollided(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.HasCollided() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileImpacted ProjectileImpactedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileImpacted>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> ProjectileImpacted => ProjectileImpactedC.Value;
+
+		public bool TryGetProjectileImpacted(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileImpacted component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddProjectileImpacted()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileImpacted() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddProjectileImpacted(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent<UnityEngine.Vector3> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature.ProjectileImpacted() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection MoveDirectionC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature.MoveDirection>();
@@ -337,6 +502,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ShootingPoint() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowReleasePoint ThrowReleasePointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowReleasePoint>();
+
+		public UnityEngine.Transform ThrowReleasePoint => ThrowReleasePointC.Value;
+
+		public bool TryGetThrowReleasePoint(out UnityEngine.Transform value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowReleasePoint component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Transform);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowReleasePoint(UnityEngine.Transform value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowReleasePoint() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.CurrentProjectile CurrentProjectileC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.CurrentProjectile>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity> CurrentProjectile => CurrentProjectileC.Value;
@@ -383,6 +567,44 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsProjectileInHand(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
 		{
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.IsProjectileInHand() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowChargeBarPoint ThrowChargeBarPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowChargeBarPoint>();
+
+		public UnityEngine.Transform ThrowChargeBarPoint => ThrowChargeBarPointC.Value;
+
+		public bool TryGetThrowChargeBarPoint(out UnityEngine.Transform value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowChargeBarPoint component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Transform);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowChargeBarPoint(UnityEngine.Transform value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.ThrowChargeBarPoint() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.FirstPersonCameraPoint FirstPersonCameraPointC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.FirstPersonCameraPoint>();
+
+		public UnityEngine.Transform FirstPersonCameraPoint => FirstPersonCameraPointC.Value;
+
+		public bool TryGetFirstPersonCameraPoint(out UnityEngine.Transform value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.FirstPersonCameraPoint component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Transform);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddFirstPersonCameraPoint(UnityEngine.Transform value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.MainHero.FirstPersonCameraPoint() {Value = value}); 
 		}
 
 		public Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget CurrentTargetC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.AI.CurrentTarget>();

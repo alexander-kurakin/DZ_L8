@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private ReactiveVariable<bool> _isMoving;
 
         private ICompositeCondition _canMove;
+        private ReactiveVariable<bool> _hasCollided;
 
         public void OnInit(Entity entity)
         {
@@ -23,10 +24,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
             _isMoving = entity.IsMoving;
 
             _canMove = entity.CanMove;
+
+            if (entity.TryGetHasCollided(out ReactiveVariable<bool> hasCollided) == true)
+                _hasCollided = hasCollided;
         }
 
         public void OnUpdate(float deltaTime)
         {
+            if (_rigidbody.isKinematic)
+            {
+                _isMoving.Value = false;
+                return;
+            }
+
+            if (_hasCollided != null && _hasCollided.Value == true)
+            {
+                _isMoving.Value = _rigidbody.velocity.sqrMagnitude > 0f;
+                return;
+            }
+
             if (_canMove.Evaluate() == false)
             {
                 _rigidbody.velocity = Vector3.zero;

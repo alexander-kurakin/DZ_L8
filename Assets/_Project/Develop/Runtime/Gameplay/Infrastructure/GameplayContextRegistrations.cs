@@ -1,5 +1,6 @@
 ﻿using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.ProjectileModifiers;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Waves;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
@@ -50,7 +51,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayStatesContext);
             container.RegisterAsSingle<IInputService>(CreateDesktopInput);
             container.RegisterAsSingle<IMouseInputService>(CreateMouseInput);
-            container.RegisterAsSingle(CreateMouseRaycastService);
+            container.RegisterAsSingle<IMouseRaycastService>(CreateMouseRaycastService);
             container.RegisterAsSingle(CreateMouseOverUIService);
             container.RegisterAsSingle(CreateMonoEntitiesFactory).NonLazy();
             container.RegisterAsSingle(CreateRunEnemyKillCounterService).NonLazy();
@@ -137,7 +138,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
 
         private static MouseRaycastService CreateMouseRaycastService(DIContainer container)
         {
-            return new MouseRaycastService(Camera.main);
+            return new MouseRaycastService(
+                Camera.main,
+                container.Resolve<ConfigsProviderService>().GetConfig<RaycastConfig>());
         }
 
         private static MouseInput CreateMouseInput(DIContainer container)

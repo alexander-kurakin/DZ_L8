@@ -1,9 +1,15 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using _Project.Develop.Runtime.UI.Gameplay.ThrowCharge;
 
+using _Project.Develop.Runtime.UI.Gameplay.ThrowCrosshair;
+
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Throw;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 
@@ -172,6 +178,32 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _container.Resolve<StageProviderService>(),
                 _container.Resolve<GameplayPhaseService>(),
                 _container.Resolve<WaveProgressService>());
+        }
+
+        public EntityThrowChargePresenter CreateEntityThrowChargePresenter(Entity entity, Bar bar)
+        {
+            return new EntityThrowChargePresenter(
+                entity,
+                bar,
+                _container.Resolve<ConfigsProviderService>().GetConfig<ThrowChargeConfig>());
+        }
+
+        public EntitiesThrowChargeDisplayPresenter CreateEntitiesThrowChargeDisplayPresenter(
+            EntitiesThrowChargeDisplay view)
+        {
+            return new EntitiesThrowChargeDisplayPresenter(
+                _container.Resolve<EntitiesLifeContext>(),
+                view,
+                _container.Resolve<ViewsFactory>(),
+                this);
+        }
+
+        public ThrowCrosshairPresenter CreateThrowCrosshairPresenter(ThrowCrosshairView view)
+        {
+            return new ThrowCrosshairPresenter(
+                view,
+                _container.Resolve<IMouseInputService>(),
+                _container.Resolve<MainHeroHolderService>());
         }
     }
 }

@@ -40,6 +40,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _releaseRequests.Clear();
         }
 
+        public void LateUpdate(float deltaTime)
+        {
+            for (int i = 0; i < _entities.Count; i++)
+                _entities[i].OnLateUpdate(deltaTime);
+        }
+
         public void Release(Entity entity)
         {
             _releaseRequests.Add(entity);

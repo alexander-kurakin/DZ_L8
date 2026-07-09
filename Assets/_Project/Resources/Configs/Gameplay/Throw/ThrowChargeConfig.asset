@@ -1,0 +1,117 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d5eb6279c9494cae2908aaa6ad6c03, type: 3}
+  m_Name: ThrowChargeConfig
+  m_EditorClassIdentifier: 
+  <MaxChargeTimeSeconds>k__BackingField: 1.5
+  <MinThrowPower>k__BackingField: 0
+  <MaxThrowPower>k__BackingField: 40
+  <MinThrowSpeed>k__BackingField: 12
+  <MaxThrowSpeed>k__BackingField: 40
+  <SpeedCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1.7200925
+      outSlope: 1.7200925
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.5414167
+      value: 0.9312868
+      inSlope: 0.93496525
+      outSlope: 0.93496525
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0.14983797
+      outSlope: 0.14983797
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  <WeakThrowMinElevationDegrees>k__BackingField: 18
+  <FullThrowMinElevationDegrees>k__BackingField: -30
+  <FullThrowMaxElevationDegrees>k__BackingField: 35
+  <PitchBiasCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: -0.547657
+      outSlope: -0.547657
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 0.66499835
+      value: 0.635809
+      inSlope: -0.29339057
+      outSlope: -0.29339057
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1.0058594
+      value: 0.6224731
+      inSlope: -0.03912411
+      outSlope: -0.03912411
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  <DirectionStabilizationPowerRatio>k__BackingField: 0.7
+  <ProjectileRespawnCooldownSeconds>k__BackingField: 1
+  <MaxProjectilesInScene>k__BackingField: 5
+  <ProjectileMaxDistanceFromOwner>k__BackingField: 30
+  <TrajectoryPreviewMaxPoints>k__BackingField: 64
+  <ChargeCurve>k__BackingField:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
+using _Project.Develop.Runtime.UI.Gameplay.ThrowCharge;
+using _Project.Develop.Runtime.UI.Gameplay.ThrowCrosshair;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
 using Assets._Project.Develop.Runtime.UI.Core;
@@ -40,6 +42,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
             CreateStatsView();
             CreateStageNumber();
+            CreateThrowChargeDisplay();
+            CreateThrowCrosshair();
 
             _playerRegisteredDisposable = _playerModifiersHolderService.HeroRegistred.Subscribe(OnPlayerRegistered);
 
@@ -76,6 +80,31 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             StagePresenter stagePresenter = _gameplayPresentersFactory.CreateStagePresenter(_screen.StageNumberView);
             _childPresenters.Add(stagePresenter);
+        }
+
+        private void CreateThrowChargeDisplay()
+        {
+            EntitiesThrowChargeDisplayPresenter throwChargeDisplayPresenter =
+                _gameplayPresentersFactory.CreateEntitiesThrowChargeDisplayPresenter(_screen.EntitiesThrowChargeDisplay);
+
+            _childPresenters.Add(throwChargeDisplayPresenter);
+        }
+
+        private void CreateThrowCrosshair()
+        {
+            ThrowCrosshairPresenter throwCrosshairPresenter =
+                _gameplayPresentersFactory.CreateThrowCrosshairPresenter(_screen.ThrowCrosshairView);
+
+            _childPresenters.Add(throwCrosshairPresenter);
+        }
+
+        public void LateUpdate()
+        {
+            foreach (IPresenter presenter in _childPresenters)
+            {
+                if (presenter is ILateUpdatablePresenter lateUpdatablePresenter)
+                    lateUpdatablePresenter.LateUpdate();
+            }
         }
     }
 }

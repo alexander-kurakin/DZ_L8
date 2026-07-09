@@ -14,6 +14,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
         private ReactiveVariable<Vector3> _direction;
 
         private ICompositeCondition _canRotate;
+        private ReactiveVariable<bool> _hasCollided;
 
         public void OnInit(Entity entity)
         {
@@ -23,14 +24,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             _canRotate = entity.CanRotate;
 
+            if (entity.TryGetHasCollided(out ReactiveVariable<bool> hasCollided) == true)
+                _hasCollided = hasCollided;
+
             if (_direction.Value != Vector3.zero)
                 _rigidbody.transform.rotation = Quaternion.LookRotation(_direction.Value.normalized);
         }
 
         public void OnUpdate(float deltaTime)
         {
-            if (_canRotate.Evaluate() == false)
+            if (_hasCollided != null && _hasCollided.Value == true)
                 return;
+
+            if (_canRotate.Evaluate() == false)
+            {
+                _rigidbody.angularVelocity = Vector3.zero;
+                return;
+            }
 
             if (_direction.Value == Vector3.zero)
                 return;

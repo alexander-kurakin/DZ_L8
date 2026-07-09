@@ -74,6 +74,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _aiBrainsContext?.Update(Time.deltaTime);
         }
 
+        private void LateUpdate()
+        {
+            _entitiesLifeContext?.LateUpdate(Time.deltaTime);
+            _screenPresenter?.LateUpdate();
+        }
+
         private void OnDestroy()
         {
             _waveProgressService?.Dispose();

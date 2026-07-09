@@ -19,6 +19,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.WinPopup, "UI/Gameplay/ResultPopup/WinPopup" },
             {ViewIDs.DefeatPopup, "UI/Gameplay/ResultPopup/DefeatPopup" },
             {ViewIDs.AbilitySlot, "UI/Gameplay/Abilities/AbilitySlotView" },
+            {ViewIDs.ThrowChargeBar, "UI/Gameplay/ThrowChargeBarView" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

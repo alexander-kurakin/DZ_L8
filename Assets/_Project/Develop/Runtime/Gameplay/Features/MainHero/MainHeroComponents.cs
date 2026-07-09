@@ -13,6 +13,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         public Transform Value;
     }
 
+    public class ThrowReleasePoint : IEntityComponent
+    {
+        public Transform Value;
+    }
+
     public class CurrentProjectile : IEntityComponent
     {
         public ReactiveVariable<Entity> Value;
@@ -21,5 +26,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
     public class IsProjectileInHand : IEntityComponent
     {
         public ReactiveVariable<bool> Value;
+    }
+
+    public class ThrowChargeBarPoint : IEntityComponent
+    {
+        public Transform Value;
+    }
+
+    public class FirstPersonCameraPoint : IEntityComponent
+    {
+        public Transform Value;
     }
 }

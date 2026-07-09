@@ -1,12 +1,18 @@
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Camera;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Throw;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
+using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
@@ -20,8 +26,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly MainHeroHolderService _mainHeroHolderService;
 		private readonly IMouseInputService _mouseInput;
+        private readonly IMouseRaycastService _mouseRaycastService;
         private readonly IInputService _desktopInput;
         private readonly BrainsFactory _brainsFactory;
+        private readonly ResourcesAssetsLoader _resourcesAssetsLoader;
         
         private int _currentLevelNumber;
 
@@ -33,8 +41,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _entitiesLifeContext = _container.Resolve<EntitiesLifeContext>();
             _mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
 			_mouseInput = _container.Resolve<IMouseInputService>();
+            _mouseRaycastService = _container.Resolve<IMouseRaycastService>();
             _desktopInput = _container.Resolve<IInputService>();
             _brainsFactory = _container.Resolve<BrainsFactory>();
+            _resourcesAssetsLoader = _container.Resolve<ResourcesAssetsLoader>();
             
             _currentLevelNumber =  currentLevelNumber;
         }
@@ -42,6 +52,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
         public Entity Create()
         {
             HeroConfig heroConfig = _configsProviderService.GetConfig<HeroConfig>();
+            ThrowChargeConfig throwChargeConfig = _configsProviderService.GetConfig<ThrowChargeConfig>();
+            HeroCameraConfig heroCameraConfig = _configsProviderService.GetConfig<HeroCameraConfig>();
 
             Entity entity = _entitiesFactory.CreateMainHero(heroConfig);
 
@@ -53,25 +65,50 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddRotationSpeed(new ReactiveVariable<float>(450))
                 .AddIsMainHero()
                 .AddCurrentProjectile()
-                .AddIsProjectileInHand();
+                .AddIsProjectileInHand()
+                .AddIsChargingThrow()
+                .AddThrowChargePower()
+                .AddThrowReleased();
+
+            entity.AddComponent(new ThrowTrajectoryPreview()
+            {
+                TrajectoryPoints = new List<ReactiveVariable<Vector3>>(),
+                IsVisible = new ReactiveVariable<bool>(false)
+            });
 
             ApplyCameraAlignedStartRotation(entity);
-            
+
+            ICompositeCondition canChargeThrow = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsProjectileInHand.Value == true));
+
+            ICompositeCondition canReleaseThrow = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsChargingThrow.Value == true))
+                .Add(new FuncCondition(() => entity.IsProjectileInHand.Value == true));
+
+            entity
+                .AddCanChargeThrow(canChargeThrow)
+                .AddCanReleaseThrow(canReleaseThrow);
+
             ICompositeCondition canMove = new CompositeCondition()
-                .Add(new FuncCondition(() => true)); //TBD is not throwing
-            
+                .Add(new FuncCondition(() => entity.IsChargingThrow.Value == false));
+
             ICompositeCondition canRotate = new CompositeCondition()
-                .Add(new FuncCondition(() => true)); //TBD is not throwing
+                .Add(new FuncCondition(() => entity.IsChargingThrow.Value == false));
 
             entity
                 .AddCanMove(canMove)
                 .AddCanRotate(canRotate);
 
             entity
+                .AddSystem(new ThrowChargeSystem(_mouseInput, throwChargeConfig))
+                .AddSystem(new ThrowTrajectoryPreviewSystem(_mouseInput, _mouseRaycastService, throwChargeConfig))
+                .AddSystem(new ThrowReleaseSystem(_mouseInput, _mouseRaycastService, throwChargeConfig))
+                .AddSystem(new ProjectileLaunchSystem(throwChargeConfig))
+                .AddSystem(new ThrowAimMarkerSystem(_resourcesAssetsLoader))
+                .AddSystem(new ProjectileRespawnSystem(_entitiesFactory, throwChargeConfig))
+                .AddSystem(new HeroCameraSystem(heroCameraConfig))
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem());
-
-            CreateHeldProjectile(entity);
 
             _entitiesLifeContext.Add(entity);
             
@@ -94,22 +131,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 return;
 
             entity.RotationDirection.Value = cameraForward.normalized;
-        }
-
-        private void CreateHeldProjectile(Entity heroEntity)
-        {
-            Transform shootingPoint = heroEntity.ShootingPoint;
-            Entity projectileEntity = _entitiesFactory.CreateProjectile(shootingPoint.position, heroEntity);
-            Transform projectileTransform = projectileEntity.Transform;
-
-            projectileTransform.SetParent(shootingPoint, worldPositionStays: false);
-            projectileTransform.localPosition = Vector3.zero;
-            projectileTransform.localRotation = Quaternion.identity;
-
-            heroEntity.CurrentProjectile.Value = projectileEntity;
-            heroEntity.IsProjectileInHand.Value = true;
-
-            _entitiesLifeContext.Add(projectileEntity);
         }
     }
 }

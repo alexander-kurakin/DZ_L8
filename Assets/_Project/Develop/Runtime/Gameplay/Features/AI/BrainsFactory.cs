@@ -38,22 +38,29 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
 
         private AIStateMachine CreatePlayerMovementStateMachine(Entity entity, IInputService desktopInput)
         {
-            FaceCameraForwardState faceCameraForwardState = new FaceCameraForwardState(entity);
-            PlayerInputMovementState playerInputMovementState = new PlayerInputMovementState(entity, desktopInput);
+            IMouseInputService mouseInput = _container.Resolve<IMouseInputService>();
+            IMouseRaycastService mouseRaycastService = _container.Resolve<IMouseRaycastService>();
+
+            FaceMousePointerState faceMousePointerState = new FaceMousePointerState(entity, mouseInput, mouseRaycastService);
+            PlayerInputMovementState playerInputMovementState = new PlayerInputMovementState(
+                entity,
+                desktopInput,
+                mouseInput,
+                mouseRaycastService);
 
             AIStateMachine stateMachine = new AIStateMachine();
 
-            stateMachine.AddState(faceCameraForwardState);
+            stateMachine.AddState(faceMousePointerState);
             stateMachine.AddState(playerInputMovementState);
 
             stateMachine.AddTransition(
-                faceCameraForwardState,
+                faceMousePointerState,
                 playerInputMovementState,
                 new FuncCondition(() => desktopInput.Direction != Vector3.zero));
 
             stateMachine.AddTransition(
                 playerInputMovementState,
-                faceCameraForwardState,
+                faceMousePointerState,
                 new FuncCondition(() => desktopInput.Direction == Vector3.zero));
 
             return stateMachine;

@@ -1,5 +1,9 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Combat;
 
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Camera;
+
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Throw;
+
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
@@ -58,6 +62,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(HeroConfig), "Configs/Gameplay/Entities/Characters/HeroConfig" },
 
             { typeof(CombatConfig), "Configs/Gameplay/Combat/CombatConfig" },
+
+            { typeof(ThrowChargeConfig), "Configs/Gameplay/Throw/ThrowChargeConfig" },
+
+            { typeof(HeroCameraConfig), "Configs/Gameplay/Camera/HeroCameraConfig" },
 
             { typeof(WaveProgressConfig), "Configs/Gameplay/Waves/WaveProgressConfig" },
 
