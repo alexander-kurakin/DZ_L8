@@ -272,13 +272,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
 
             Shuffle(_tauntCandidatesBuffer);
 
-            foreach (Entity gnome in _tauntCandidatesBuffer)
-            {
-                _gazeActivatedGnomes.Add(gnome);
-                gnome.GnomeForcePeekRequested.Value = true;
-            }
-
-            Debug.Log($"Gnome taunt triggered for {_tauntCandidatesBuffer.Count} gnome(s)");
+            Entity gnomeCandidate = _tauntCandidatesBuffer[0];
+            _gazeActivatedGnomes.Add(gnomeCandidate);
+            gnomeCandidate.GnomeForcePeekRequested.Value = true;
         }
 
         private static Vector3 ProjectPointOnPlane(Vector3 planePoint, Vector3 planeNormal, Vector3 point)
