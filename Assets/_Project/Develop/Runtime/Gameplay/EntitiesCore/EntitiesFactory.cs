@@ -1,10 +1,15 @@
 ﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Throw;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.ContactTakeDamage;
+using Assets._Project.Develop.Runtime.Gameplay.Features.LifeCycle;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Sensors;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
+using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
@@ -53,6 +58,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _monoEntitiesFactory.Create(entity, position, "Entities/Projectile");
 
             Rigidbody rigidbody = entity.Rigidbody;
+            Teams projectileTeam = ResolveProjectileTeam(owner);
 
             entity
                 .AddMoveDirection(new ReactiveVariable<Vector3>(Vector3.zero))
@@ -64,26 +70,46 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddProjectileDamage(new ReactiveVariable<float>(0f))
                 .AddProjectileOwner(owner)
                 .AddHasCollided(new ReactiveVariable<bool>(false))
-                .AddProjectileImpacted(new ReactiveEvent<Vector3>());
+                .AddProjectileImpacted(new ReactiveEvent<Vector3>())
+                .AddIsDead()
+                .AddContactsDetectingMask(Layers.ProjectileContactsMask)
+                .AddContactCollidersBuffer(new Buffer<Collider>(64))
+                .AddContactEntitiesBuffer(new Buffer<Entity>(64))
+                .AddBodyContactDamage(new ReactiveVariable<float>(1f))
+                .AddComponent(new ContactDamageOwner { Value = owner })
+                .AddIsTouchAnotherTeam()
+                .AddTeam(new ReactiveVariable<Teams>(projectileTeam));
 
             ICompositeCondition canMove = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == false))
                 .Add(new FuncCondition(() => rigidbody.isKinematic == false));
 
             ICompositeCondition canRotate = new CompositeCondition()
-                .Add(new FuncCondition(() => true));
+                .Add(new FuncCondition(() => entity.IsDead.Value == false));
+
+            ICompositeCondition mustDie = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsTouchAnotherTeam.Value));
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.IsDead.Value == true));
 
             entity
                 .AddCanMove(canMove)
-                .AddCanRotate(canRotate);
+                .AddCanRotate(canRotate)
+                .AddMustDie(mustDie)
+                .AddMustSelfRelease(mustSelfRelease);
 
             entity
                 .AddSystem(new RigidbodyMovementSystem())
                 .AddSystem(new RigidbodyRotationSystem())
-                .AddSystem(new ProjectileMaxDistanceFromOwnerSystem(_throwChargeConfig.ProjectileMaxDistanceFromOwner));
-
-            // TODO: BodyContactsDetectingSystem, BodyContactsEntitiesFilterSystem,
-            // DealDamageOnContactSystem, DeathMaskTouchDetectorSystem, AnotherTeamTouchDetectorSystem,
-            // ProjectileOffScreenBoundsSystem, DeathSystem, DisableCollidersOnDeathSystem, SelfReleaseSystem
+                .AddSystem(new BodyContactsDetectingSystem(ColliderType.Sphere))
+                .AddSystem(new BodyContactsEntitiesFilterSystem(_collidersRegistryService))
+                .AddSystem(new DealDamageOnContactSystem())
+                .AddSystem(new AnotherTeamTouchDetectorSystem())
+                .AddSystem(new ProjectileMaxDistanceFromOwnerSystem(_throwChargeConfig.ProjectileMaxDistanceFromOwner))
+                .AddSystem(new DeathSystem())
+                .AddSystem(new DisableCollidersOnDeathSystem())
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
 
             rigidbody.isKinematic = true;
             rigidbody.useGravity = false;
@@ -95,6 +121,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
         }
 
         public Entity CreateEmpty() => new Entity();
+
+        private Teams ResolveProjectileTeam(Entity owner)
+        {
+            if (owner != null && owner.TryGetTeam(out ReactiveVariable<Teams> ownerTeam))
+                return ownerTeam.Value;
+
+            return Teams.MainHero;
+        }
 
         private void OnEntityReleased(Entity entity)
         {

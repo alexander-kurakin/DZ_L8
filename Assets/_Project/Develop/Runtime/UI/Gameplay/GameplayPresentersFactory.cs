@@ -1,6 +1,8 @@
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 
+using _Project.Develop.Runtime.UI.Gameplay.GnomeKillToast;
+
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCharge;
 
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCrosshair;
@@ -204,6 +206,13 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<IMouseInputService>(),
                 _container.Resolve<MainHeroHolderService>());
+        }
+
+        public GnomeKillToastPresenter CreateGnomeKillToastPresenter(GnomeKillToastView view)
+        {
+            return new GnomeKillToastPresenter(
+                view,
+                _container.Resolve<RunEnemyKillCounterService>());
         }
     }
 }

@@ -1,4 +1,5 @@
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
+using _Project.Develop.Runtime.UI.Gameplay.GnomeKillToast;
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCharge;
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCrosshair;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
@@ -15,6 +16,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         [field: SerializeField] public EntitiesHealthDisplay EntitiesHealthDisplay { get; private set; }
         [field: SerializeField] public EntitiesThrowChargeDisplay EntitiesThrowChargeDisplay { get; private set; }
         [field: SerializeField] public ThrowCrosshairView ThrowCrosshairView { get; private set; }
+        [field: SerializeField] public GnomeKillToastView GnomeKillToastView { get; private set; }
     }
 }
 

@@ -12,7 +12,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public Entity LinkedEntity => _linkedEntity;
 
-        public void Initialize(CollidersRegistryService collidersRegistryService, IGameSoundsService gameSoundsService)
+        public void Initialize(
+            CollidersRegistryService collidersRegistryService,
+            IGameSoundsService gameSoundsService)
         {
             _collidersRegistryService = collidersRegistryService;
             _gameSoundsService = gameSoundsService;
@@ -27,7 +29,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
             if (registrators != null)
                 foreach (MonoEntityRegistrator registrator in registrators)
                     registrator.Register(entity);
-            
+
             EntityView[] views = GetComponentsInChildren<EntityView>();
 
             if (views != null)
@@ -45,7 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
             if (views != null)
                 foreach (EntityView view in views)
                     view.Cleanup(entity);
-            
+
             foreach (Collider collider in GetComponentsInChildren<Collider>())
                 _collidersRegistryService.Unregister(collider);
 

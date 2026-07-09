@@ -38,7 +38,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature
 
             if (_canRotate.Evaluate() == false)
             {
-                _rigidbody.angularVelocity = Vector3.zero;
+                if (_rigidbody.isKinematic == false)
+                    _rigidbody.angularVelocity = Vector3.zero;
+
                 return;
             }
 

@@ -1,4 +1,5 @@
 ﻿using _Project.Develop.Runtime.UI.Gameplay;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Gnome;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.ProjectileModifiers;
@@ -11,6 +12,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
+using Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ProjectileModifiers;
 using Assets._Project.Develop.Runtime.Gameplay.Features.RunKillCounter;
@@ -64,6 +66,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateMainHeroFactory);
             container.RegisterAsSingle(CreateAIBrainsContext);
             container.RegisterAsSingle(CreateBrainsFactory);
+            container.RegisterAsSingle(CreateEnemiesFactory);
+            container.RegisterAsSingle(CreateGnomeOrchestratorService);
+            container.RegisterAsSingle(CreateGnomeWinConditionService).NonLazy();
+            container.RegisterAsSingle(CreateGnomePeekPointsHolder);
             
             container.RegisterAsSingle(CreateMainHeroHolderService).NonLazy();
         }
@@ -198,6 +204,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 container.Resolve<EntitiesLifeContext>(),
                 container.Resolve<CollidersRegistryService>(),
                 container.Resolve<IGameSoundsService>());
+        }
+
+        private static EnemiesFactory CreateEnemiesFactory(DIContainer container)
+        {
+            return new EnemiesFactory(container);
+        }
+
+        private static GnomeOrchestratorService CreateGnomeOrchestratorService(DIContainer container)
+        {
+            return new GnomeOrchestratorService(
+                container.Resolve<EnemiesFactory>(),
+                container.Resolve<EntitiesLifeContext>(),
+                container.Resolve<IMouseRaycastService>(),
+                container.Resolve<IMouseInputService>(),
+                container.Resolve<ConfigsProviderService>().GetConfig<GnomeArenaConfig>());
+        }
+
+        private static GnomeWinConditionService CreateGnomeWinConditionService(DIContainer container)
+        {
+            return new GnomeWinConditionService(
+                container.Resolve<RunEnemyKillCounterService>(),
+                container.Resolve<ConfigsProviderService>().GetConfig<GnomeArenaConfig>());
+        }
+
+        private static GnomePeekPointsHolder CreateGnomePeekPointsHolder(DIContainer container)
+        {
+            return new GnomePeekPointsHolder();
         }
 
         private static EntitiesLifeContext CreateEntitiesLifeContext(DIContainer container)

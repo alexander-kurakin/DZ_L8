@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Throw;
 
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Entities;
 
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Gnome;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Levels;
 
 using Assets._Project.Develop.Runtime.Configs.Gameplay.MouseConfig;
@@ -78,6 +79,10 @@ namespace Assets._Project.Develop.Runtime.Utilities.ConfigsManagment
             { typeof(UISoundsConfig), "Configs/Utilities/Audio/UISoundsConfig" },
 
             { typeof(GameSoundsConfig), "Configs/Utilities/Audio/GameSoundsConfig" },
+
+            { typeof(GnomeConfig), "Configs/Gameplay/Gnome/GnomeConfig" },
+
+            { typeof(GnomeArenaConfig), "Configs/Gameplay/Gnome/GnomeArenaConfig" },
 
         };
 

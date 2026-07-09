@@ -1,12 +1,13 @@
-﻿using Assets._Project.Develop.Runtime.Utilities.Audio;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 {
     public abstract class EntityView : MonoBehaviour
     {
-        protected IGameSoundsService GameSoundsService { get;  private set; }
-        
+        protected IGameSoundsService GameSoundsService { get; private set; }
+
         public void Link(Entity entity, IGameSoundsService gameSoundsService)
         {
             GameSoundsService = gameSoundsService;

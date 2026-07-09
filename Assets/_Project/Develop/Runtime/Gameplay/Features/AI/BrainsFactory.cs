@@ -1,6 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Assets._Project.Develop.Runtime.Configs.Gameplay.Gnome;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI.States;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
@@ -130,6 +130,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
           //  stateMachine.AddTransition(attackTriggerState, rotateToTargetState, fromAttackToRotateStateCondition);
 
             return stateMachine;
-        }        
+        }
+
+        public StateMachineBrain CreateGnomePeekBrain(Entity entity, GnomeConfig config)
+        {
+            MainHeroHolderService mainHeroHolderService = _container.Resolve<MainHeroHolderService>();
+
+            GnomeHiddenState hiddenState = new GnomeHiddenState(entity, config);
+            GnomePeekingState peekingState = new GnomePeekingState(entity, config, mainHeroHolderService);
+
+            AIStateMachine stateMachine = new AIStateMachine();
+            stateMachine.AddState(hiddenState);
+            stateMachine.AddState(peekingState);
+
+            stateMachine.AddTransition(
+                hiddenState,
+                peekingState,
+                new FuncCondition(() => hiddenState.ShouldPeek));
+
+            stateMachine.AddTransition(
+                peekingState,
+                hiddenState,
+                new FuncCondition(() => peekingState.ShouldHide));
+
+            StateMachineBrain brain = new StateMachineBrain(stateMachine);
+            _brainsContext.SetFor(entity, brain);
+
+            return brain;
+        }
     }
 }

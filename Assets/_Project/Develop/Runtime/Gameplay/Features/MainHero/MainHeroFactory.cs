@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.CameraFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MovementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
@@ -64,6 +65,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddRotationDirection()
                 .AddRotationSpeed(new ReactiveVariable<float>(450))
                 .AddIsMainHero()
+                .AddTeam(new ReactiveVariable<Teams>(Teams.MainHero))
                 .AddCurrentProjectile()
                 .AddIsProjectileInHand()
                 .AddIsChargingThrow()

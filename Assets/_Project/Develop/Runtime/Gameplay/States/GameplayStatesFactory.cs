@@ -25,15 +25,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _container = container;
         }
 
-        public PreparationState CreatePreparationState()
-        {
-            return new PreparationState(
-                _container.Resolve<PreparationTriggerService>(),
-                _container.Resolve<GameplayPhaseService>(),
-                _container.Resolve<WaveProgressService>(),
-                _container.Resolve<IBackgroundMusicService>());
-        }
-
         public StageProcessState CreateStageProcessState()
         {
             return new StageProcessState(
@@ -91,26 +82,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
 
         public GameplayStateMachine CreateCoreLoopState()
         {
-            PreparationTriggerService preparationTriggerService = _container.Resolve<PreparationTriggerService>();
-            StageProviderService stageProviderService = _container.Resolve<StageProviderService>();
-
-            PreparationState preparationState = CreatePreparationState();
             StageProcessState stageProcessState = CreateStageProcessState();
 
-            ICompositeCondition preparationToStageProcessCondition = new CompositeCondition()
-                .Add(new FuncCondition(() => preparationTriggerService.PrepareTriggerClicked.Value))
-                .Add(new FuncCondition(() => stageProviderService.HasNextStage()));
-
-            FuncCondition stageProcessToPreparationCondition =
-                new FuncCondition(() => stageProviderService.CurrentStageResult.Value == StageResults.Completed);
-
             GameplayStateMachine coreLoopState = new GameplayStateMachine();
-
-            coreLoopState.AddState(preparationState);
             coreLoopState.AddState(stageProcessState);
-
-            coreLoopState.AddTransition(preparationState, stageProcessState, preparationToStageProcessCondition);
-            coreLoopState.AddTransition(stageProcessState, preparationState, stageProcessToPreparationCondition);
 
             return coreLoopState;
         }

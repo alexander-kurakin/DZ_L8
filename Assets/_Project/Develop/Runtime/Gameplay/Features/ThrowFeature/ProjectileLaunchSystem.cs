@@ -57,6 +57,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
             Rigidbody rigidbody = projectile.Rigidbody;
             rigidbody.isKinematic = false;
             rigidbody.useGravity = true;
+            rigidbody.collisionDetectionMode = CollisionDetectionMode.ContinuousDynamic;
             rigidbody.velocity = direction * speed;
         }
     }

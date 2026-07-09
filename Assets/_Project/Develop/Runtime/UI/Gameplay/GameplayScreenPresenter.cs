@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
+using _Project.Develop.Runtime.UI.Gameplay.GnomeKillToast;
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCharge;
 using _Project.Develop.Runtime.UI.Gameplay.ThrowCrosshair;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
@@ -44,6 +45,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateStageNumber();
             CreateThrowChargeDisplay();
             CreateThrowCrosshair();
+            CreateGnomeKillToast();
 
             _playerRegisteredDisposable = _playerModifiersHolderService.HeroRegistred.Subscribe(OnPlayerRegistered);
 
@@ -96,6 +98,14 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _gameplayPresentersFactory.CreateThrowCrosshairPresenter(_screen.ThrowCrosshairView);
 
             _childPresenters.Add(throwCrosshairPresenter);
+        }
+
+        private void CreateGnomeKillToast()
+        {
+            GnomeKillToastPresenter gnomeKillToastPresenter =
+                _gameplayPresentersFactory.CreateGnomeKillToastPresenter(_screen.GnomeKillToastView);
+
+            _childPresenters.Add(gnomeKillToastPresenter);
         }
 
         public void LateUpdate()

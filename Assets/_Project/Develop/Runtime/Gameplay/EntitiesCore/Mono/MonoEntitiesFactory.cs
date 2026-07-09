@@ -1,19 +1,18 @@
-﻿using Assets._Project.Develop.Runtime.Infrastructure.DI;
+﻿using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using System;
 using System.Collections.Generic;
-using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
+namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
     public class MonoEntitiesFactory : IInitializable, IDisposable
     {
         private readonly ResourcesAssetsLoader _resources;
-
         private readonly EntitiesLifeContext _entitiesLifeContext;
-
         private readonly CollidersRegistryService _collidersRegistryService;
         private readonly IGameSoundsService _gameSoundsService;
 
@@ -33,12 +32,17 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono
 
         public MonoEntity Create(Entity entity, Vector3 position, string path)
         {
+            return Create(entity, position, Quaternion.identity, path);
+        }
+
+        public MonoEntity Create(Entity entity, Vector3 position, Quaternion rotation, string path)
+        {
             if (_entityToMono.TryGetValue(entity, out MonoEntity existingMonoEntity))
                 return existingMonoEntity;
 
             MonoEntity prefab = _resources.Load<MonoEntity>(path);
 
-            MonoEntity viewInstance = Object.Instantiate(prefab, position, Quaternion.identity, null);
+            MonoEntity viewInstance = Object.Instantiate(prefab, position, rotation, null);
 
             viewInstance.Initialize(_collidersRegistryService, _gameSoundsService);
 

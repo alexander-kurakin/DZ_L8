@@ -18,10 +18,14 @@ namespace Assets._Project.Develop.Runtime.Utilities
         public static readonly int FloorLayerIndex = LayerMask.NameToLayer("Floor");
         public static readonly LayerMask FloorLayerMask = 1 << FloorLayerIndex;
 
-        public static readonly LayerMask FloorAndTriggerMask =  LayerMask.GetMask("ContactTrigger", "Floor"); 
+        public static readonly LayerMask FloorAndTriggerMask = LayerMask.GetMask("ContactTrigger", "Floor"); 
 		
         public static readonly int Fence = LayerMask.NameToLayer("Fence");
         public static readonly LayerMask FenceMask = 1 << Fence;
 
+        public static readonly int Projectiles = LayerMask.NameToLayer("Projectiles");
+        public static readonly LayerMask ProjectilesMask = 1 << Projectiles;
+
+        public static readonly LayerMask ProjectileContactsMask = CharactersMask;
     }
 }

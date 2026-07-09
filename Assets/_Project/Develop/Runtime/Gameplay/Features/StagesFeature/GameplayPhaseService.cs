@@ -4,7 +4,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature
 {
     public class GameplayPhaseService
     {
-        private readonly ReactiveVariable<GameplayStates> _currentPhase = new(GameplayStates.Preparation);
+        private readonly ReactiveVariable<GameplayStates> _currentPhase = new(GameplayStates.Search);
 
         public IReadOnlyVariable<GameplayStates> CurrentPhase => _currentPhase;
 
