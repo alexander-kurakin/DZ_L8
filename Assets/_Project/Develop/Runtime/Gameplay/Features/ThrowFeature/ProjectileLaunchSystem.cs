@@ -9,11 +9,12 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
 {
     public class ProjectileLaunchSystem : IInitializableSystem, IDisposableSystem
     {
+        private const float LAUNCH_CLEARANCE_FROM_OWNER = 0.25f;
+
         private readonly ThrowChargeConfig _throwChargeConfig;
 
         private ReactiveEvent<ThrowReleaseData> _throwReleased;
         private IDisposable _throwReleasedSubscription;
-        private Transform _throwReleasePoint;
 
         public ProjectileLaunchSystem(ThrowChargeConfig throwChargeConfig)
         {
@@ -23,7 +24,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
         public void OnInit(Entity entity)
         {
             _throwReleased = entity.ThrowReleased;
-            _throwReleasePoint = entity.ThrowReleasePoint;
             _throwReleasedSubscription = _throwReleased.Subscribe(OnThrowReleased);
         }
 
@@ -39,12 +39,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
             if (projectile == null)
                 return;
 
-            projectile.Transform.SetParent(null, worldPositionStays: true);
-
-            if (_throwReleasePoint != null)
-                projectile.Transform.position = _throwReleasePoint.position;
-
             Vector3 direction = data.Direction.sqrMagnitude > 0f ? data.Direction.normalized : Vector3.forward;
+
+            projectile.Transform.SetParent(null, worldPositionStays: true);
+            projectile.Transform.position += direction * LAUNCH_CLEARANCE_FROM_OWNER;
+
+            ProjectileCarryCollisionUtility.SetColliderEnabled(projectile, true);
+
             float speed = _throwChargeConfig.EvaluateThrowSpeed(data.Power);
 
             projectile.MoveDirection.Value = direction;

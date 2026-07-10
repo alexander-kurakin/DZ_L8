@@ -205,7 +205,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _coverAnchor: {fileID: 1401651144}
-  _peekOffset: 1.5
+  _peekOffset: 2
+  _peekLeanAngle: 25
   _isVerticalLayout: 0
 --- !u!1 &579573753
 GameObject:
@@ -492,13 +493,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1272203556}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.11760827, y: 0.96860164, z: -0.026402289, w: 0.21744476}
-  m_LocalPosition: {x: -0.233, y: 0.015, z: -0.4847}
+  m_LocalRotation: {x: -0.11992018, y: 0.9356873, z: -0.012162946, w: 0.331603}
+  m_LocalPosition: {x: -0.18, y: 0.008, z: -0.541}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1401651140}
-  m_LocalEulerAnglesHint: {x: 0, y: 154.694, z: -13.846}
+  m_LocalEulerAnglesHint: {x: -3.254, y: 141.356, z: -13.465}
 --- !u!114 &1272203558
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -512,7 +513,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _coverAnchor: {fileID: 1401651144}
-  _peekOffset: 1.5
+  _peekOffset: 2
+  _peekLeanAngle: 25
   _isVerticalLayout: 0
 --- !u!1 &1401651139
 GameObject:
@@ -787,7 +789,7 @@ GameObject:
   - component: {fileID: 1646172750}
   - component: {fileID: 1646172749}
   m_Layer: 0
-  m_Name: Floor
+  m_Name: MockupFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1068,13 +1070,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2053931098}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.4983162, y: 0.46176317, z: 0.49738383, w: 0.5395046}
-  m_LocalPosition: {x: -0.866, y: 0.4576, z: -0.0019}
+  m_LocalRotation: {x: -0.5194125, y: 0.4847201, z: 0.4753107, w: 0.5189767}
+  m_LocalPosition: {x: -0.869, y: 0.264, z: -0.004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1401651140}
-  m_LocalEulerAnglesHint: {x: -94.413, y: 181.89, z: -96.40201}
+  m_LocalEulerAnglesHint: {x: -90.763, y: 315.406, z: -229.898}
 --- !u!114 &2053931100
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1088,7 +1090,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _coverAnchor: {fileID: 1401651144}
-  _peekOffset: 1.5
+  _peekOffset: 4
+  _peekLeanAngle: 25
   _isVerticalLayout: 1
 --- !u!1 &2136007270
 GameObject:

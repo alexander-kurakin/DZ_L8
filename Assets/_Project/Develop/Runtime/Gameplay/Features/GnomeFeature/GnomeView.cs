@@ -10,16 +10,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
     public class GnomeView : EntityView
     {
         private const float PEEK_TWEEN_DURATION_SECONDS = 0.2f;
-        private const float VERTICAL_VISUAL_ROTATION_X = 90f;
 
         [SerializeField] private Transform _visualRoot;
-        [SerializeField] private Collider _hitCollider;
 
         private IReadOnlyVariable<bool> _isPeeking;
         private Transform _entityTransform;
         private Vector3 _peekDirection;
         private float _peekOffset;
+        private float _peekLeanAngle;
         private Vector3 _hiddenLocalPosition;
+        private Quaternion _hiddenLocalRotation;
         private Tween _peekTween;
         private IDisposable _isPeekingSubscription;
 
@@ -28,22 +28,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
             if (entity.TryGetTransform(out Transform entityTransform) == false)
                 throw new InvalidOperationException("Gnome entity transform is missing.");
 
+            if (entity.TryGetComponent(out IsPeeking isPeeking) == false)
+                throw new InvalidOperationException("Gnome IsPeeking component is missing.");
+
+            if (entity.TryGetComponent(out GnomePeekDirection gnomePeekDirection) == false)
+                throw new InvalidOperationException("Gnome GnomePeekDirection component is missing.");
+
+            if (entity.TryGetComponent(out GnomePeekOffset gnomePeekOffset) == false)
+                throw new InvalidOperationException("Gnome GnomePeekOffset component is missing.");
+
             _entityTransform = entityTransform;
-            _isPeeking = entity.IsPeeking;
-            _peekDirection = entity.GnomePeekDirection;
-            _peekOffset = entity.GnomePeekOffset;
-
-            if (entity.TryGetComponent(out GnomeIsVerticalLayout verticalLayout) == true && verticalLayout.Value == true)
-                _visualRoot.localRotation = Quaternion.Euler(VERTICAL_VISUAL_ROTATION_X, 0f, 0f);
-
+            _isPeeking = isPeeking.Value;
+            _peekDirection = gnomePeekDirection.Value;
+            _peekOffset = gnomePeekOffset.Value;
+            
+            _peekLeanAngle = entity.TryGetComponent(out GnomePeekLeanAngle gnomePeekLeanAngle) == true
+                ? gnomePeekLeanAngle.Value
+                : 0f;
+            
             _hiddenLocalPosition = _visualRoot.localPosition;
+            _hiddenLocalRotation = _visualRoot.localRotation;
 
             _isPeekingSubscription = _isPeeking.Subscribe(OnPeekingChanged);
 
             if (_isPeeking.Value == true)
                 ShowPeeked();
             else
-                ShowHidden();
+                ShowHidden(animate: false);
         }
 
         public override void Cleanup(Entity entity)
@@ -59,34 +70,79 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
             if (isPeeking == true)
                 ShowPeeked();
             else
-                ShowHidden();
+                ShowHidden(animate: oldValue == true);
         }
 
-        private void ShowHidden()
+        private void ShowHidden(bool animate)
         {
             _peekTween?.Kill();
 
-            if (_hitCollider != null)
-                _hitCollider.enabled = false;
+            if (animate == false)
+            {
+                _visualRoot.localPosition = _hiddenLocalPosition;
+                _visualRoot.localRotation = _hiddenLocalRotation;
+                return;
+            }
+            
+            Vector3 hiddenWorldPosition = _entityTransform.TransformPoint(_hiddenLocalPosition);
 
-            _visualRoot.localPosition = _hiddenLocalPosition;
+            if (_peekLeanAngle == 0f)
+            {
+                _peekTween = _visualRoot
+                    .DOMove(hiddenWorldPosition, PEEK_TWEEN_DURATION_SECONDS)
+                    .SetEase(Ease.OutCubic)
+                    .SetUpdate(true)
+                    .Play();
+
+                return;
+            }
+
+            _peekTween = DOTween.Sequence()
+                .Join(_visualRoot.DOMove(hiddenWorldPosition, PEEK_TWEEN_DURATION_SECONDS))
+                .Join(_visualRoot.DOLocalRotateQuaternion(_hiddenLocalRotation, PEEK_TWEEN_DURATION_SECONDS))
+                .SetEase(Ease.OutCubic)
+                .SetUpdate(true)
+                .Play();
         }
 
         private void ShowPeeked()
         {
             _peekTween?.Kill();
 
-            if (_hitCollider != null)
-                _hitCollider.enabled = true;
-
             Vector3 hiddenWorldPosition = _entityTransform.TransformPoint(_hiddenLocalPosition);
             Vector3 peekWorldPosition = hiddenWorldPosition + _peekDirection * _peekOffset;
 
-            _peekTween = _visualRoot
-                .DOMove(peekWorldPosition, PEEK_TWEEN_DURATION_SECONDS)
+            if (_peekLeanAngle == 0f)
+            {
+                _peekTween = _visualRoot
+                    .DOMove(peekWorldPosition, PEEK_TWEEN_DURATION_SECONDS)
+                    .SetEase(Ease.OutCubic)
+                    .SetUpdate(true)
+                    .Play();
+
+                return;
+            }
+
+            Quaternion peekLocalRotation = GetPeekLocalRotation();
+
+            _peekTween = DOTween.Sequence()
+                .Join(_visualRoot.DOMove(peekWorldPosition, PEEK_TWEEN_DURATION_SECONDS))
+                .Join(_visualRoot.DOLocalRotateQuaternion(peekLocalRotation, PEEK_TWEEN_DURATION_SECONDS))
                 .SetEase(Ease.OutCubic)
                 .SetUpdate(true)
                 .Play();
+        }
+
+        private Quaternion GetPeekLocalRotation()
+        {
+            Transform rotationParent = _visualRoot.parent != null ? _visualRoot.parent : _entityTransform;
+            Quaternion hiddenVisualWorldRotation = rotationParent.rotation * _hiddenLocalRotation;
+            Quaternion peekVisualWorldRotation = GnomePeekPoint.GetPeekLeanRotation(
+                hiddenVisualWorldRotation,
+                _peekDirection,
+                _peekLeanAngle);
+
+            return Quaternion.Inverse(rotationParent.rotation) * peekVisualWorldRotation;
         }
     }
 }

@@ -33,6 +33,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
         public Vector3 Value;
     }
 
+    public class GnomePeekLeanAngle : IEntityComponent
+    {
+        public float Value;
+    }
+
     public class GnomeForcePeekRequested : IEntityComponent
     {
         public ReactiveVariable<bool> Value;

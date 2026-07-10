@@ -44,7 +44,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
                 return null;
 
             Entity entity = _entitiesFactory.CreateEmpty();
-            _monoEntitiesFactory.Create(entity, peekPoint.HiddenPosition, peekPoint.HiddenRotation, _gnomeConfig.PrefabPath);
+            
+            _monoEntitiesFactory.Create(entity, peekPoint.HiddenPosition, peekPoint.HiddenRotation(), _gnomeConfig.PrefabPath);
             ApplyVerticalSpawnOffset(peekPoint, entity);
 
             float peekOffset = peekPoint.PeekOffset > 0f ? peekPoint.PeekOffset : _gnomeConfig.DefaultPeekOffset;
@@ -57,6 +58,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
                 .AddGnomeRequiredHits(_gnomeConfig.RequiredHits)
                 .AddGnomePeekOffset(peekOffset)
                 .AddGnomePeekDirection(peekPoint.PeekDirection)
+                .AddComponent(new GnomePeekLeanAngle
+                {
+                    Value = peekPoint.IsVerticalLayout == true ? 0f : peekPoint.PeekLeanAngle
+                })
                 .AddGnomeForcePeekRequested(new ReactiveVariable<bool>(false))
                 .AddComponent(new GnomeIsVerticalLayout { Value = peekPoint.IsVerticalLayout })
                 .AddGnomeDeathDissolveDuration(_gnomeConfig.DeathDissolveSeconds)
@@ -80,6 +85,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
                 .AddCanRotate(canRotate);
 
             entity
+                .AddSystem(new GnomePeekHitColliderSystem())
                 .AddSystem(new GnomeTakeDamageSystem())
                 .AddSystem(new RigidbodyRotationSystem());
 
@@ -94,32 +100,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature
             }
 
             return entity;
-        }
-
-        public void RelocateToPeekPoint(Entity entity, GnomePeekPoint peekPoint)
-        {
-            if (entity == null || peekPoint == null)
-                return;
-
-            if (entity.TryGetTransform(out Transform gnomeTransform) == false)
-                return;
-
-            gnomeTransform.position = peekPoint.HiddenPosition;
-            ApplyVerticalSpawnOffset(peekPoint, entity);
-            gnomeTransform.rotation = peekPoint.HiddenRotation;
-
-            if (entity.TryGetComponent(out GnomePeekOffset gnomePeekOffset) == true)
-                gnomePeekOffset.Value = peekPoint.PeekOffset > 0f ? peekPoint.PeekOffset : _gnomeConfig.DefaultPeekOffset;
-
-            if (entity.TryGetComponent(out GnomePeekDirection gnomePeekDirection) == true)
-                gnomePeekDirection.Value = peekPoint.PeekDirection;
-
-            if (entity.TryGetComponent(out GnomeIsVerticalLayout verticalLayout) == true)
-                verticalLayout.Value = peekPoint.IsVerticalLayout;
-
-            entity.IsPeeking.Value = false;
-            entity.GnomeForcePeekRequested.Value = false;
-            entity.GnomeHitCount.Value = 0;
         }
 
         private static void ApplyVerticalSpawnOffset(GnomePeekPoint peekPoint, Entity entity)

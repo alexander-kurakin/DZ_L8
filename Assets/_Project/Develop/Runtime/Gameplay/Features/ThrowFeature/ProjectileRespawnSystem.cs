@@ -75,6 +75,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
             projectileTransform.localPosition = Vector3.zero;
             projectileTransform.localRotation = Quaternion.identity;
 
+            ProjectileCarryCollisionUtility.SetColliderEnabled(projectileEntity, false);
+            ProjectileCarryCollisionUtility.SetOwnerCollisionsIgnored(projectileEntity, _heroEntity, true);
+
             _currentProjectile.Value = projectileEntity;
             _isProjectileInHand.Value = true;
         }

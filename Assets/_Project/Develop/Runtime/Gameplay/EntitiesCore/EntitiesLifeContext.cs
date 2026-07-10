@@ -48,6 +48,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         public void Release(Entity entity)
         {
+            if (entity == null)
+                return;
+
+            if (_entities.Contains(entity) == false)
+                return;
+
+            if (_releaseRequests.Contains(entity))
+                return;
+
             _releaseRequests.Add(entity);
         }
 

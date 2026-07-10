@@ -1283,6 +1283,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomePeekDirection() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomePeekLeanAngle GnomePeekLeanAngleC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomePeekLeanAngle>();
+
+		public System.Single GnomePeekLeanAngle => GnomePeekLeanAngleC.Value;
+
+		public bool TryGetGnomePeekLeanAngle(out System.Single value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomePeekLeanAngle component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(System.Single);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddGnomePeekLeanAngle(System.Single value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomePeekLeanAngle() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomeForcePeekRequested GnomeForcePeekRequestedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.GnomeFeature.GnomeForcePeekRequested>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> GnomeForcePeekRequested => GnomeForcePeekRequestedC.Value;

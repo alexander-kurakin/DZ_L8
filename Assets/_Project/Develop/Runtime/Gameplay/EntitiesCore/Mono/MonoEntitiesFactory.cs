@@ -77,7 +77,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 
         private void CleanupFor(Entity entity)
         {
-            MonoEntity monoEntity = _entityToMono[entity];
+            if (_entityToMono.TryGetValue(entity, out MonoEntity monoEntity) == false)
+                return;
+
             monoEntity.Cleanup(entity);
             Object.Destroy(monoEntity.gameObject);
         }
