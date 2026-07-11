@@ -70,7 +70,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddIsProjectileInHand()
                 .AddIsChargingThrow()
                 .AddThrowChargePower()
-                .AddThrowReleased();
+                .AddThrowReleased()
+                .AddIsWatchingThrownProjectile()
+                .AddThrowPostImpactAimLockRemainingTime();
 
             entity.AddComponent(new ThrowTrajectoryPreview()
             {
@@ -95,7 +97,9 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .Add(new FuncCondition(() => entity.IsChargingThrow.Value == false));
 
             ICompositeCondition canRotate = new CompositeCondition()
-                .Add(new FuncCondition(() => entity.IsChargingThrow.Value == false));
+                .Add(new FuncCondition(() => entity.IsChargingThrow.Value == false))
+                .Add(new FuncCondition(() => entity.IsWatchingThrownProjectile.Value == false))
+                .Add(new FuncCondition(() => entity.ThrowPostImpactAimLockRemainingTime.Value <= 0f));
 
             entity
                 .AddCanMove(canMove)
@@ -106,6 +110,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
                 .AddSystem(new ThrowTrajectoryPreviewSystem(_mouseInput, _mouseRaycastService, throwChargeConfig))
                 .AddSystem(new ThrowReleaseSystem(_mouseInput, _mouseRaycastService, throwChargeConfig))
                 .AddSystem(new ProjectileLaunchSystem(throwChargeConfig))
+                .AddSystem(new ThrownProjectileWatchSystem(throwChargeConfig, _entitiesLifeContext))
                 .AddSystem(new ThrowAimMarkerSystem(_resourcesAssetsLoader))
                 .AddSystem(new ProjectileRespawnSystem(_entitiesFactory, throwChargeConfig))
                 .AddSystem(new HeroCameraSystem(heroCameraConfig))

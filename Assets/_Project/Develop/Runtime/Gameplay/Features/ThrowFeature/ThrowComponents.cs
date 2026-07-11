@@ -54,4 +54,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature
         public List<ReactiveVariable<Vector3>> TrajectoryPoints;
         public ReactiveVariable<bool> IsVisible;
     }
+
+    public class IsWatchingThrownProjectile : IEntityComponent
+    {
+        public ReactiveVariable<bool> Value;
+    }
+
+    public class ThrowPostImpactAimLockRemainingTime : IEntityComponent
+    {
+        public ReactiveVariable<float> Value;
+    }
 }

@@ -17,6 +17,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Throw
         [field: SerializeField] public AnimationCurve PitchBiasCurve { get; private set; } = AnimationCurve.Linear(0f, 1f, 1f, 0.65f);
         [field: SerializeField, Range(0f, 1f)] public float DirectionStabilizationPowerRatio { get; private set; } = 0.7f;
         [field: SerializeField, Min(0f)] public float ProjectileRespawnCooldownSeconds { get; private set; } = 1f;
+        [field: SerializeField, Min(0f)] public float PostImpactAimLockSeconds { get; private set; } = 0.5f;
         [field: SerializeField, Min(1)] public int MaxProjectilesInScene { get; private set; } = 5;
         [field: SerializeField, Min(0f)] public float ProjectileMaxDistanceFromOwner { get; private set; } = 25f;
         [field: SerializeField, Min(8)] public int TrajectoryPreviewMaxPoints { get; private set; } = 64;

@@ -9,55 +9,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
     public class PlayerInputMovementState : State, IUpdatableState
     {
         private readonly IInputService _inputService;
-        private readonly IMouseInputService _mouseInput;
-        private readonly IMouseRaycastService _mouseRaycastService;
         private readonly ReactiveVariable<Vector3> _movementDirection;
         private readonly ReactiveVariable<Vector3> _rotationDirection;
         private readonly IReadOnlyVariable<bool> _isChargingThrow;
-        private readonly Transform _heroTransform;
+        private readonly IReadOnlyVariable<bool> _isWatchingThrownProjectile;
+        private readonly IReadOnlyVariable<float> _throwPostImpactAimLockRemainingTime;
 
-        public PlayerInputMovementState(
-            Entity entity,
-            IInputService inputService,
-            IMouseInputService mouseInput,
-            IMouseRaycastService mouseRaycastService)
+        public PlayerInputMovementState(Entity entity, IInputService inputService)
         {
             _inputService = inputService;
-            _mouseInput = mouseInput;
-            _mouseRaycastService = mouseRaycastService;
             _movementDirection = entity.MoveDirection;
             _rotationDirection = entity.RotationDirection;
             _isChargingThrow = entity.IsChargingThrow;
-            _heroTransform = entity.Transform;
+            _isWatchingThrownProjectile = entity.IsWatchingThrownProjectile;
+            _throwPostImpactAimLockRemainingTime = entity.ThrowPostImpactAimLockRemainingTime;
         }
 
         public void Update(float deltaTime)
         {
-            _movementDirection.Value = _inputService.Direction;
-            ApplyMousePointerRotation();
+            Vector3 movementDirection = _inputService.Direction;
+            _movementDirection.Value = movementDirection;
+            ApplyMovementRotation(movementDirection);
         }
 
-        private void ApplyMousePointerRotation()
+        private void ApplyMovementRotation(Vector3 movementDirection)
+        {
+            if (CanApplyRotation() == false)
+                return;
+
+            movementDirection.y = 0f;
+
+            if (movementDirection.sqrMagnitude <= 0f)
+                return;
+
+            _rotationDirection.Value = movementDirection.normalized;
+        }
+
+        private bool CanApplyRotation()
         {
             if (_isChargingThrow.Value == true)
-                return;
+                return false;
 
-            if (_mouseInput.IsEnabled == false)
-                return;
+            if (_isWatchingThrownProjectile.Value == true)
+                return false;
 
-            Vector2 pointerScreenPosition = _mouseInput.PointerScreenPosition;
-            float planeY = _heroTransform.position.y;
+            if (_throwPostImpactAimLockRemainingTime.Value > 0f)
+                return false;
 
-            if (_mouseRaycastService.TryGetHorizontalPlaneHit(pointerScreenPosition, planeY, out Vector3 hitPoint) == false)
-                return;
-
-            Vector3 direction = hitPoint - _heroTransform.position;
-            direction.y = 0f;
-
-            if (direction.sqrMagnitude <= 0f)
-                return;
-
-            _rotationDirection.Value = direction.normalized;
+            return true;
         }
 
         public override void Exit()

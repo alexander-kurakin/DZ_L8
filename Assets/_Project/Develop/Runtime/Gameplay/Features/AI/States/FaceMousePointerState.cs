@@ -13,6 +13,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
         private readonly ReactiveVariable<Vector3> _movementDirection;
         private readonly ReactiveVariable<Vector3> _rotationDirection;
         private readonly IReadOnlyVariable<bool> _isChargingThrow;
+        private readonly IReadOnlyVariable<bool> _isWatchingThrownProjectile;
+        private readonly IReadOnlyVariable<float> _throwPostImpactAimLockRemainingTime;
         private readonly Transform _heroTransform;
 
         public FaceMousePointerState(
@@ -25,6 +27,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
             _movementDirection = entity.MoveDirection;
             _rotationDirection = entity.RotationDirection;
             _isChargingThrow = entity.IsChargingThrow;
+            _isWatchingThrownProjectile = entity.IsWatchingThrownProjectile;
+            _throwPostImpactAimLockRemainingTime = entity.ThrowPostImpactAimLockRemainingTime;
             _heroTransform = entity.Transform;
         }
 
@@ -43,7 +47,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
 
         private void ApplyMousePointerRotation()
         {
-            if (_isChargingThrow.Value == true)
+            if (CanApplyMousePointerRotation() == false)
                 return;
 
             if (_mouseInput.IsEnabled == false)
@@ -62,6 +66,20 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI.States
                 return;
 
             _rotationDirection.Value = direction.normalized;
+        }
+
+        private bool CanApplyMousePointerRotation()
+        {
+            if (_isChargingThrow.Value == true)
+                return false;
+
+            if (_isWatchingThrownProjectile.Value == true)
+                return false;
+
+            if (_throwPostImpactAimLockRemainingTime.Value > 0f)
+                return false;
+
+            return true;
         }
     }
 }

@@ -119,6 +119,54 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowTrajectoryPreview() {TrajectoryPoints = trajectoryPoints, IsVisible = isVisible}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsWatchingThrownProjectile IsWatchingThrownProjectileC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsWatchingThrownProjectile>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> IsWatchingThrownProjectile => IsWatchingThrownProjectileC.Value;
+
+		public bool TryGetIsWatchingThrownProjectile(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsWatchingThrownProjectile component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWatchingThrownProjectile()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsWatchingThrownProjectile() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddIsWatchingThrownProjectile(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.IsWatchingThrownProjectile() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowPostImpactAimLockRemainingTime ThrowPostImpactAimLockRemainingTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowPostImpactAimLockRemainingTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> ThrowPostImpactAimLockRemainingTime => ThrowPostImpactAimLockRemainingTimeC.Value;
+
+		public bool TryGetThrowPostImpactAimLockRemainingTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowPostImpactAimLockRemainingTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowPostImpactAimLockRemainingTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowPostImpactAimLockRemainingTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddThrowPostImpactAimLockRemainingTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.ThrowFeature.ThrowPostImpactAimLockRemainingTime() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team TeamC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Team>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature.Teams> Team => TeamC.Value;

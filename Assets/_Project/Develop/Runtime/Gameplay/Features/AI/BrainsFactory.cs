@@ -42,11 +42,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             IMouseRaycastService mouseRaycastService = _container.Resolve<IMouseRaycastService>();
 
             FaceMousePointerState faceMousePointerState = new FaceMousePointerState(entity, mouseInput, mouseRaycastService);
-            PlayerInputMovementState playerInputMovementState = new PlayerInputMovementState(
-                entity,
-                desktopInput,
-                mouseInput,
-                mouseRaycastService);
+            PlayerInputMovementState playerInputMovementState = new PlayerInputMovementState(entity, desktopInput);
 
             AIStateMachine stateMachine = new AIStateMachine();
 

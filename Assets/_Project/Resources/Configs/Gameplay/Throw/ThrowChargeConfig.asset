@@ -88,6 +88,7 @@ MonoBehaviour:
     m_RotationOrder: 4
   <DirectionStabilizationPowerRatio>k__BackingField: 0.7
   <ProjectileRespawnCooldownSeconds>k__BackingField: 1
+  <PostImpactAimLockSeconds>k__BackingField: 0.5
   <MaxProjectilesInScene>k__BackingField: 5
   <ProjectileMaxDistanceFromOwner>k__BackingField: 30
   <TrajectoryPreviewMaxPoints>k__BackingField: 64
