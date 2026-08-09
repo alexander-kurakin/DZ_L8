@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature
@@ -16,6 +17,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly PlantSellJuiceService _plantSellJuiceService;
         private readonly SpellcoreCoachToastService _spellcoreCoachToastService;
+        private readonly SpellcoreProgressionService _spellcoreProgressionService;
 
         public PlantSellService(
             PlantPlacementService plantPlacementService,
@@ -24,7 +26,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             EssenceConfig essenceConfig,
             EntitiesLifeContext entitiesLifeContext,
             PlantSellJuiceService plantSellJuiceService,
-            SpellcoreCoachToastService spellcoreCoachToastService)
+            SpellcoreCoachToastService spellcoreCoachToastService,
+            SpellcoreProgressionService spellcoreProgressionService)
         {
             _plantPlacementService = plantPlacementService;
             _sectorMembershipService = sectorMembershipService;
@@ -33,6 +36,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             _entitiesLifeContext = entitiesLifeContext;
             _plantSellJuiceService = plantSellJuiceService;
             _spellcoreCoachToastService = spellcoreCoachToastService;
+            _spellcoreProgressionService = spellcoreProgressionService;
         }
 
         public bool TrySellAtWorldPosition(Vector3 worldPosition)
@@ -56,7 +60,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
                 _plantSellJuiceService.SpawnRefundNumber(worldPosition, refund);
             }
 
-            _spellcoreCoachToastService.TryShowFreeMineSoldHint(isMine, refund);
+            _spellcoreCoachToastService.TryShowFreeMineSoldHint(
+                isMine,
+                refund,
+                _spellcoreProgressionService.CompletedWaves);
 
             _entitiesLifeContext.Release(plantEntity);
             return true;

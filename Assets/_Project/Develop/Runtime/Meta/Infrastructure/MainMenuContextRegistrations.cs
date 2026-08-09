@@ -3,6 +3,7 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.UI.MainMenu;
+using Assets._Project.Develop.Runtime.Utilities.ApplicationQuit;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilities.DataManagment.DataProviders;
 using UnityEngine;
@@ -16,7 +17,7 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
             container.RegisterAsSingle(CreateMainMenuUIRoot).NonLazy();
             container.RegisterAsSingle(CreateMainMenuPresentersFactory);
             container.RegisterAsSingle(CreateMainMenuScreenPresenter).NonLazy();
-            container.RegisterAsSingle(CreateMainMenuPopupService);
+            container.RegisterAsSingle(CreateMainMenuPopupService).NonLazy();
         }
         
         private static MainMenuPopupService CreateMainMenuPopupService(DIContainer c)
@@ -25,7 +26,8 @@ namespace Assets._Project.Develop.Runtime.Meta.Infrastructure
                 c.Resolve<ViewsFactory>(),
                 c.Resolve<ProjectPresentersFactory>(),
                 c.Resolve<MainMenuPresentersFactory>(),
-                c.Resolve<MainMenuUIRoot>());
+                c.Resolve<MainMenuUIRoot>(),
+                c.Resolve<EscToQuitService>());
         }
 
         private static MainMenuUIRoot CreateMainMenuUIRoot(DIContainer c)

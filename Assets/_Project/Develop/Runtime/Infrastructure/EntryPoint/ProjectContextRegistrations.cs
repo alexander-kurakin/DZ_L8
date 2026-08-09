@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using _Project.Develop.Runtime.Meta.Features.Powerups;
 using Assets._Project.Develop.Runtime.Configs.Utilities.Audio;
 using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Utilities.ApplicationQuit;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -64,6 +65,14 @@ namespace Assets._Project.Develop.Runtime.Infrastructure.EntryPoint
             container.RegisterAsSingle<IBackgroundMusicService>(CreateBackgroundMusicService);
             
             container.RegisterAsSingle<IUISoundService>(CreateUISoundsService);
+
+            container.RegisterAsSingle(CreateEscToQuitService).NonLazy();
+        }
+
+        private static EscToQuitService CreateEscToQuitService(DIContainer container)
+        {
+            GameObject gameObject = new GameObject(nameof(EscToQuitService));
+            return gameObject.AddComponent<EscToQuitService>();
         }
         
         private static AudioHub CreateAudioHub(DIContainer c)

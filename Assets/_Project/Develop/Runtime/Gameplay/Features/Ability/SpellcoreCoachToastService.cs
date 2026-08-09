@@ -43,12 +43,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                 _lmbFlavorToastService.ShowOnce(LmbFlavorToastType.DragonPoisonImmune);
         }
 
-        public void TryShowFreeMineSoldHint(bool isMine, int refund)
+        public void TryShowFreeMineSoldHint(bool isMine, int refund, int completedWaves)
         {
             if (isMine == false)
                 return;
 
             if (refund > 0)
+                return;
+
+            if (completedWaves > 0)
                 return;
 
             _lmbFlavorToastService.ShowOnce(LmbFlavorToastType.FreeMineSold);

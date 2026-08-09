@@ -8,7 +8,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast
     public class LmbFlavorToastView : MonoBehaviour
     {
         private const float FADE_IN_DURATION_SECONDS = 0.22f;
-        private const float VISIBLE_DURATION_SECONDS = 2.4f;
+        private const float VISIBLE_DURATION_SECONDS = 4.4f;
         private const float FADE_OUT_DURATION_SECONDS = 0.32f;
         private const float SLIDE_OFFSET_Y = 28f;
         private const float BACKGROUND_ALPHA = 0.72f;

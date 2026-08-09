@@ -35,7 +35,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             });
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             foreach (PopupPresenterBase popup in _presenterToInfo.Keys)
             {

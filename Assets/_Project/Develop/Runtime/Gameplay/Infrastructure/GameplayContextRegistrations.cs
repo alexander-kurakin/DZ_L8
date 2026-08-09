@@ -35,6 +35,7 @@ using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
 using Assets._Project.Develop.Runtime.Utilities.AssetsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Audio;
+using Assets._Project.Develop.Runtime.Utilities.ApplicationQuit;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using UnityEngine;
 
@@ -125,7 +126,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             
             container.RegisterAsSingle(CreateGameplayScreenPresenter).NonLazy();
             
-            container.RegisterAsSingle(CreateGameplayPopupService);
+            container.RegisterAsSingle(CreateGameplayPopupService).NonLazy();
             
             container.RegisterAsSingle(CreatePowerupFactory);
             
@@ -159,7 +160,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<ViewsFactory>(),
                 c.Resolve<ProjectPresentersFactory>(),
                 c.Resolve<GameplayUIRoot>(),
-                c.Resolve<GameplayPresentersFactory>());
+                c.Resolve<GameplayPresentersFactory>(),
+                c.Resolve<EscToQuitService>());
         }
 
         private static AbilitiesFactory CreateAbilitiesFactory(DIContainer c)
@@ -319,7 +321,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<ConfigsProviderService>().GetConfig<EssenceConfig>(),
                 c.Resolve<EntitiesLifeContext>(),
                 c.Resolve<PlantSellJuiceService>(),
-                c.Resolve<SpellcoreCoachToastService>());
+                c.Resolve<SpellcoreCoachToastService>(),
+                c.Resolve<SpellcoreProgressionService>());
         }
 
         private static PlantSellInputService CreatePlantSellInputService(DIContainer c)

@@ -25,6 +25,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.ShopPopup, "UI/MainMenu/Shop/ShopPopup" },
             {ViewIDs.SelectableAbilityView, "UI/AbilitySelectPopup/SelectionAbilityView"},
             {ViewIDs.CombatTimeScaleView, "UI/Gameplay/CombatTimeScale/CombatTimeScaleView"},
+            {ViewIDs.QuitConfirmationPopup, "UI/QuitConfirmation/QuitConfirmationPopup" },
         };
 
         public ViewsFactory(ResourcesAssetsLoader resourcesAssetsLoader)

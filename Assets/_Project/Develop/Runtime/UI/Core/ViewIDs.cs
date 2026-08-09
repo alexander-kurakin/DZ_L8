@@ -15,5 +15,6 @@
         public const string SelectableAbilityView = nameof(SelectableAbilityView);
         public const string ShopPopup = nameof(ShopPopup);
         public const string CombatTimeScaleView = nameof(CombatTimeScaleView);
+        public const string QuitConfirmationPopup = nameof(QuitConfirmationPopup);
     }
 }
