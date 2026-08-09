@@ -10,6 +10,7 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
         private const float ICON_SIZE = 80f;
 
         [SerializeField] private RectTransform _iconsLayoutRoot;
+        [SerializeField] private Material _iconOutlineMaterial;
 
         private readonly List<Image> _iconImages = new();
 
@@ -65,6 +66,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
             iconImage.sprite = sprite;
             iconImage.preserveAspect = true;
             iconImage.raycastTarget = false;
+
+            if (_iconOutlineMaterial != null)
+                iconImage.material = _iconOutlineMaterial;
 
             return iconImage;
         }
