@@ -23,6 +23,9 @@ namespace Assets._Project.Develop.Runtime.UI.Gameplay.Stages
         {
             ClearIcons();
 
+            if (icons == null || icons.Count == 0)
+                return;
+
             for (int iconIndex = 0; iconIndex < icons.Count; iconIndex++)
             {
                 Image iconImage = CreateIconImage(iconIndex, icons[iconIndex]);

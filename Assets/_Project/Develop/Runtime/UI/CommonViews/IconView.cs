@@ -22,6 +22,11 @@ namespace Assets._Project.Develop.Runtime.UI.CommonViews
             _icon.sprite = icon;
             _icon.preserveAspect = true;
         }
+
+        public void SetIconScale(float scale)
+        {
+            _icon.rectTransform.localScale = Vector3.one * scale;
+        }
         
         public void SetHighlighted(bool active) => _highlightedImage.gameObject.SetActive(active);
     }

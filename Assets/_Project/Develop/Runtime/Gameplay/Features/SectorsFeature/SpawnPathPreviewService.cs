@@ -133,7 +133,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             GameObject markerObject = new GameObject("SpawnThreatMarker");
 
             float yRotationDegrees = Mathf.Atan2(inwardDirection.x, inwardDirection.z) * Mathf.Rad2Deg;
-            Quaternion groundRotation = Quaternion.Euler(90f, yRotationDegrees, 0f);
+            Quaternion groundRotation = Quaternion.AngleAxis(yRotationDegrees, Vector3.up)
+                                        * Quaternion.Euler(90f, 0f, 0f);
             Vector3 rowDirection = Vector3.Cross(Vector3.up, inwardDirection).normalized;
 
             Vector3 arrowWorldPosition = spawnAnchor + Vector3.up * MARKER_GROUND_Y_OFFSET;

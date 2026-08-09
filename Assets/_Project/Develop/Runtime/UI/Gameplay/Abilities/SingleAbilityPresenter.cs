@@ -60,6 +60,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             _view.SetCostVisible(true);
             _view.SetCountVisible(false);
             _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(_abilityType));
+            _view.IconView.SetIconScale(GetIconScale(_abilityType));
 
             _view.IconTextView.SetText(_costInEssence.ToString());
             _view.IconTextView.SetIcon(_currencyIconsConfig.GetSpriteFor(CurrencyTypes.Essence));
@@ -69,6 +70,18 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
             _activeAbilityDisposable =
                 _mainHero.AbilityUserActiveAbility.Subscribe(OnActiveAbilityChanged);
+        }
+
+        private static float GetIconScale(AbilityType abilityType)
+        {
+            switch (abilityType)
+            {
+                case AbilityType.PlantMine:
+                    return 2f;
+
+                default:
+                    return 1f;
+            }
         }
 
         private void OnActiveAbilityChanged(AbilityType oldValue, AbilityType newValue)
