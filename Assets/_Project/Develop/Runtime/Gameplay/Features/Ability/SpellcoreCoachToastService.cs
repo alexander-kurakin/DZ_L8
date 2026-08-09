@@ -9,10 +9,16 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
     public class SpellcoreCoachToastService
     {
         private const float INVALID_PLACE_HINT_COOLDOWN_SECONDS = 3f;
+        private const float STREAK_BREAK_GAP_SECONDS = 2f;
+        private const int SELL_STUFF_HINT_CONSECUTIVE_HITS = 10;
 
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly PlantPlacementService _plantPlacementService;
         private readonly SectorMembershipService _sectorMembershipService;
+
+        private int _consecutiveTowerIntegrityHits;
+        private float _lastTowerIntegrityDamageUnscaledTime = -1f;
+        private bool _sellStuffHintShownForCurrentStreak;
 
         public SpellcoreCoachToastService(
             LmbFlavorToastService lmbFlavorToastService,
@@ -27,6 +33,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         public void InitializeForRun()
         {
             _lmbFlavorToastService.ResetForRun();
+            ResetSellStuffHintStreak();
+        }
+
+        public void TryOnTowerIntegrityDamaged(int hits)
+        {
+            if (hits <= 0)
+                return;
+
+            float now = Time.unscaledTime;
+
+            if (_lastTowerIntegrityDamageUnscaledTime >= 0f
+                && now - _lastTowerIntegrityDamageUnscaledTime > STREAK_BREAK_GAP_SECONDS)
+            {
+                ResetSellStuffHintStreak();
+            }
+
+            _lastTowerIntegrityDamageUnscaledTime = now;
+            _consecutiveTowerIntegrityHits += hits;
+
+            if (_consecutiveTowerIntegrityHits < SELL_STUFF_HINT_CONSECUTIVE_HITS)
+                return;
+
+            if (_sellStuffHintShownForCurrentStreak)
+                return;
+
+            _sellStuffHintShownForCurrentStreak = true;
+            _lmbFlavorToastService.Show(LmbFlavorToastType.SellStuffHint);
         }
 
         public void TryShowPreparationHints(
@@ -77,6 +110,13 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _lmbFlavorToastService.ShowThrottled(
                 LmbFlavorToastType.InvalidPlaceHint,
                 INVALID_PLACE_HINT_COOLDOWN_SECONDS);
+        }
+
+        private void ResetSellStuffHintStreak()
+        {
+            _consecutiveTowerIntegrityHits = 0;
+            _sellStuffHintShownForCurrentStreak = false;
+            _lastTowerIntegrityDamageUnscaledTime = -1f;
         }
 
         private static bool ContainsPreviewType(

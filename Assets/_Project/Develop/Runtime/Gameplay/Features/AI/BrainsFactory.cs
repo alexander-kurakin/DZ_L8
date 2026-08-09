@@ -187,11 +187,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return stateMachine;
         }        
         
-        private AIStateMachine CreateRandomMovementStateMachine(Entity entity, out BrotherRandomWalkerBrainHandle brainHandle)
+        private AIStateMachine CreateRandomMovementStateMachine(
+            Entity entity,
+            out BrotherRandomWalkerBrainHandle brainHandle,
+            bool respectTowerWalkBounds = false)
         {
             List<IDisposable> disposables = new List<IDisposable>();
 
-            RandomMovementState randomMovementState = new RandomMovementState(entity);
+            RandomMovementState randomMovementState = new RandomMovementState(entity, respectTowerWalkBounds);
             InformativeIdleState informativeIdleState = new InformativeIdleState(entity);
 
             TimerService movementTimer = _timerServiceFactory.Create(3f);
@@ -223,9 +226,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.AI
             return stateMachine;
         }
         
-        public StateMachineBrain CreateSimpleRandomWalkerBrain(Entity entity)
+        public StateMachineBrain CreateSimpleRandomWalkerBrain(
+            Entity entity,
+            bool respectTowerWalkBounds = false)
         {
-            AIStateMachine stateMachine = CreateRandomMovementStateMachine(entity, out BrotherRandomWalkerBrainHandle brainHandle);
+            AIStateMachine stateMachine = CreateRandomMovementStateMachine(
+                entity,
+                out BrotherRandomWalkerBrainHandle brainHandle,
+                respectTowerWalkBounds);
             _brotherRandomWalkerBrainsRegistry.Register(entity, brainHandle);
             StateMachineBrain brain = new StateMachineBrain(stateMachine);
 

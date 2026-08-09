@@ -10,5 +10,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         DragonPoisonImmune = 5,
         FirstMinePlacedGoHint = 6,
         InvalidPlaceHint = 7,
+        SellStuffHint = 8,
     }
 }

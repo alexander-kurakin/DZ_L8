@@ -6,6 +6,7 @@ using Assets._Project.Develop.Runtime.Configs.Gameplay.Spellcore;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.AI;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Attack.Shoot;
@@ -95,7 +96,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
                 .AddCanTakeDamage(canTakeIncomingDamage);
 
             entity.AddSystem(new TowerIntegrityTakeDamageSystem(
-                new TowerIntegrityLeakResolver(towerIntegrityConfig)));
+                new TowerIntegrityLeakResolver(towerIntegrityConfig),
+                _container.Resolve<SpellcoreCoachToastService>()));
 
             entity
                 .AddSystem(new TowerTakeDamageScreenShakeSystem(_container.Resolve<GameplayJuiceService>()))

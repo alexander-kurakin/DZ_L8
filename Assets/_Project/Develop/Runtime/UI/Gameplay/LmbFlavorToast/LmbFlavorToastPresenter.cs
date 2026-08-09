@@ -16,6 +16,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast
         private const string FIRST_MINE_PLACED_GO_HINT_MESSAGE =
             "Awesome. Now touch the magic sphere and let's get rolling!";
         private const string INVALID_PLACE_HINT_MESSAGE = "You can't park.. em.. place there mate";
+        private const string SELL_STUFF_HINT_MESSAGE =
+            "By the way, you can sell your stuff at incredible 50% base price any time. Hover over the cell and hit the hammer icon";
 
         private readonly LmbFlavorToastService _lmbFlavorToastService;
         private readonly LmbFlavorToastView _view;
@@ -72,6 +74,10 @@ namespace _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast
 
                 case LmbFlavorToastType.InvalidPlaceHint:
                     _view.Show(INVALID_PLACE_HINT_MESSAGE);
+                    break;
+
+                case LmbFlavorToastType.SellStuffHint:
+                    _view.Show(SELL_STUFF_HINT_MESSAGE);
                     break;
             }
         }

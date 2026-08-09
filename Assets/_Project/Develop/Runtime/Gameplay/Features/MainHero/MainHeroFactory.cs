@@ -148,7 +148,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.MainHero
             _mainHeroHolderService.RegisterTowerBrother(entity);
 
             _entitiesLifeContext.Add(entity);
-            _brainsFactory.CreateSimpleRandomWalkerBrain(entity);
+            _brainsFactory.CreateSimpleRandomWalkerBrain(entity, respectTowerWalkBounds: true);
 
             entity.AddSystem(new TowerBrotherRepairSystem(
                 _mainHeroHolderService,

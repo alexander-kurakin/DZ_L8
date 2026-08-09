@@ -8,8 +8,8 @@ namespace _Project.Develop.Runtime.UI.Gameplay.CombatTimeScale
 {
     public class CombatTimeScaleView : MonoBehaviour, IView
     {
-        private static readonly Color SELECTED_COLOR = new Color(0.12f, 0.71f, 0.05f, 1f);
-        private static readonly Color DEFAULT_COLOR = new Color(0.25f, 0.25f, 0.25f, 0.9f);
+        private static readonly Color SELECTED_COLOR = new Color(0.49411765f, 0.7843137f, 0.9098039f, 0.9f);
+        private static readonly Color DEFAULT_COLOR = new Color(0.101960786f, 0.14117648f, 0.2f, 0.9f);
 
         [SerializeField] private Button _pauseButton;
         [SerializeField] private Button _normalSpeedButton;

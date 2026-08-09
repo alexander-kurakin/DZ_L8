@@ -73,16 +73,6 @@ namespace Assets._Project.Develop.Runtime.UI
                 mainHero);
         }
 
-        public LmbAbilitySlotPresenter CreateLmbAbilitySlotPresenter(
-            AbilitySlotView view,
-            Entity mainHero)
-        {
-            return new LmbAbilitySlotPresenter(
-                _container.Resolve<ConfigsProviderService>().GetConfig<AbilityIconsConfig>(),
-                view,
-                mainHero);
-        }
-
         public WalletPresenter CreateWalletPresenter(IconTextListView view)
         {
             return new WalletPresenter(

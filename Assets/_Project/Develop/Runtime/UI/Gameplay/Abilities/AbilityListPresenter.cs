@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
+using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayStateBridge;
@@ -14,6 +15,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
     public class AbilityListPresenter : IPresenter
     {
         private readonly ProjectPresentersFactory _presentersFactory;
+        private readonly GameplayPresentersFactory _gameplayPresentersFactory;
         private readonly ViewsFactory _viewsFactory;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
 
@@ -29,6 +31,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
         public AbilityListPresenter(
             ProjectPresentersFactory presentersFactory,
+            GameplayPresentersFactory gameplayPresentersFactory,
             ViewsFactory viewsFactory,
             AbilitySlotListView view,
             Entity mainHero,
@@ -36,6 +39,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             SpellcoreProgressionService spellcoreProgressionService)
         {
             _presentersFactory = presentersFactory;
+            _gameplayPresentersFactory = gameplayPresentersFactory;
             _viewsFactory = viewsFactory;
             _view = view;
             _mainHero = mainHero;
@@ -82,10 +86,11 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             AbilitySlotView abilityView = _viewsFactory.Create<AbilitySlotView>(ViewIDs.AbilitySlot);
 
             _mouseOverUIService.Register(abilityView.IconView.RectTransform);
+            _mouseOverUIService.Register(abilityView.IconTextView.RectTransform);
             _view.Add(abilityView);
 
             _lmbAbilitySlotPresenter =
-                _presentersFactory.CreateLmbAbilitySlotPresenter(abilityView, _mainHero);
+                _gameplayPresentersFactory.CreateLmbAbilitySlotPresenter(abilityView, _mainHero);
 
             _lmbAbilitySlotPresenter.Initialize();
         }
@@ -97,6 +102,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
 
             _view.Remove(_lmbAbilitySlotPresenter.View);
             _mouseOverUIService.Unregister(_lmbAbilitySlotPresenter.View.IconView.RectTransform);
+            _mouseOverUIService.Unregister(_lmbAbilitySlotPresenter.View.IconTextView.RectTransform);
             _viewsFactory.Release(_lmbAbilitySlotPresenter.View);
             _lmbAbilitySlotPresenter.Dispose();
             _lmbAbilitySlotPresenter = null;

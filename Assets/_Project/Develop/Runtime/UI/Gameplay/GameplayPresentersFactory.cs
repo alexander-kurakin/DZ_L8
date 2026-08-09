@@ -1,9 +1,11 @@
 using _Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using _Project.Develop.Runtime.UI.Gameplay.Abilities;
 using _Project.Develop.Runtime.UI.Gameplay.Essence;
-using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
-using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Abilities;
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Stages;
+using Assets._Project.Develop.Runtime.Configs.Meta.Stats;
+using Assets._Project.Develop.Runtime.Configs.Meta.Wallet;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Meta.Features.Wallet;
 using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
@@ -91,7 +93,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay
 
         public AbilityListPresenter CreateAbilityListPresenter(AbilitySlotListView view, Entity mainHero)
         {
-            return new AbilityListPresenter( _container.Resolve<ProjectPresentersFactory>(),
+            return new AbilityListPresenter(
+                _container.Resolve<ProjectPresentersFactory>(),
+                this,
                 _container.Resolve<ViewsFactory>(),
                 view,
                 mainHero,
@@ -140,6 +144,20 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<ViewsFactory>(),
                 this);
+        }
+
+        public LmbAbilitySlotPresenter CreateLmbAbilitySlotPresenter(
+            AbilitySlotView view,
+            Entity mainHero)
+        {
+            ConfigsProviderService configsProviderService = _container.Resolve<ConfigsProviderService>();
+
+            return new LmbAbilitySlotPresenter(
+                configsProviderService.GetConfig<AbilityIconsConfig>(),
+                configsProviderService.GetConfig<CurrencyIconsConfig>(),
+                _container.Resolve<PlantBuildingBuffService>(),
+                view,
+                mainHero);
         }
 
         public PlantBuildingBuffCountdownPresenter CreatePlantBuildingBuffCountdownPresenter(

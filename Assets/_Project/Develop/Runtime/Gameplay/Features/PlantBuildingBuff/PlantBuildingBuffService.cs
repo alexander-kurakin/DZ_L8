@@ -72,6 +72,10 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff
             return Mathf.CeilToInt(_spellcoreCombatConfig.BuildingBuffEssenceCost * _strongerBuffEssenceCostMultiplier);
         }
 
+        public int ActiveBuffCount => _activeBuffs.Count;
+
+        public int MaxActiveBuffCount => _spellcoreCombatConfig.BuildingBuffMaxActiveCount;
+
         public bool TryApplyBuffAtWorldPosition(Vector3 worldPosition, BuildingBuffCastAbilityConfig lmbConfig)
         {
             SectorId sectorId = _sectorMembershipService.ResolveSectorAtClick(worldPosition);
@@ -107,6 +111,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff
                 RemainingSecondsReactive = remainingSecondsReactive,
                 OrbsInstance = orbsInstance,
             });
+
+            BuffTimerStarted?.Invoke(plantEntity);
 
             _runEssenceService.Spend(buffEssenceCost);
 
@@ -192,7 +198,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff
             {
                 ReactiveVariable<float> remainingSecondsReactive = new ReactiveVariable<float>(initialSeconds);
                 plantEntity.AddComponent(new BuildingBuffRemainingSeconds { Value = remainingSecondsReactive });
-                BuffTimerStarted?.Invoke(plantEntity);
                 return remainingSecondsReactive;
             }
 
@@ -210,6 +215,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff
 
             BuffTimerEnded?.Invoke(plantEntity);
         }
+
         private static GameObject SpawnBuffOrbs(BuildingBuffCastAbilityConfig lmbConfig, Transform plantTransform)
         {
             if (lmbConfig.FrostTargetOrbsPrefab == null)
@@ -245,7 +251,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff
             if (buff.OrbsInstance != null)
                 Object.Destroy(buff.OrbsInstance);
 
-            DetachRemainingSecondsReactive(buff.PlantEntity);
             _activeBuffs.RemoveAt(index);
+            DetachRemainingSecondsReactive(buff.PlantEntity);
         }    }
 }

@@ -58,6 +58,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         public void Initialize()
         {
             _view.SetCostVisible(true);
+            _view.SetCountVisible(false);
             _view.IconView.SetIcon(_abilityIconsConfig.GetSpriteFor(_abilityType));
 
             _view.IconTextView.SetText(_costInEssence.ToString());
