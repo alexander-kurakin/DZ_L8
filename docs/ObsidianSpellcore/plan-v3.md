@@ -342,12 +342,14 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 ## 7. Критерий merge в master
 
-1. W1–W5 проходимы с **factory** шкалой ≤ целевой.
+1. W1–W5 проходимы с **factory** шкалой ≤ целевой — **волны accepted as-is** (freeze; без дальнейшего pacing-тюнинга).
 2. Нет обязательного brother/LMB damage по врагам.
 3. Playtest сторонним человеком: описывает бой словами **«смотрел»**, не **«тушил»**.
 4. `balance-v3.md` + one-pager согласованы.
 
 До merge **master** = legacy archive; не балансим v2 параллельно.
+
+**Старый план (до v3-нумерации):** Epic 9 intro camera / Epic 10 bottom bar / spawn-path стрелки / survival — уже закрыты в эпиках v3 (UI + `SpawnPathPreviewService` + Epic 8+). Не открывать заново.
 
 ---
 
@@ -359,8 +361,8 @@ Gameplay + визуал при ударе по врагу (mine / turret / proje
 
 ## 9. Следующий шаг
 
-**Merge readiness** — playtest W1–W5 + survival smoke по [[meetup-build-checklist]]; сторонний playtest на factory-feel шкале.
+**Playtest-ready / waves frozen.** Smoke W1–W5 + survival по [[meetup-build-checklist]] — без тюнинга Intro/survival numbers. Стороний playtest на factory-feel шкале → merge, когда gate §7 ок.
 
 ---
 
-*`Spellcore_v3` @ Epic 9 done. Balance/docs sync, meetup checklist, end-of-run beat — 2026-06-30. Дизайн-обоснование: [[factory-feel]].*
+*`Spellcore_v3` @ merge readiness closeout. Waves freeze; Epic 1–9 + 8+ done. Meetup = smoke, не баланс. Дизайн-обоснование: [[factory-feel]].*

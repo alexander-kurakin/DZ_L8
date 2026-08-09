@@ -1,6 +1,6 @@
 # Balance v3 — factory / idle defense
 
-**Status:** синхрон с `.asset` · **ветка** `Spellcore_v3` · Epic 9  
+**Status:** синхрон с `.asset` · **ветка** `Spellcore_v3` · Epic 9 · **waves freeze**  
 **Контракт:** [[factory-feel#12. Направление v2 — урон **только** от построек]] · [[plan-v3]]  
 **Legacy:** [[balance]] — не трогаем при v3-итерациях, только сверка «что выключили»
 
@@ -199,3 +199,4 @@ Composition/timing — переписываются в эпиках 3, 5, 8. **I
 | 2026-06-30 | 4–5 | Enemy hit juice: stun + `EnemyHitJuiceUtility`; toxic/beam tick **2.5 / 2 с**; toxic без hitstop |
 | 2026-06-30 | 8+ | Survival playtest slice: flow/popups, tier scaling, path rotation, `PersistedGoldRewardService`, sell-shovel hit radius; enemy hit juice iter (SkipFrames → RemainingTime → Animator child) |
 | 2026-06-30 | 9 | Синхрон с `.asset`; `SpellcoreCombatConfig` naming; brother repair = movement phase; end-of-run beat **1.2 с**; one-pager v3; [[meetup-build-checklist]] |
+| 2026-06-30 | merge | **Wave composition freeze** — Intro1–5 / survival tier numbers accepted as-is; no further pacing tweaks |
