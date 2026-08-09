@@ -1,6 +1,6 @@
 {
   "WalletData": {
-    "Gold": 8700
+    "Gold": 5200
   },
   "Wins": 4,
   "Losses": 0,
@@ -11,7 +11,7 @@
     },
     "DamageFirstEnemies": {
       "Level": 1,
-      "Unlocked": false
+      "Unlocked": true
     },
     "StrongerBuff": {
       "Level": 1,
