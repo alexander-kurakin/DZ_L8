@@ -18,6 +18,7 @@ using System;
 using System.Collections;
 using _Project.Develop.Runtime.UI.Gameplay;
 using Assets._Project.Develop.Runtime.Gameplay.Features.GameplayTimeScale;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using UnityEngine;
 
@@ -66,6 +67,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             _container.Resolve<PlantPlacementService>().ClearForNewRun();
             _container.Resolve<PlantBuildingBuffService>().ClearForNewRun();
             _container.Resolve<SpellcoreProgressionService>().InitializeForRun();
+            _container.Resolve<SpellcoreCoachToastService>().InitializeForRun();
 
             _essenceFeatureService = _container.Resolve<EssenceFeatureService>();
             _essenceFeatureService.InitializeForRun();

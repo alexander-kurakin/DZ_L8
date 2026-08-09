@@ -9,10 +9,8 @@ using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using System;
 using System.Collections.Generic;
-using _Project.Develop.Runtime.Gameplay.Features.Input;
 using Assets._Project.Develop.Runtime.Gameplay.Features.InputFeature;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 {
@@ -20,30 +18,33 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
     {
         private readonly EssenceConfig _essenceConfig;
         private readonly RunEssenceService _runEssenceService;
+        private readonly EntitiesFactory _entitiesFactory;
         private readonly EntitiesLifeContext _entitiesLifeContext;
+        private readonly CollidersRegistryService _collidersRegistryService;
         private readonly MainHeroHolderService _mainHeroHolderService;
         private readonly IMouseInputService _mouseInputService;
-        private readonly MouseRaycastService _mouseRaycastService;
         private readonly RaycastConfig _raycastConfig;
 
-        private readonly List<EssencePickupView> _activePickups = new();
+        private readonly List<Entity> _activePickups = new();
         private readonly Dictionary<Entity, IDisposable> _enemyDeathSubscriptions = new();
         private readonly HashSet<int> _bailoutGrantedForCompletedWaves = new();
 
         public EssenceFeatureService(
             ConfigsProviderService configsProviderService,
             RunEssenceService runEssenceService,
+            EntitiesFactory entitiesFactory,
             EntitiesLifeContext entitiesLifeContext,
+            CollidersRegistryService collidersRegistryService,
             MainHeroHolderService mainHeroHolderService,
-            IMouseInputService mouseInputService,
-            MouseRaycastService mouseRaycastService)
+            IMouseInputService mouseInputService)
         {
             _essenceConfig = configsProviderService.GetConfig<EssenceConfig>();
             _runEssenceService = runEssenceService;
+            _entitiesFactory = entitiesFactory;
             _entitiesLifeContext = entitiesLifeContext;
+            _collidersRegistryService = collidersRegistryService;
             _mainHeroHolderService = mainHeroHolderService;
             _mouseInputService = mouseInputService;
-            _mouseRaycastService = mouseRaycastService;
             _raycastConfig = configsProviderService.GetConfig<RaycastConfig>();
 
             _entitiesLifeContext.Added += OnEntityAdded;
@@ -97,15 +98,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
         {
             for (int pickupIndex = 0; pickupIndex < _activePickups.Count; pickupIndex++)
             {
-                EssencePickupView pickup = _activePickups[pickupIndex];
+                Entity pickup = _activePickups[pickupIndex];
 
                 if (pickup == null)
                     continue;
 
-                pickup.ForceActivateHover();
+                if (pickup.TryGetEssenceStartVacuumRequest(out ReactiveEvent startVacuumRequest) == false)
+                    continue;
 
-                if (pickup.IsVacuuming == false)
-                    pickup.StartVacuuming();
+                startVacuumRequest.Invoke();
             }
         }
 
@@ -114,36 +115,24 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             if (_activePickups.Count == 0)
                 return;
 
-            if (TryGetTowerCollectPosition(out Vector3 towerCollectPosition) == false)
+            Entity hoveredPickup = TryGetHoveredPickup();
+
+            if (hoveredPickup == null)
                 return;
 
-            EssencePickupView hoveredPickup = TryGetHoveredPickup();
+            if (hoveredPickup.TryGetEssenceIsVacuuming(out ReactiveVariable<bool> isVacuuming) == false)
+                return;
 
-            for (int pickupIndex = _activePickups.Count - 1; pickupIndex >= 0; pickupIndex--)
-            {
-                EssencePickupView pickup = _activePickups[pickupIndex];
+            if (isVacuuming.Value)
+                return;
 
-                if (pickup == null)
-                {
-                    _activePickups.RemoveAt(pickupIndex);
-                    continue;
-                }
+            if (hoveredPickup.TryGetEssenceCanAcceptHover(out ReactiveVariable<bool> canAcceptHover) == false)
+                return;
 
-                pickup.TickHoverLock(deltaTime);
+            if (canAcceptHover.Value == false)
+                return;
 
-                if (pickup.IsVacuuming == false && pickup.CanAcceptHover && pickup == hoveredPickup)
-                    pickup.StartVacuuming();
-
-                if (pickup.IsVacuuming)
-                {
-                    pickup.MoveTowards(towerCollectPosition, _essenceConfig.VacuumMoveSpeed, deltaTime);
-
-                    float collectDistance = GetFlatDistance(pickup.transform.position, towerCollectPosition);
-
-                    if (collectDistance <= _essenceConfig.TowerCollectRadius)
-                        CollectPickup(pickupIndex);
-                }
-            }
+            hoveredPickup.EssenceStartVacuumRequest.Invoke();
         }
 
         public void Dispose()
@@ -182,6 +171,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 
         private void OnEntityReleased(Entity entity)
         {
+            _activePickups.Remove(entity);
+
             if (_enemyDeathSubscriptions.TryGetValue(entity, out IDisposable subscription) == false)
                 return;
 
@@ -206,34 +197,23 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
                 return;
 
             Vector3 spawnPosition = enemyTransform.position;
-            Vector3 pickupWorldPosition = spawnPosition;
-            pickupWorldPosition.y += _essenceConfig.PickupFloorOffset;
+            Vector3 dropVfxPosition = spawnPosition;
+            dropVfxPosition.y += _essenceConfig.PickupFloorOffset;
 
             if (_essenceConfig.PickupDropPrefab != null)
             {
                 GameplayVfxUtility.SpawnTransientAt(
                     _essenceConfig.PickupDropPrefab,
-                    pickupWorldPosition,
+                    dropVfxPosition,
                     Quaternion.identity,
                     uniformScale: _essenceConfig.PickupDropVfxScale);
             }
 
-            GameObject pickupRoot = new GameObject("EssencePickup");
-            GameObject glowInstance = Object.Instantiate(_essenceConfig.PickupGlowPrefab, pickupRoot.transform);
-            glowInstance.transform.localPosition = Vector3.zero;
-            glowInstance.transform.localRotation = Quaternion.identity;
-            glowInstance.transform.localScale = Vector3.one;
-
-            EssencePickupView pickup = pickupRoot.AddComponent<EssencePickupView>();
-            pickup.Initialize(
-                dropAmount,
-                spawnPosition,
-                _essenceConfig,
-                _essenceConfig.PickupVacuumTrailPrefab);
+            Entity pickup = _entitiesFactory.CreateEssencePickup(spawnPosition, dropAmount, _essenceConfig);
             _activePickups.Add(pickup);
         }
 
-        private EssencePickupView TryGetHoveredPickup()
+        private Entity TryGetHoveredPickup()
         {
             Vector2 pointerScreenPosition = _mouseInputService.PointerScreenPosition;
             Ray ray = Camera.main.ScreenPointToRay(pointerScreenPosition);
@@ -243,102 +223,46 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
                 Physics.DefaultRaycastLayers,
                 QueryTriggerInteraction.Collide);
 
-            EssencePickupView closestPickup = null;
+            Entity closestPickup = null;
             float closestHitDistance = float.MaxValue;
 
             for (int hitIndex = 0; hitIndex < hits.Length; hitIndex++)
             {
                 RaycastHit hit = hits[hitIndex];
-                EssencePickupView pickup = hit.collider.GetComponent<EssencePickupView>();
+                Entity hitEntity = _collidersRegistryService.GetBy(hit.collider);
 
-                if (pickup == null)
+                if (hitEntity == null)
                     continue;
 
-                if (pickup.CanAcceptHover == false)
+                if (hitEntity.TryGetEssenceCanAcceptHover(out ReactiveVariable<bool> canAcceptHover) == false)
+                    continue;
+
+                if (canAcceptHover.Value == false)
                     continue;
 
                 if (hit.distance >= closestHitDistance)
                     continue;
 
                 closestHitDistance = hit.distance;
-                closestPickup = pickup;
+                closestPickup = hitEntity;
             }
 
             return closestPickup;
-        }
-
-        private void CollectPickup(int pickupIndex)
-        {
-            EssencePickupView pickup = _activePickups[pickupIndex];
-            _activePickups.RemoveAt(pickupIndex);
-
-            int collectedAmount = Mathf.FloorToInt(pickup.Amount * _essenceConfig.TowerEatFraction);
-            _runEssenceService.Add(collectedAmount);
-
-            PlayTowerCollectVfx();
-            Object.Destroy(pickup.gameObject);
-        }
-
-        private void PlayTowerCollectVfx()
-        {
-            if (_essenceConfig.TowerCollectPrefab == null)
-                return;
-
-            Entity mainHero = _mainHeroHolderService.MainHero;
-
-            if (mainHero == null || mainHero.TryGetTransform(out Transform towerTransform) == false)
-                return;
-
-            if (towerTransform == null)
-                return;
-
-            Vector3 spawnPosition = towerTransform.position;
-            spawnPosition.y += _essenceConfig.TowerCollectHeightOffset;
-
-            GameplayVfxUtility.SpawnTransientAt(
-                _essenceConfig.TowerCollectPrefab,
-                spawnPosition,
-                Quaternion.identity,
-                towerTransform,
-                _essenceConfig.TowerCollectVfxScale);
         }
 
         private void ClearActivePickups()
         {
             for (int pickupIndex = 0; pickupIndex < _activePickups.Count; pickupIndex++)
             {
-                if (_activePickups[pickupIndex] != null)
-                    Object.Destroy(_activePickups[pickupIndex].gameObject);
+                Entity pickup = _activePickups[pickupIndex];
+
+                if (pickup == null)
+                    continue;
+
+                _entitiesLifeContext.Release(pickup);
             }
 
             _activePickups.Clear();
-        }
-
-        private bool TryGetTowerCollectPosition(out Vector3 towerCollectPosition)
-        {
-            towerCollectPosition = Vector3.zero;
-
-            Entity mainHero = _mainHeroHolderService.MainHero;
-
-            if (mainHero == null)
-                return false;
-
-            if (mainHero.TryGetTransform(out Transform towerTransform) == false)
-                return false;
-
-            if (towerTransform == null)
-                return false;
-
-            towerCollectPosition = towerTransform.position;
-            towerCollectPosition.y += _essenceConfig.TowerCollectHeightOffset;
-            return true;
-        }
-
-        private static float GetFlatDistance(Vector3 firstPoint, Vector3 secondPoint)
-        {
-            firstPoint.y = 0f;
-            secondPoint.y = 0f;
-            return Vector3.Distance(firstPoint, secondPoint);
         }
     }
 }

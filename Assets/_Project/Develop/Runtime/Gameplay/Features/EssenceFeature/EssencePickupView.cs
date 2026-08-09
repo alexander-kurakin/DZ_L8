@@ -1,73 +1,69 @@
-using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
+using System;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Mono;
+using Assets._Project.Develop.Runtime.Gameplay.Features.JuiceFeature;
+using Assets._Project.Develop.Runtime.Utilities.Audio;
 using DG.Tweening;
 using UnityEngine;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 {
-    public class EssencePickupView : MonoBehaviour
+    public class EssencePickupView : EntityView
     {
-        private EssenceConfig _essenceConfig;
-        private float _remainingHoverLockSeconds;
+        [SerializeField] private GameObject _vacuumTrailPrefab;
+        [SerializeField] private GameObject _towerCollectPrefab;
+        [SerializeField] private GameSoundsIDs _pickupSoundToPlay = GameSoundsIDs.PickupCrystal;
+
+        [SerializeField] private float _towerCollectVfxScale = 6f;
+        [SerializeField] private float _groundScale = 2.88f;
+        [SerializeField] private float _hoverReadyScaleFactor = 1.35f;
+        [SerializeField] private float _hoverReadyGrowDurationSeconds = 0.5f;
+        [SerializeField] private float _vacuumPulseScaleFactor = 1.6f;
+        [SerializeField] private float _vacuumPulseUpDurationSeconds = 0.22f;
+        [SerializeField] private float _vacuumSettleDurationSeconds = 0.28f;
+        [SerializeField] private float _trailLocalY = 9f;
+        [SerializeField] private float _trailScale = 2f;
+
         private Transform _visualRoot;
-        private SphereCollider _sphereCollider;
-        private GameObject _vacuumTrailPrefab;
         private GameObject _vacuumTrailInstance;
         private Tween _vacuumScaleTween;
         private Tween _hoverPopScaleTween;
+        private IDisposable _hoverReadyDisposable;
+        private IDisposable _vacuumStartedDisposable;
+        private IDisposable _collectedDisposable;
 
-        public int Amount { get; private set; }
-
-        public bool IsVacuuming { get; private set; }
-
-        public bool CanAcceptHover { get; private set; }
-
-        public void Initialize(
-            int amount,
-            Vector3 worldPosition,
-            EssenceConfig essenceConfig,
-            GameObject vacuumTrailPrefab)
+        protected override void OnEntityStartedWork(Entity entity)
         {
-            _essenceConfig = essenceConfig;
-            Amount = amount;
-            CanAcceptHover = false;
-            _remainingHoverLockSeconds = essenceConfig.HoverUnlockDelay;
-            _vacuumTrailPrefab = vacuumTrailPrefab;
             _visualRoot = transform.childCount > 0 ? transform.GetChild(0) : transform;
+            _visualRoot.localScale = Vector3.one * _groundScale;
 
-            transform.localScale = Vector3.one;
-            _visualRoot.localScale = Vector3.one * essenceConfig.PickupGlowGroundScale;
-
-            worldPosition.y += essenceConfig.PickupFloorOffset;
-            transform.position = worldPosition;
-
-            SetupVisualParticles(_visualRoot.gameObject);
-            ConfigureCollider();
+            _hoverReadyDisposable = entity.EssenceHoverReadyEvent.Subscribe(OnHoverReady);
+            _vacuumStartedDisposable = entity.EssenceVacuumStartedEvent.Subscribe(OnVacuumStarted);
+            _collectedDisposable = entity.EssenceCollectedEvent.Subscribe(OnCollected);
         }
 
-        public void TickHoverLock(float deltaTime)
+        public override void Cleanup(Entity entity)
         {
-            if (CanAcceptHover)
-                return;
+            base.Cleanup(entity);
 
-            _remainingHoverLockSeconds -= deltaTime;
+            _hoverReadyDisposable?.Dispose();
+            _vacuumStartedDisposable?.Dispose();
+            _collectedDisposable?.Dispose();
 
-            if (_remainingHoverLockSeconds > 0f)
-                return;
-
-            ActivateHoverReady();
+            KillTweens();
         }
 
-        public void ForceActivateHover()
+        private void OnHoverReady()
         {
-            ActivateHoverReady();
+            _hoverPopScaleTween?.Kill();
+            _hoverPopScaleTween = _visualRoot
+                .DOScale(Vector3.one * GetHoverScale(), _hoverReadyGrowDurationSeconds)
+                .SetEase(Ease.OutCubic)
+                .Play();
         }
 
-        public void StartVacuuming()
+        private void OnVacuumStarted()
         {
-            if (IsVacuuming)
-                return;
-
-            IsVacuuming = true;
             AttachVacuumTrail();
 
             _hoverPopScaleTween?.Kill();
@@ -77,22 +73,32 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
             float pulseScale = GetVacuumPulseScale();
             _vacuumScaleTween = DOTween.Sequence()
                 .Append(_visualRoot
-                    .DOScale(Vector3.one * pulseScale, _essenceConfig.PickupVacuumPulseUpDurationSeconds)
+                    .DOScale(Vector3.one * pulseScale, _vacuumPulseUpDurationSeconds)
                     .SetEase(Ease.OutBack, 1.4f, 0.35f))
                 .Append(_visualRoot
-                    .DOScale(Vector3.one * hoverScale, _essenceConfig.PickupVacuumSettleDurationSeconds)
+                    .DOScale(Vector3.one * hoverScale, _vacuumSettleDurationSeconds)
                     .SetEase(Ease.OutCubic))
                 .Play();
         }
 
-        public Vector3 GetWorldPosition()
+        private void OnCollected()
         {
-            return transform.position;
+            KillTweens();
+            GameSoundsService.PlayOneShot(_pickupSoundToPlay);
+            PlayTowerCollectVfx();
         }
 
-        public void MoveTowards(Vector3 targetPosition, float moveSpeed, float deltaTime)
+        private void PlayTowerCollectVfx()
         {
-            transform.position = Vector3.MoveTowards(transform.position, targetPosition, moveSpeed * deltaTime);
+            if (_towerCollectPrefab == null)
+                return;
+
+            GameplayVfxUtility.SpawnTransientAt(
+                _towerCollectPrefab,
+                transform.position,
+                Quaternion.identity,
+                null,
+                _towerCollectVfxScale);
         }
 
         private void AttachVacuumTrail()
@@ -104,28 +110,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
                 return;
 
             _vacuumTrailInstance = Instantiate(_vacuumTrailPrefab, transform);
-            _vacuumTrailInstance.transform.localPosition = new Vector3(0f, _essenceConfig.PickupHoverColliderCenterY, 0f);
+            _vacuumTrailInstance.transform.localPosition = new Vector3(0f, _trailLocalY, 0f);
             _vacuumTrailInstance.transform.localRotation = Quaternion.identity;
-            _vacuumTrailInstance.transform.localScale = Vector3.one * _essenceConfig.PickupVacuumTrailScale;
+            _vacuumTrailInstance.transform.localScale = Vector3.one * _trailScale;
 
-            PlayParticleSystemsInChildren(_vacuumTrailInstance);
-        }
-
-        private static void SetupVisualParticles(GameObject root)
-        {
-            ParticleSystem[] particleSystems = root.GetComponentsInChildren<ParticleSystem>(true);
-
-            for (int index = 0; index < particleSystems.Length; index++)
-            {
-                ParticleSystem.MainModule mainModule = particleSystems[index].main;
-                mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
-                particleSystems[index].Play(true);
-            }
-        }
-
-        private static void PlayParticleSystemsInChildren(GameObject root)
-        {
-            ParticleSystem[] particleSystems = root.GetComponentsInChildren<ParticleSystem>(true);
+            ParticleSystem[] particleSystems = _vacuumTrailInstance.GetComponentsInChildren<ParticleSystem>(true);
 
             for (int index = 0; index < particleSystems.Length; index++)
                 particleSystems[index].Play(true);
@@ -133,69 +122,25 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature
 
         private float GetHoverScale()
         {
-            return _essenceConfig.PickupGlowGroundScale * _essenceConfig.PickupHoverReadyScaleFactor;
+            return _groundScale * _hoverReadyScaleFactor;
         }
 
         private float GetVacuumPulseScale()
         {
-            return _essenceConfig.PickupGlowGroundScale * _essenceConfig.PickupVacuumPulseScaleFactor;
+            return _groundScale * _vacuumPulseScaleFactor;
         }
 
-        private void ActivateHoverReady()
+        private void KillTweens()
         {
-            if (CanAcceptHover)
-                return;
-
-            CanAcceptHover = true;
-            _remainingHoverLockSeconds = 0f;
-            _sphereCollider.enabled = true;
-            PlayHoverReadyPop();
-        }
-
-        private void PlayHoverReadyPop()
-        {
+            _vacuumScaleTween?.Kill();
             _hoverPopScaleTween?.Kill();
-            _hoverPopScaleTween = _visualRoot
-                .DOScale(Vector3.one * GetHoverScale(), _essenceConfig.PickupHoverReadyGrowDurationSeconds)
-                .SetEase(Ease.OutCubic)
-                .Play();
-        }
-
-        private void ConfigureCollider()
-        {
-            RemoveChildColliders();
-
-            _sphereCollider = GetComponent<SphereCollider>();
-
-            if (_sphereCollider == null)
-                _sphereCollider = gameObject.AddComponent<SphereCollider>();
-
-            _sphereCollider.center = new Vector3(0f, _essenceConfig.PickupHoverColliderCenterY, 0f);
-            _sphereCollider.radius = _essenceConfig.PickupHoverColliderRadius;
-
-            _sphereCollider.isTrigger = true;
-            _sphereCollider.enabled = false;
-        }
-
-        private void RemoveChildColliders()
-        {
-            Collider[] colliders = GetComponentsInChildren<Collider>(true);
-
-            for (int index = 0; index < colliders.Length; index++)
-            {
-                Collider collider = colliders[index];
-
-                if (collider.gameObject == gameObject)
-                    continue;
-
-                Destroy(collider);
-            }
+            _vacuumScaleTween = null;
+            _hoverPopScaleTween = null;
         }
 
         private void OnDestroy()
         {
-            _vacuumScaleTween?.Kill();
-            _hoverPopScaleTween?.Kill();
+            KillTweens();
         }
     }
 }

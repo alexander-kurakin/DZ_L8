@@ -27,12 +27,15 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.TakeDamage;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TowerIntegrityFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TowerWalker;
 using Assets._Project.Develop.Runtime.Gameplay.Features.TeamsFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
+using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
 using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.Utilities;
 using Assets._Project.Develop.Runtime.Utilities.Conditions;
 using Assets._Project.Develop.Runtime.Utilities.ConfigsManagment;
 using Assets._Project.Develop.Runtime.Utilities.Reactive;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 {
@@ -671,6 +674,98 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
             _entitiesLifeContext.Add(entity);
 
             return entity;
+        }
+
+        public Entity CreateEssencePickup(Vector3 position, int amount, EssenceConfig essenceConfig)
+        {
+            Entity entity = CreateEmpty();
+
+            Vector3 spawnPosition = position;
+            spawnPosition.y += essenceConfig.PickupFloorOffset;
+
+            MonoEntity monoEntity = _monoEntitiesFactory.Create(entity, spawnPosition, "Entities/EssencePickup");
+
+            EnsureEssencePickupVisual(monoEntity, essenceConfig);
+            ConfigureEssenceHoverCollider(entity, essenceConfig);
+
+            entity
+                .AddEssenceAmount(new ReactiveVariable<int>(amount))
+                .AddEssenceHoverUnlockRemainingTime(new ReactiveVariable<float>(essenceConfig.HoverUnlockDelay))
+                .AddEssenceCanAcceptHover(new ReactiveVariable<bool>(false))
+                .AddEssenceIsVacuuming(new ReactiveVariable<bool>(false))
+                .AddEssenceIsCollected(new ReactiveVariable<bool>(false))
+                .AddEssenceStartVacuumRequest()
+                .AddEssenceHoverReadyEvent()
+                .AddEssenceVacuumStartedEvent()
+                .AddEssenceCollectedEvent();
+
+            ICompositeCondition mustSelfRelease = new CompositeCondition()
+                .Add(new FuncCondition(() => entity.EssenceIsCollected.Value));
+
+            entity.AddMustSelfRelease(mustSelfRelease);
+
+            entity
+                .AddSystem(new EssenceHoverUnlockSystem())
+                .AddSystem(new EssenceVacuumSystem(
+                    essenceConfig,
+                    _container.Resolve<RunEssenceService>(),
+                    _mainHeroHolderService))
+                .AddSystem(new SelfReleaseSystem(_entitiesLifeContext));
+
+            _entitiesLifeContext.Add(entity);
+
+            return entity;
+        }
+
+        private void EnsureEssencePickupVisual(MonoEntity monoEntity, EssenceConfig essenceConfig)
+        {
+            Transform rootTransform = monoEntity.transform;
+
+            if (rootTransform.childCount == 0)
+            {
+                if (essenceConfig.PickupGlowPrefab == null)
+                {
+                    Debug.LogError("EssenceConfig.PickupGlowPrefab is not assigned.");
+                    return;
+                }
+
+                GameObject glowInstance = Object.Instantiate(essenceConfig.PickupGlowPrefab, rootTransform);
+                glowInstance.transform.localPosition = Vector3.zero;
+                glowInstance.transform.localRotation = Quaternion.identity;
+                glowInstance.transform.localScale = Vector3.one;
+
+                Collider[] glowColliders = glowInstance.GetComponentsInChildren<Collider>(true);
+
+                for (int index = 0; index < glowColliders.Length; index++)
+                    Object.Destroy(glowColliders[index]);
+            }
+
+            Transform visualRoot = rootTransform.GetChild(0);
+            visualRoot.localScale = Vector3.one * essenceConfig.PickupGlowGroundScale;
+
+            ParticleSystem[] particleSystems = visualRoot.GetComponentsInChildren<ParticleSystem>(true);
+
+            for (int index = 0; index < particleSystems.Length; index++)
+            {
+                ParticleSystem.MainModule mainModule = particleSystems[index].main;
+                mainModule.scalingMode = ParticleSystemScalingMode.Hierarchy;
+                particleSystems[index].Play(true);
+            }
+        }
+
+        private static void ConfigureEssenceHoverCollider(Entity entity, EssenceConfig essenceConfig)
+        {
+            if (entity.TryGetEssenceHoverCollider(out Collider hoverCollider) == false)
+                return;
+
+            if (hoverCollider is SphereCollider sphereCollider)
+            {
+                sphereCollider.center = new Vector3(0f, essenceConfig.PickupHoverColliderCenterY, 0f);
+                sphereCollider.radius = essenceConfig.PickupHoverColliderRadius;
+                sphereCollider.isTrigger = true;
+            }
+
+            hoverCollider.enabled = false;
         }
 
         private Entity CreateEmpty() => new Entity();

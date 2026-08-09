@@ -59,6 +59,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay.LmbFlavorToast
                         _restAnchoredPosition + new Vector2(0f, SLIDE_OFFSET_Y * 0.35f),
                         FADE_OUT_DURATION_SECONDS)
                     .SetEase(Ease.InQuad))
+                .SetUpdate(true)
                 .Play();
         }
 

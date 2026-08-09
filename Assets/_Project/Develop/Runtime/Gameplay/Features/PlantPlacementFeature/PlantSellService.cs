@@ -1,5 +1,6 @@
 using Assets._Project.Develop.Runtime.Configs.Gameplay.Essence;
 using Assets._Project.Develop.Runtime.Gameplay.EntitiesCore;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using UnityEngine;
@@ -14,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
         private readonly EssenceConfig _essenceConfig;
         private readonly EntitiesLifeContext _entitiesLifeContext;
         private readonly PlantSellJuiceService _plantSellJuiceService;
+        private readonly SpellcoreCoachToastService _spellcoreCoachToastService;
 
         public PlantSellService(
             PlantPlacementService plantPlacementService,
@@ -21,7 +23,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             RunEssenceService runEssenceService,
             EssenceConfig essenceConfig,
             EntitiesLifeContext entitiesLifeContext,
-            PlantSellJuiceService plantSellJuiceService)
+            PlantSellJuiceService plantSellJuiceService,
+            SpellcoreCoachToastService spellcoreCoachToastService)
         {
             _plantPlacementService = plantPlacementService;
             _sectorMembershipService = sectorMembershipService;
@@ -29,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
             _essenceConfig = essenceConfig;
             _entitiesLifeContext = entitiesLifeContext;
             _plantSellJuiceService = plantSellJuiceService;
+            _spellcoreCoachToastService = spellcoreCoachToastService;
         }
 
         public bool TrySellAtWorldPosition(Vector3 worldPosition)
@@ -44,12 +48,15 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeatur
                 plantedEssenceCost = storedCost;
 
             int refund = _runEssenceService.CalculateRefund(plantedEssenceCost, _essenceConfig);
+            bool isMine = plantEntity.TryGetMineCollider(out _);
 
             if (refund > 0)
             {
                 _runEssenceService.Add(refund);
                 _plantSellJuiceService.SpawnRefundNumber(worldPosition, refund);
             }
+
+            _spellcoreCoachToastService.TryShowFreeMineSoldHint(isMine, refund);
 
             _entitiesLifeContext.Release(plantEntity);
             return true;

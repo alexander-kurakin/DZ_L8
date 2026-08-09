@@ -19,7 +19,8 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
         private readonly PurchasableEntityConfig _purchasableEntityConfig;
         private readonly SpellcoreProgressionService _spellcoreProgressionService;
         private readonly PlantPlacementService _plantPlacementService;
-        
+        private readonly SpellcoreCoachToastService _spellcoreCoachToastService;
+
         private Entity _entity;
         private IDisposable _requestDisposable;
 
@@ -28,13 +29,15 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
             PlantableObjectsFactory plantableObjectsFactory,
             PurchasableEntityConfig purchasableEntityConfig,
             SpellcoreProgressionService spellcoreProgressionService,
-            PlantPlacementService plantPlacementService)
+            PlantPlacementService plantPlacementService,
+            SpellcoreCoachToastService spellcoreCoachToastService)
         {
             _runEssenceService = runEssenceService;
             _plantableObjectsFactory = plantableObjectsFactory;
             _purchasableEntityConfig = purchasableEntityConfig;
             _spellcoreProgressionService = spellcoreProgressionService;
             _plantPlacementService = plantPlacementService;
+            _spellcoreCoachToastService = spellcoreCoachToastService;
         }
 
         public void OnInit(Entity entity)
@@ -53,7 +56,10 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                     AbilityType.PlantMine,
                     out Vector3 plantPosition,
                     out SectorId sectorId) == false)
+            {
+                _spellcoreCoachToastService.TryShowInvalidPlaceHint(usePoint, AbilityType.PlantMine);
                 return;
+            }
 
             if (_spellcoreProgressionService.TrySpendFreeMine())
             {
@@ -77,6 +83,7 @@ namespace _Project.Develop.Runtime.Gameplay.Features.AbilitySystems
                 sectorId,
                 plantedEssenceCost);
             _plantPlacementService.RegisterPlantedEntity(plantEntity, sectorId);
+            _spellcoreCoachToastService.TryShowFirstMinePlacedGoHint();
         }
 
         public void OnDispose()

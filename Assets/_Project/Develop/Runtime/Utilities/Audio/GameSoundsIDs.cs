@@ -15,6 +15,7 @@ namespace Assets._Project.Develop.Runtime.Utilities.Audio
         Die,
         CatSpawn,
         CatTaunt,
-        Explosion
+        Explosion,
+        PickupCrystal,
     }
 }

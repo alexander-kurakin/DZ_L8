@@ -10,6 +10,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Features.StagesFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.Ability;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantBuildingBuff;
 using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
 using Assets._Project.Develop.Runtime.Gameplay.Infrastructure;
@@ -61,6 +62,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 _container.Resolve<PersistedGoldRewardService>(),
                 _container.Resolve<SceneSwitcherService>(),
                 _container.Resolve<ICoroutinesPerformer>(),
+                _container.Resolve<SpellcoreCoachToastService>(),
+                _container.Resolve<StageProviderService>(),
                 levelGoldReward);
         }
 

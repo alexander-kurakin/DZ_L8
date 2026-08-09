@@ -78,6 +78,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             container.RegisterAsSingle(CreateGameplayJuiceService).NonLazy();
             container.RegisterAsSingle(CreatePlantDamageApplicationService);
             container.RegisterAsSingle(CreateLmbFlavorToastService);
+            container.RegisterAsSingle(CreateSpellcoreCoachToastService).NonLazy();
             container.RegisterAsSingle(CreateLmbFrostProjectileService).NonLazy();
             container.RegisterAsSingle(CreateSpellcoreProgressionService);
             container.RegisterAsSingle(CreateRunEssenceService);
@@ -277,6 +278,14 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new LmbFlavorToastService();
         }
 
+        private static SpellcoreCoachToastService CreateSpellcoreCoachToastService(DIContainer c)
+        {
+            return new SpellcoreCoachToastService(
+                c.Resolve<LmbFlavorToastService>(),
+                c.Resolve<PlantPlacementService>(),
+                c.Resolve<SectorMembershipService>());
+        }
+
         private static LmbFrostProjectileService CreateLmbFrostProjectileService(DIContainer c)
         {
             return new LmbFrostProjectileService();
@@ -309,7 +318,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
                 c.Resolve<RunEssenceService>(),
                 c.Resolve<ConfigsProviderService>().GetConfig<EssenceConfig>(),
                 c.Resolve<EntitiesLifeContext>(),
-                c.Resolve<PlantSellJuiceService>());
+                c.Resolve<PlantSellJuiceService>(),
+                c.Resolve<SpellcoreCoachToastService>());
         }
 
         private static PlantSellInputService CreatePlantSellInputService(DIContainer c)
@@ -440,10 +450,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Infrastructure
             return new EssenceFeatureService(
                 c.Resolve<ConfigsProviderService>(),
                 c.Resolve<RunEssenceService>(),
+                c.Resolve<EntitiesFactory>(),
                 c.Resolve<EntitiesLifeContext>(),
+                c.Resolve<CollidersRegistryService>(),
                 c.Resolve<MainHeroHolderService>(),
-                c.Resolve<IMouseInputService>(),
-                c.Resolve<MouseRaycastService>());
+                c.Resolve<IMouseInputService>());
         }
 
         private static RunEnemyKillCounterService CreateRunEnemyKillCounterService(DIContainer c)

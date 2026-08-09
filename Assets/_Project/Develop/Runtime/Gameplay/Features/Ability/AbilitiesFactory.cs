@@ -32,6 +32,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
         private readonly LmbFrostProjectileService _lmbFrostProjectileService;
         private readonly GameplayJuiceService _gameplayJuiceService;
         private readonly PlantBuildingBuffService _plantBuildingBuffService;
+        private readonly SpellcoreCoachToastService _spellcoreCoachToastService;
         private BuildingBuffCastAbilityConfig _buildingBuffCastAbilityConfig;
         
         public AbilitiesFactory(DIContainer container)
@@ -47,6 +48,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
             _lmbFrostProjectileService = container.Resolve<LmbFrostProjectileService>();
             _gameplayJuiceService = container.Resolve<GameplayJuiceService>();
             _plantBuildingBuffService = container.Resolve<PlantBuildingBuffService>();
+            _spellcoreCoachToastService = container.Resolve<SpellcoreCoachToastService>();
 
             _buildingBuffCastAbilityConfig = _configsProviderService.GetConfig<BuildingBuffCastAbilityConfig>();
         }
@@ -100,7 +102,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _spellcoreProgressionService,
-                    _plantPlacementService));
+                    _plantPlacementService,
+                    _spellcoreCoachToastService));
 
             return entity;
         }
@@ -125,7 +128,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _spellcoreProgressionService,
-                    _plantPlacementService));
+                    _plantPlacementService,
+                    _spellcoreCoachToastService));
 
             return entity;
         }
@@ -150,7 +154,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.Ability
                     _plantableObjectsFactory,
                     purchasableEntityConfig,
                     _spellcoreProgressionService,
-                    _plantPlacementService));
+                    _plantPlacementService,
+                    _spellcoreCoachToastService));
 
             return entity;
         }

@@ -1025,6 +1025,241 @@ namespace Assets._Project.Develop.Runtime.Gameplay.EntitiesCore
 			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EnemyWavePreviewType() {Value = value}); 
 		}
 
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceAmount EssenceAmountC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceAmount>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> EssenceAmount => EssenceAmountC.Value;
+
+		public bool TryGetEssenceAmount(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceAmount component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceAmount()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceAmount() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceAmount(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Int32> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceAmount() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverUnlockRemainingTime EssenceHoverUnlockRemainingTimeC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverUnlockRemainingTime>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> EssenceHoverUnlockRemainingTime => EssenceHoverUnlockRemainingTimeC.Value;
+
+		public bool TryGetEssenceHoverUnlockRemainingTime(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverUnlockRemainingTime component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceHoverUnlockRemainingTime()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverUnlockRemainingTime() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceHoverUnlockRemainingTime(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverUnlockRemainingTime() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCanAcceptHover EssenceCanAcceptHoverC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCanAcceptHover>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> EssenceCanAcceptHover => EssenceCanAcceptHoverC.Value;
+
+		public bool TryGetEssenceCanAcceptHover(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCanAcceptHover component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceCanAcceptHover()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCanAcceptHover() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceCanAcceptHover(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCanAcceptHover() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsVacuuming EssenceIsVacuumingC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsVacuuming>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> EssenceIsVacuuming => EssenceIsVacuumingC.Value;
+
+		public bool TryGetEssenceIsVacuuming(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsVacuuming component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceIsVacuuming()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsVacuuming() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceIsVacuuming(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsVacuuming() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsCollected EssenceIsCollectedC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsCollected>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> EssenceIsCollected => EssenceIsCollectedC.Value;
+
+		public bool TryGetEssenceIsCollected(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsCollected component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceIsCollected()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsCollected() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean>() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceIsCollected(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Boolean> value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceIsCollected() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverCollider EssenceHoverColliderC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverCollider>();
+
+		public UnityEngine.Collider EssenceHoverCollider => EssenceHoverColliderC.Value;
+
+		public bool TryGetEssenceHoverCollider(out UnityEngine.Collider value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverCollider component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(UnityEngine.Collider);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceHoverCollider(UnityEngine.Collider value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverCollider() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceStartVacuumRequest EssenceStartVacuumRequestC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceStartVacuumRequest>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent EssenceStartVacuumRequest => EssenceStartVacuumRequestC.Value;
+
+		public bool TryGetEssenceStartVacuumRequest(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceStartVacuumRequest component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceStartVacuumRequest()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceStartVacuumRequest() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceStartVacuumRequest(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceStartVacuumRequest() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverReadyEvent EssenceHoverReadyEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverReadyEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent EssenceHoverReadyEvent => EssenceHoverReadyEventC.Value;
+
+		public bool TryGetEssenceHoverReadyEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverReadyEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceHoverReadyEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverReadyEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceHoverReadyEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceHoverReadyEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceVacuumStartedEvent EssenceVacuumStartedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceVacuumStartedEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent EssenceVacuumStartedEvent => EssenceVacuumStartedEventC.Value;
+
+		public bool TryGetEssenceVacuumStartedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceVacuumStartedEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceVacuumStartedEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceVacuumStartedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceVacuumStartedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceVacuumStartedEvent() {Value = value}); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCollectedEvent EssenceCollectedEventC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCollectedEvent>();
+
+		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent EssenceCollectedEvent => EssenceCollectedEventC.Value;
+
+		public bool TryGetEssenceCollectedEvent(out Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			bool result = TryGetComponent(out Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCollectedEvent component);
+			if(result)
+				value = component.Value;
+			else
+				value = default(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent);
+			return result;
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceCollectedEvent()
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCollectedEvent() { Value = new Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent() }); 
+		}
+
+		public Assets._Project.Develop.Runtime.Gameplay.EntitiesCore.Entity AddEssenceCollectedEvent(Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveEvent value)
+		{
+			return AddComponent(new Assets._Project.Develop.Runtime.Gameplay.Features.EssenceFeature.EssenceCollectedEvent() {Value = value}); 
+		}
+
 		public Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick DamagePerTickC => GetComponent<Assets._Project.Develop.Runtime.Gameplay.Features.DealDamageOverTime.DamagePerTick>();
 
 		public Assets._Project.Develop.Runtime.Utilities.Reactive.ReactiveVariable<System.Single> DamagePerTick => DamagePerTickC.Value;

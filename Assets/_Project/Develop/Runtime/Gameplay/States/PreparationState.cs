@@ -46,6 +46,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
         private readonly PersistedGoldRewardService _goldRewardService;
         private readonly SceneSwitcherService _sceneSwitcherService;
         private readonly ICoroutinesPerformer _coroutinesPerformer;
+        private readonly SpellcoreCoachToastService _spellcoreCoachToastService;
+        private readonly StageProviderService _stageProviderService;
         private readonly int _levelGoldReward;
 
         private IMouseInputService _mouseInputService;
@@ -74,6 +76,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             PersistedGoldRewardService goldRewardService,
             SceneSwitcherService sceneSwitcherService,
             ICoroutinesPerformer coroutinesPerformer,
+            SpellcoreCoachToastService spellcoreCoachToastService,
+            StageProviderService stageProviderService,
             int levelGoldReward)
         {
             _preparationTriggerService = preparationTriggerService;
@@ -95,6 +99,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
             _goldRewardService = goldRewardService;
             _sceneSwitcherService = sceneSwitcherService;
             _coroutinesPerformer = coroutinesPerformer;
+            _spellcoreCoachToastService = spellcoreCoachToastService;
+            _stageProviderService = stageProviderService;
             _levelGoldReward = levelGoldReward;
         }
 
@@ -115,6 +121,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.States
                 : AbilityType.LeftClickAtPoint;
 
             _spellcoreProgressionService.OnPreparationEntered();
+
+            int upcomingWaveNumber = _spellcoreProgressionService.UpcomingWaveNumber;
+            _spellcoreCoachToastService.TryShowPreparationHints(
+                upcomingWaveNumber,
+                _stageProviderService.GetWaveEnemyPreviewTypesForWave(upcomingWaveNumber));
 
             _essenceFeatureService.TryGrantBailoutOnPreparation(
                 _mainHeroHolderService.MainHero,
