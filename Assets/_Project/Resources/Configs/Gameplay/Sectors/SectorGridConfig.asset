@@ -16,7 +16,7 @@ MonoBehaviour:
   <MiddleBeltMaxRadius>k__BackingField: 45
   <OuterBeltMaxRadius>k__BackingField: 64.8
   <SpawnBeltMaxRadius>k__BackingField: 90
-  <InnerBeltAnchorRadius>k__BackingField: 12.6
+  <InnerBeltAnchorRadius>k__BackingField: 20
   <MiddleBeltAnchorRadius>k__BackingField: 35.1
   <OuterBeltAnchorRadius>k__BackingField: 54.9
   <SpawnBeltAnchorRadius>k__BackingField: 77.4

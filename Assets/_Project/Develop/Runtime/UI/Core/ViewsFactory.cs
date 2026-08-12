@@ -20,6 +20,7 @@ namespace Assets._Project.Develop.Runtime.UI.Core
             {ViewIDs.DefeatPopup, "UI/Gameplay/ResultPopup/DefeatPopup" },
             {ViewIDs.SimpleHealthBar, "UI/Gameplay/HealthBars/SimpleHealthBar" },
             {ViewIDs.MainHeroHealthBar, "UI/Gameplay/HealthBars/HeroHealthBar" },
+            {ViewIDs.CoachHintArrow, "UI/Gameplay/CoachHintArrows/CoachHintArrowView" },
             {ViewIDs.BuildingBuffTimerTextView, "UI/Gameplay/PlantBuildingBuff/BuildingBuffTimerTextView" },
             {ViewIDs.AbilitySlot, "UI/Gameplay/Abilities/AbilitySlotView" },
             {ViewIDs.ShopPopup, "UI/MainMenu/Shop/ShopPopup" },

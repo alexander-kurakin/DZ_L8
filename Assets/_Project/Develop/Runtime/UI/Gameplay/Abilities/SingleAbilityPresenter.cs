@@ -39,7 +39,9 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
         }
         
         public AbilitySlotView View => _view;
-        
+
+        public AbilityType AbilityType => _abilityType;
+
         private int GetCostInEssence(AbilityType type, ConfigsProviderService configsProviderService)
         {
             switch (type)

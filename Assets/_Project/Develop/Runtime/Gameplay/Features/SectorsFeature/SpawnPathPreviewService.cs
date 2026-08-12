@@ -93,6 +93,55 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             _markerInstances.Clear();
         }
 
+        public void CollectIconWorldPositions(
+            SectorRegistryService registry,
+            IReadOnlyList<SpawnGroupPlanEntry> groupPlans,
+            WaveEnemyPreviewType previewType,
+            List<Vector3> results)
+        {
+            results.Clear();
+
+            if (registry == null || registry.IsInitialized == false)
+                return;
+
+            if (groupPlans == null || groupPlans.Count == 0)
+                return;
+
+            Dictionary<int, List<WaveEnemyPreviewType>> threatsByPath = AggregateThreatsByPath(groupPlans);
+
+            foreach (KeyValuePair<int, List<WaveEnemyPreviewType>> pathThreats in threatsByPath)
+            {
+                int pathIndex = pathThreats.Key;
+                List<WaveEnemyPreviewType> previewTypes = pathThreats.Value;
+
+                SectorId spawnSectorId = new SectorId(SectorBelt.Spawn, pathIndex);
+                Vector3 anchor = registry.GetAnchorPosition(spawnSectorId);
+                Vector3 toCenter = registry.Center - anchor;
+                toCenter.y = 0f;
+
+                if (toCenter.sqrMagnitude <= 0.0001f)
+                    continue;
+
+                Vector3 inwardDirection = toCenter.normalized;
+                Vector3 arrowWorldPosition = anchor + Vector3.up * MARKER_GROUND_Y_OFFSET;
+                Vector3 iconsRowCenter = arrowWorldPosition
+                                         + inwardDirection * ICON_OFFSET_TOWARD_CENTER
+                                         + Vector3.up * ICON_EXTRA_Y_OFFSET;
+                Vector3 rowDirection = Vector3.Cross(Vector3.up, inwardDirection).normalized;
+                float rowStartOffset = (previewTypes.Count - 1) * 0.5f * ICON_ROW_SPACING;
+
+                for (int iconIndex = 0; iconIndex < previewTypes.Count; iconIndex++)
+                {
+                    if (previewTypes[iconIndex] != previewType)
+                        continue;
+
+                    Vector3 iconWorldPosition = iconsRowCenter
+                                                + rowDirection * (iconIndex * ICON_ROW_SPACING - rowStartOffset);
+                    results.Add(iconWorldPosition);
+                }
+            }
+        }
+
         private void EnsureRoot()
         {
             if (_root != null)

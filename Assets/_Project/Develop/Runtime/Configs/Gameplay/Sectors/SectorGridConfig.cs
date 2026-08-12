@@ -10,7 +10,7 @@ namespace Assets._Project.Develop.Runtime.Configs.Gameplay.Sectors
         [field: SerializeField, Min(0f)] public float OuterBeltMaxRadius { get; private set; } = 64.8f;
         [field: SerializeField, Min(0f)] public float SpawnBeltMaxRadius { get; private set; } = 90f;
 
-        [field: SerializeField, Min(0f)] public float InnerBeltAnchorRadius { get; private set; } = 12.6f;
+        [field: SerializeField, Min(0f)] public float InnerBeltAnchorRadius { get; private set; } = 20f;
         [field: SerializeField, Min(0f)] public float MiddleBeltAnchorRadius { get; private set; } = 35.1f;
         [field: SerializeField, Min(0f)] public float OuterBeltAnchorRadius { get; private set; } = 54.9f;
         [field: SerializeField, Min(0f)] public float SpawnBeltAnchorRadius { get; private set; } = 77.4f;

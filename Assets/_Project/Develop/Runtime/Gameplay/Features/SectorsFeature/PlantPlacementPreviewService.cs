@@ -12,10 +12,8 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
     public class PlantPlacementPreviewService
     {
         private const float MARKER_GROUND_Y_OFFSET = 0.55f;
-        private const float WEDGE_ANGLE_FRACTION = 0.18f;
-        private const float BELT_RADIUS_FRACTION = 0.72f;
-        private const float INNER_WEDGE_ANGLE_FRACTION = 0.5f;
-        private const float INNER_BELT_RADIUS_FRACTION = 0.84f;
+        private const float SELL_MARKER_OUTWARD_OFFSET = 8f;
+        private const float SELL_MARKER_OUTER_EDGE_MARGIN = 1f;
         private const float MARKER_WORLD_SIZE = 7f;
         private const float CHECK_SPRITE_Z_ROTATION = -90f;
         private const int MARKER_SORTING_ORDER = 175;
@@ -162,7 +160,7 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 return;
 
             _hoveredSellSectorId = hoveredSectorId;
-            Vector3 markerPosition = GetMarkerPosition(registry, hoveredSectorId);
+            Vector3 markerPosition = GetSellMarkerPosition(registry, hoveredSectorId);
             ShowHoverSellShovel(markerPosition);
         }
 
@@ -280,22 +278,40 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
             if (previewState == PlantPlacementPreviewState.BlockedOccupied)
                 return;
 
-            Vector3 markerPosition = GetMarkerPosition(registry, sectorId);
+            Vector3 markerPosition = GetPlantMarkerPosition(registry, sectorId);
             bool showCheck = previewState == PlantPlacementPreviewState.Allowed;
             GameObject marker = CreatePlacementMarker(markerPosition, showCheck, abilityType, sectorId.Belt);
             marker.transform.SetParent(_root, false);
             _markerBySectorId[sectorId] = marker;
         }
 
-        private static Vector3 GetMarkerPosition(SectorRegistryService registry, SectorId sectorId)
+        private static Vector3 GetPlantMarkerPosition(SectorRegistryService registry, SectorId sectorId)
         {
-            return WorldToSector.GetSectorWedgeMarkerPosition(
-                registry.Center,
-                sectorId,
-                registry.GridConfig,
-                GetWedgeAngleFraction(sectorId.Belt),
-                GetBeltRadiusFraction(sectorId.Belt),
-                MARKER_GROUND_Y_OFFSET);
+            Vector3 anchor = registry.GetAnchorPosition(sectorId);
+
+            return new Vector3(anchor.x, anchor.y + MARKER_GROUND_Y_OFFSET, anchor.z);
+        }
+
+        private static Vector3 GetSellMarkerPosition(SectorRegistryService registry, SectorId sectorId)
+        {
+            Vector3 plantAnchor = registry.GetAnchorPosition(sectorId);
+            Vector3 fromCenter = plantAnchor - registry.Center;
+            fromCenter.y = 0f;
+
+            if (fromCenter.sqrMagnitude <= 0.0001f)
+                return GetPlantMarkerPosition(registry, sectorId);
+
+            Vector3 outward = fromCenter.normalized;
+            float plantRadius = fromCenter.magnitude;
+            float outerRadius = WorldToSector.GetBeltOuterRadius(sectorId.Belt, registry.GridConfig);
+            float maxOutward = Mathf.Max(0f, outerRadius - plantRadius - SELL_MARKER_OUTER_EDGE_MARGIN);
+            float outwardOffset = Mathf.Min(SELL_MARKER_OUTWARD_OFFSET, maxOutward);
+            Vector3 sellPosition = plantAnchor + outward * outwardOffset;
+
+            return new Vector3(
+                sellPosition.x,
+                registry.Center.y + MARKER_GROUND_Y_OFFSET,
+                sellPosition.z);
         }
 
         private void ShowHoverSellShovel(Vector3 markerPosition)
@@ -401,22 +417,6 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
                 CROSS_COLOR,
                 MARKER_SORTING_ORDER).transform;
             _hoverCrossRenderer = _hoverCrossVisual.GetComponent<SpriteRenderer>();
-        }
-
-        private static float GetBeltRadiusFraction(SectorBelt belt)
-        {
-            if (belt == SectorBelt.Inner)
-                return INNER_BELT_RADIUS_FRACTION;
-
-            return BELT_RADIUS_FRACTION;
-        }
-
-        private static float GetWedgeAngleFraction(SectorBelt belt)
-        {
-            if (belt == SectorBelt.Inner)
-                return INNER_WEDGE_ANGLE_FRACTION;
-
-            return WEDGE_ANGLE_FRACTION;
         }
 
         private void EnsureRoot()

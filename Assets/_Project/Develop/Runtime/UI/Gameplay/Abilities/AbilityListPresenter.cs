@@ -134,6 +134,23 @@ namespace _Project.Develop.Runtime.UI.Gameplay.Abilities
             }
         }
 
+        public bool TryGetAbilitySlotView(AbilityType abilityType, out AbilitySlotView abilitySlotView)
+        {
+            for (int index = 0; index < _abilityPresenters.Count; index++)
+            {
+                SingleAbilityPresenter abilityPresenter = _abilityPresenters[index];
+
+                if (abilityPresenter.AbilityType != abilityType)
+                    continue;
+
+                abilitySlotView = abilityPresenter.View;
+                return true;
+            }
+
+            abilitySlotView = null;
+            return false;
+        }
+
         public void HideAll()
         {
             _view.gameObject.SetActive(false);

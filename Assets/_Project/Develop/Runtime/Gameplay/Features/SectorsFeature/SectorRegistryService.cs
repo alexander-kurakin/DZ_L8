@@ -124,7 +124,11 @@ namespace Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature
         public void RegisterVolume(SectorId sectorId, Vector3 anchorPosition, Collider triggerCollider)
         {
             EnsureInitialized();
-            _anchorBySector[sectorId] = anchorPosition;
+
+            // Plant anchors come from SectorGridConfig (InitializeGrid).
+            // Scene volumes only map colliders — their baked transform must not overwrite config radius.
+            if (_anchorBySector.ContainsKey(sectorId) == false)
+                _anchorBySector[sectorId] = anchorPosition;
 
             if (triggerCollider == null)
                 return;

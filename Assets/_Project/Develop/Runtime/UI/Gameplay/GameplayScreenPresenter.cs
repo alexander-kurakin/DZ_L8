@@ -9,6 +9,7 @@ using Assets._Project.Develop.Runtime.Gameplay.Features.MainHero;
 using Assets._Project.Develop.Runtime.Gameplay.Features.SpellcoreProgressionFeature;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.CoachHintArrows;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
 using Assets._Project.Develop.Runtime.UI.Stats;
@@ -31,6 +32,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         
         private EntitiesHealthDisplayPresenter _entitiesHealthDisplayPresenter;
         private PlantBuildingBuffTimersDisplayPresenter _plantBuildingBuffTimersDisplayPresenter;
+        private CoachHintArrowsDisplayPresenter _coachHintArrowsDisplayPresenter;
 
         private MainHeroHolderService _mainHeroHolderService;
         private SpellcoreProgressionService _spellcoreProgressionService;
@@ -68,6 +70,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
             CreateCombatTimeScale();
             CreateEntitiesHealthDisplay();
             CreatePlantBuildingBuffTimersDisplay();
+            CreateCoachHintArrowsDisplay();
             
             _mainHeroRegisteredDisposable = _mainHeroHolderService.HeroRegistred.Subscribe(OnMainHeroRegistered);
 
@@ -83,6 +86,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         private void OnMainHeroRegistered(Entity mainHero)
         {
             CreateAbitities(mainHero);
+            _coachHintArrowsDisplayPresenter?.SetAbilityListPresenter(_abilityListPresenter);
             
             _gameplayStateChangedDisposable = mainHero.GameplayPhase.Subscribe(OnGameplayStateChanged);
             _spellcoreProgressionService.Changed += OnProgressionChanged;
@@ -129,6 +133,7 @@ namespace _Project.Develop.Runtime.UI.Gameplay
         {
             _entitiesHealthDisplayPresenter.LateUpdate();
             _plantBuildingBuffTimersDisplayPresenter?.LateUpdate();
+            _coachHintArrowsDisplayPresenter?.LateUpdate();
         }
         
         private void CreateCurrencyHud()
@@ -193,6 +198,17 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 _gameplayPresentersFactory.CreatePlantBuildingBuffTimersDisplayPresenter(_screen.PlantBuildingBuffTimersDisplay);
 
             _childPresenters.Add(_plantBuildingBuffTimersDisplayPresenter);
+        }
+
+        private void CreateCoachHintArrowsDisplay()
+        {
+            if (_screen.CoachHintArrowsDisplay == null)
+                return;
+
+            _coachHintArrowsDisplayPresenter =
+                _gameplayPresentersFactory.CreateCoachHintArrowsDisplayPresenter(_screen.CoachHintArrowsDisplay);
+
+            _childPresenters.Add(_coachHintArrowsDisplayPresenter);
         }
     }
 }

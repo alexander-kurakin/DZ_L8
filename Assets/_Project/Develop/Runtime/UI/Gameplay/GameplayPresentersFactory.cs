@@ -22,8 +22,11 @@ using Assets._Project.Develop.Runtime.Infrastructure.DI;
 using Assets._Project.Develop.Runtime.UI;
 using Assets._Project.Develop.Runtime.UI.CommonViews;
 using Assets._Project.Develop.Runtime.UI.Core;
+using Assets._Project.Develop.Runtime.UI.Gameplay.CoachHintArrows;
 using Assets._Project.Develop.Runtime.UI.Gameplay.HealthDisplay;
 using Assets._Project.Develop.Runtime.UI.Gameplay.PlantBuildingBuff;
+using Assets._Project.Develop.Runtime.Gameplay.Features.PlantPlacementFeature;
+using Assets._Project.Develop.Runtime.Gameplay.Features.SectorsFeature;
 using Assets._Project.Develop.Runtime.UI.Gameplay.ResultsPopups;
 using Assets._Project.Develop.Runtime.UI.Stats;
 using Assets._Project.Develop.Runtime.UI.Gameplay.Stages;
@@ -175,6 +178,26 @@ namespace _Project.Develop.Runtime.UI.Gameplay
                 view,
                 _container.Resolve<ViewsFactory>(),
                 this);
+        }
+
+        public CoachHintArrowPresenter CreateCoachHintArrowPresenter(CoachHintArrowView view)
+        {
+            return new CoachHintArrowPresenter(view);
+        }
+
+        public CoachHintArrowsDisplayPresenter CreateCoachHintArrowsDisplayPresenter(CoachHintArrowsDisplay view)
+        {
+            return new CoachHintArrowsDisplayPresenter(
+                _container.Resolve<LmbFlavorToastService>(),
+                view,
+                _container.Resolve<ViewsFactory>(),
+                this,
+                _container.Resolve<ConfigsProviderService>(),
+                _container.Resolve<SectorRegistryService>(),
+                _container.Resolve<PlantPlacementService>(),
+                _container.Resolve<WaveSpawnPlanService>(),
+                _container.Resolve<SpawnPathPreviewService>(),
+                _container.Resolve<PreparationTriggerService>());
         }
 
         public LmbFlavorToastPresenter CreateLmbFlavorToastPresenter(Transform parent)

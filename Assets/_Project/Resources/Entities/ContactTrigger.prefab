@@ -120,7 +120,7 @@ CapsuleCollider:
     serializedVersion: 2
     m_Bits: 4294967295
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 2
@@ -206,7 +206,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Plasma Sphere (3)
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1937892233989869475, guid: 71b502122a0cfe640969b5a2538bcdc1, type: 3}
+    - {fileID: 2699354955047182372, guid: 71b502122a0cfe640969b5a2538bcdc1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

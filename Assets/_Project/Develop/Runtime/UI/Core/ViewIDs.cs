@@ -11,6 +11,7 @@
         public const string DefeatPopup = nameof(DefeatPopup);
         public const string SimpleHealthBar = nameof(SimpleHealthBar);
         public const string MainHeroHealthBar = nameof(MainHeroHealthBar);
+        public const string CoachHintArrow = nameof(CoachHintArrow);
         public const string BuildingBuffTimerTextView = nameof(BuildingBuffTimerTextView);
         public const string SelectableAbilityView = nameof(SelectableAbilityView);
         public const string ShopPopup = nameof(ShopPopup);
